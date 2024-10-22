@@ -7,6 +7,7 @@ const VisageAnalyzer = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [imageCaptured, setImageCaptured] = useState(false); // State to track if the image has been captured
+  const [isRecording,setRecording] = useState(false);
 
   // References to mutable objects
   const ppixelsRef = useRef(null);
@@ -66,6 +67,7 @@ const VisageAnalyzer = () => {
         });
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
+          setRecording(true);
         }
       } catch (error) {
         console.error("Error accessing the camera: ", error);
@@ -80,15 +82,15 @@ const VisageAnalyzer = () => {
         console.log('Cleaning up streams');
       }
     };
-  }, [stream]);
+  },[stream]);
 
   return (
     <div>
       {/* Video element to display the camera stream */}
-      <video ref={videoRef} autoPlay style={{ display: "none" }}></video>
+      <video ref={videoRef} autoPlay style={{display : 'none'}}></video>
 
       {/* ImageCapture component to handle the canvas drawing and analysis */}
-      <ImageCapture
+      { isRecording && <ImageCapture
         videoRef={videoRef}
         canvasRef={canvasRef}
         imageCaptured={imageCaptured}
@@ -101,7 +103,7 @@ const VisageAnalyzer = () => {
         TfaceDataArrayRef={TfaceDataArrayRef}
         tmpAnalysisDataRef={tmpAnalysisDataRef}
         m_FaceAnalyserRef={m_FaceAnalyserRef}
-      />
+      />}
     </div>
   );
 };

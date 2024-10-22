@@ -42,8 +42,11 @@ const Chat = ({ darkMode }) => {
       } */
 
       // Trigger VisageAnalyzer by toggling showVisage
+
       setShowVisage(false); // Temporarily hide
-      setTimeout(() => setShowVisage(true), 100); // Re-show after short delay
+      setTimeout(() => {    
+        setShowVisage(true); // Re-show after short delay
+      }, 100); // Re-show after short delay
     }
   };
 
@@ -81,8 +84,7 @@ const Chat = ({ darkMode }) => {
     '2024-02-01',
     '2024-03-01',
     '2024-04-01',
-    '2024-05-01',
-    
+    '2024-05-01',   
 ];
 
   return (
@@ -122,7 +124,7 @@ const Chat = ({ darkMode }) => {
       </div>
 
       {/* Conditionally render VisageAnalyzer */}
-      {showVisage && <VisageAnalyzer />}
+      { showVisage && <VisageAnalyzer />}
     </div>
   );
 };

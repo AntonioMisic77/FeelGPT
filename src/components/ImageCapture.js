@@ -60,10 +60,15 @@ const ImageCapture = ({ videoRef, imageCaptured, setImageCaptured, canvasRef, mW
             
             console.log('tmpAnalysisDataRef.current.getEmotionsValid(): ', tmpAnalysisDataRef.current.get(0).getEmotionsValid());
             if (tmpAnalysisDataRef.current.get(0).getEmotionsValid()) {
-              const emotions = tmpAnalysisDataRef.current.get(0).getEmotionProbabilities();
-              emotionsArray = Array.from(emotions);
+              const emotions = tmpAnalysisDataRef.current.get(0);
+              emotionsArray = Array.from(emotions.getEmotionProbabilities());
               console.log("Emotions Array: ", emotionsArray);
             }
+
+            // console.log("Age valid: ",tmpAnalysisDataRef.current.get(0).getAgeValid());
+            // console.log("Age: ",tmpAnalysisDataRef.current.get(0).getAge());
+            // console.log("Gender valid: ",tmpAnalysisDataRef.current.get(0).getGenderValid());
+            // console.log("Gender: ",tmpAnalysisDataRef.current.get(0).getGender());
           }
         }
 
@@ -81,7 +86,6 @@ const ImageCapture = ({ videoRef, imageCaptured, setImageCaptured, canvasRef, mW
       ref={canvasRef}
       width={mWidth}
       height={mHeight}
-      style={{ display: "none" }}  
     ></canvas>
   );
 };
