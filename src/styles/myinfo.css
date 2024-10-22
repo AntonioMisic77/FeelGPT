@@ -1,0 +1,45 @@
+.info-page-container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 80vh; 
+    width: 100vw; 
+}
+
+.info-container {
+    display: flex;
+    flex-grow: 1; 
+    padding: 10px; 
+    align-content: flex-start;
+    flex-direction: column;
+}
+
+.graphs-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    overflow-y: scroll;
+    flex-grow: 1; 
+    padding: 10px;
+    max-height: 100%;  
+}
+
+.graphs-container::-webkit-scrollbar {
+    display: none; /* Hidden scrollbar */
+}
+
+.legend-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: space-between;
+    flex-grow: 1; 
+    padding: 10px;
+}
+
+.graph, .legend, .user-picture-profile {
+    margin: 5px;
+    max-width: 15vw;  
+    height: auto;     
+    margin: 10px;
+}
