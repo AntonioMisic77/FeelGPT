@@ -4,7 +4,6 @@ const ImageCapture = ({ videoRef, imageCaptured, setImageCaptured, canvasRef, mW
   // Capture a single frame from the video, extract pixel data, and perform tracking
   useEffect(() => {
     if (videoRef.current && canvasRef.current && !imageCaptured) {
-      // TASK: why this code goes twice? (output in console.log)
       const captureFrame = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
@@ -38,37 +37,41 @@ const ImageCapture = ({ videoRef, imageCaptured, setImageCaptured, canvasRef, mW
             window.VisageModule.VisageTrackerImageFormat.VISAGE_FRAMEGRABBER_FMT_RGBA.value,
             window.VisageModule.VisageTrackerOrigin.VISAGE_FRAMEGRABBER_ORIGIN_TL.value
           );
-          console.log('trackerReturnState:', trackerReturnState[0]);
-          console.log('TfaceDataArrayRef.current.get(0): ', TfaceDataArrayRef.current.get(0))
+          //console.log('trackerReturnState:', trackerReturnState[0]);
+          //console.log('TfaceDataArrayRef.current.get(0): ', TfaceDataArrayRef.current.get(0))
 
-          // Analyze the face using the face analyzer -> if tracker is 1, then it is ok -> 3 is on the first message (needs to be 1)!
-          // TASK: if it is 3, take another picture?
+          // Analyze the face using the face analyzer -> if tracker is 1, then it is ok, if 3 face is not found!
+          var options = 0;
+          options |= window.VisageModule.VFAFlags.VFA_EMOTION.value;
+          options |= window.VisageModule.VFAFlags.VFA_GENDER.value;
+          options |= window.VisageModule.VFAFlags.VFA_AGE.value;
+
           if (trackerReturnState[0] === window.VisageModule.VisageTrackerStatus.TRACK_STAT_OK.value) {
             const status = m_FaceAnalyserRef.current.analyseImage(
               mWidth,
               mHeight,
               ppixelsRef.current,
               TfaceDataArrayRef.current.get(0),
-              window.VisageModule.VFAFlags.VFA_EMOTION.value,
+              options,   //window.VisageModule.VFAFlags.VFA_EMOTION.value,   -> only for emotions
               tmpAnalysisDataRef.current.get(0)
             );
-            console.log("AnalyseImage status:", status);
-            console.log('options: ',window.VisageModule.VFAFlags.VFA_EMOTION.value);
-            console.log('tmpAnalysisDataRef.current.get(0): ', tmpAnalysisDataRef.current.get(0))
+            //console.log("AnalyseImage status:", status);
+            //console.log('options: ',window.VisageModule.VFAFlags.VFA_EMOTION.value);
+            //console.log('tmpAnalysisDataRef.current.get(0): ', tmpAnalysisDataRef.current.get(0))
 
             let emotionsArray = [];
             
-            console.log('tmpAnalysisDataRef.current.getEmotionsValid(): ', tmpAnalysisDataRef.current.get(0).getEmotionsValid());
+            //console.log('tmpAnalysisDataRef.current.getEmotionsValid(): ', tmpAnalysisDataRef.current.get(0).getEmotionsValid());
             if (tmpAnalysisDataRef.current.get(0).getEmotionsValid()) {
               const emotions = tmpAnalysisDataRef.current.get(0);
               emotionsArray = Array.from(emotions.getEmotionProbabilities());
               console.log("Emotions Array: ", emotionsArray);
             }
 
-            // console.log("Age valid: ",tmpAnalysisDataRef.current.get(0).getAgeValid());
-            // console.log("Age: ",tmpAnalysisDataRef.current.get(0).getAge());
-            // console.log("Gender valid: ",tmpAnalysisDataRef.current.get(0).getGenderValid());
-            // console.log("Gender: ",tmpAnalysisDataRef.current.get(0).getGender());
+            //console.log("Age valid: ",tmpAnalysisDataRef.current.get(0).getAgeValid());
+            console.log("Age: ",tmpAnalysisDataRef.current.get(0).getAge());
+            //console.log("Gender valid: ",tmpAnalysisDataRef.current.get(0).getGenderValid());
+            console.log("Gender: ",tmpAnalysisDataRef.current.get(0).getGender());
           }
         }
 
@@ -86,6 +89,7 @@ const ImageCapture = ({ videoRef, imageCaptured, setImageCaptured, canvasRef, mW
       ref={canvasRef}
       width={mWidth}
       height={mHeight}
+      style={{ display: "none" }}  
     ></canvas>
   );
 };
