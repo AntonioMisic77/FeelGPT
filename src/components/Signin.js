@@ -8,7 +8,6 @@ import "../styles/signin.css";
 const Signin = () => {
   const [consent, setConsent] = useState(false);
   const [notifications, setNotifications] = useState("daily"); // Options: 'daily', 'weekly'
-  const [smsNumber, setSmsNumber] = useState("");
 
   const handleConsentChange = () => {
     setConsent(!consent);
@@ -19,17 +18,17 @@ const Signin = () => {
   };
 
   return (
-    <div>
+    <div className="body-signin">
       <div className="sign-in-container">
         <div className="sign-in-form">
           <h1 className="form-title">Feel GPT Sign In Form</h1>
           <form>
             <div>
-              <label className="signin-label">Email:</label>
+              <label className="signin-label">Email</label>
               <input className="signin-input" type="email" placeholder="Enter your email" required />
             </div>
             <div>
-              <label className="signin-label" >Password:</label>
+              <label className="signin-label" >Password</label>
               <input
               className="signin-input"
                 type="password"
@@ -44,7 +43,7 @@ const Signin = () => {
           <h2 className="info-title">Additional Info</h2>
           <div className="consent-container">
             <label className="question-label">
-              Would you like to you your camera for better performance?
+              Would you like to you use your camera for better performance?
             </label>
             <div class="checkbox-wrapper-10">
               <input
@@ -64,7 +63,7 @@ const Signin = () => {
           </div>
 
           <div>
-            <label>Do you want to get notifications for conversations?</label>
+            <label className="question-label radio-label">Do you want to get notifications for conversations?</label>
             <div class="horizontal-radio">
               <div class="radio-wrapper-5">
                 <label for="example-5" class="forCircle">
@@ -141,7 +140,7 @@ const Signin = () => {
           </div>
           {(notifications === "weekly" || notifications === "daily") && (
             <div>
-              <label>How would you like to receive notifications?</label>
+              <label className="question-label radio-label">How would you like to receive notifications?</label>
               <div class="horizontal-radio">
                 <div class="radio-wrapper-5">
                   <label for="example-5" class="forCircle">
@@ -206,7 +205,7 @@ const Signin = () => {
           {/* Button at the bottom */}
         </div>
       </div>
-      <div className="submit-container">
+      <div className="submit-container-signin">
         <button type="submit" className="submit-btn button-66">
           Submit
         </button>

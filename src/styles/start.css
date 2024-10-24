@@ -1,4 +1,4 @@
-.container {
+.bckg {
   position: relative;
   min-height: 100vh;
   width: 100%;
@@ -9,12 +9,12 @@
   overflow: hidden;
 }
 
-.dark {
+.dark-start {
   background: linear-gradient(to bottom right, #001f3f, #0074d9);
   color: white;
 }
 
-.light {
+.light-start {
   background: linear-gradient(to bottom right, #0066ff, #66ccff);
   color: black;
 }

@@ -1,5 +1,6 @@
-body {
+.body-signin {
     display: flex;
+    flex-direction: column;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
     height: 100vh; /* Full viewport height */
@@ -11,6 +12,7 @@ body {
   
   .sign-in-container {
     display: flex;
+
     width: 80vw; /* Adjust width as necessary */
     height: 60vh; /* Adjust height as necessary */
     border: 1px solid #ccc; /* Optional border */
@@ -76,6 +78,14 @@ body {
     color: gray
     
   }
+
+  .question-label{
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    display: block;
+  }
+
 
   /* check box */
 
@@ -188,16 +198,20 @@ body {
 
 
   .consent-container {
-    display: flex;             /* Use flexbox for layout */
-  flex-direction: row;      /* Arrange items in a row */
-  align-items: center;      /* Center items vertically */
+    /* display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px; */
 }
 
-.submit-container {
-    display: flex;                   /* Use flexbox for layout */
-  justify-content: flex-end;     /* Align items to the left */
-  padding-top: 10px; 
+.submit-container-signin {
+  display: flex;                   /* Use flexbox for layout */
+  justify-content: flex-end;       /* Align items to the right */
+  width: 80vw; /* Adjust width as necessary */                    /* Ensure container takes up the full width */
+  padding-top: 10px;               /* Add some space above the button */
 }
+
 
 
 .horizontal-radio{
