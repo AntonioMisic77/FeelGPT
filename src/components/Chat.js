@@ -7,9 +7,9 @@ import CalendarCarousel from './CalendarCarousel';
 
 const Chat = ({ darkMode }) => {
   const [messages, setMessages] = useState([
-    { text: "Question", sender: "them" },
-    { text: "Response", sender: "me" },
-    { text: "Question", sender: "them" },
+    { text: "Good Morning! What are you up to today, given the fact that you haven't been feeling good yesterday?", sender: "them" },
+    { text: " I woke up feeling pretty good today! The sun is shining, and I'm ready to tackle whatever comes my way.", sender: "me" },
+    { text: "That's awesome to hear! ☀️ I love those sunny mornings—they really set a positive tone for the day.", sender: "them" },
   ]);
   const [inputValue, setInputValue] = useState("");
   const [showVisage, setShowVisage] = useState(false);
@@ -102,7 +102,7 @@ const Chat = ({ darkMode }) => {
                   className="user-picture chat"
                 />
               )}
-              <div className="message-border">{message.text}</div>
+              <div className="message-border ">{message.text}</div>
             </div>
           </div>
         ))}

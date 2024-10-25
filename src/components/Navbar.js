@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/navbar.css";
 import ChatListButton from "./ChatListButton";
-import { Link, useLocation} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = ({ darkMode, setDarkMode }) => {
   const location = useLocation();
@@ -10,27 +10,38 @@ const Navbar = ({ darkMode, setDarkMode }) => {
       <div className="navbar-container">
         <div className="navbar-left">
           {/* <ChatListButton/> */}
-          <p className="name"> Feel GPT</p>
+          <p className="name "> Feel GPT</p>
         </div>
         <div className="navbar-right">
-        {location.pathname !== "/" && (
+          {location.pathname !== "/" && (
             <Link className="link" to="/">
-              Chat with me
+              <button type="button" className="submit-btn button-66-smaller">
+                  Chat
+                </button>
             </Link>
           )}
-          <button
-            className="button-mode"
-            onClick={() => setDarkMode(!darkMode)}
-          >
-            {darkMode ? "Light Mode" : "Dark Mode"}
-          </button>
-          <Link to="/my-info">
+
+          <div class="checkbox-wrapper-64">
+            <label class="switch">
+              <input type="checkbox" onClick={() => setDarkMode(!darkMode)} />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div>
+            <Link to="/my-info">
             <img
-              src="https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-              alt=""
-              className="user-picture"
-            />
-          </Link>
+                src={
+                  location.pathname === "/my-info"
+                    ? "../images/logout.png" 
+                    : "../images/icon.png" 
+                }
+                alt=""
+                className="user-icon"
+              />
+
+            </Link>
+          </div>
         </div>
       </div>
     </nav>

@@ -3,6 +3,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
 }
 
 .chat-container{
@@ -32,11 +34,21 @@
     
 }
 textarea{
-    border-radius: 10px;
-    width: 500px;
-    padding: 10px;
-}
 
+        width: 100%; /* Full width */
+        padding: 10px; /* Padding inside the input */
+        margin-left: 30px;
+        margin-top: 5px; /* Spacing above the input */
+        border: 1px solid #ccc; /* Border */
+        border-radius: 4px; /* Rounding */
+        font-family: inherit; /* Inherit font from body */
+}
+textarea:focus {
+    border-color: rgb(54, 99, 198); /* Border color when focused */
+    outline: none; /* Removes the default outline */
+  }
+
+  
 .send-button{
     margin: 10px;
 }
@@ -78,11 +90,12 @@ textarea{
 
 .message-border {
     background-color:rgb(171, 197, 226);
-    padding: 10px;
+    padding: 16px;
     border-radius: 15px;
     max-width: 60%; 
     white-space: pre-wrap; 
     overflow-wrap: break-word; 
+    margin-left: 5px;
 }
 
 
@@ -103,3 +116,8 @@ textarea {
     width: 25px;
     height: 25px;
 }
+
+
+/* message bubbles */
+
+
