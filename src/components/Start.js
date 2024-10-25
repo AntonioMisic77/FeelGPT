@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import { Link } from "react-router-dom";
 
+
+/* TASK: add navbar element -> modify it so it has language */
 const SignInLogin = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("EN");
@@ -20,12 +22,12 @@ const SignInLogin = () => {
         {/* Top right buttons */}
         <div className="top-right">
           {/* Dark Mode Toggle Switch */}
-          <label className="toggle-switch">
-            <input type="checkbox" checked={darkMode} onChange={toggleDarkMode} />
-            <div className="toggle-switch-background">
-              <div className="toggle-switch-handle"></div>
-            </div>
-          </label>
+          <div class="checkbox-wrapper-64 down">
+            <label class="switch">
+              <input type="checkbox" onClick={() => toggleDarkMode()} />
+              <span class="slider"></span>
+            </label>
+          </div>
 
           <button onClick={toggleLanguage} className="language-btn">
             <img

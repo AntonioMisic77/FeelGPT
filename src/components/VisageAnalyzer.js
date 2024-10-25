@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import VisageLoader from "./VisageLicenceLoad";
 import ImageCapture from "./ImageCapture"; 
+import "../styles/visageAnalyzer.css";
+
 
 const VisageAnalyzer = () => {
   const [stream, setStream] = useState(null);
@@ -87,7 +89,7 @@ const VisageAnalyzer = () => {
   return (
     <div>
       {/* Video element to display the camera stream */}
-      <video ref={videoRef} autoPlay style={{display : 'none'}}></video>
+      <video className="live-video" ref={videoRef} autoPlay style={{display : 'none'}} ></video>
 
       {/* ImageCapture component to handle the canvas drawing and analysis */}
       { isRecording && <ImageCapture
