@@ -20,6 +20,19 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                 </button>
             </Link>
           )}
+          <div>
+            {/* TASK-> its not implemented opening camera if wanted connected to this icon */}
+          <img
+                src={
+                  
+                    
+                    "../images/camera.png" 
+                }
+                alt=""
+                className="user-icon"
+              />
+          </div>
+
 
           <div class="checkbox-wrapper-64">
             <label class="switch">
