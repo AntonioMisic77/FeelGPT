@@ -27,6 +27,10 @@
     background-color: #f9f9f9; /* Light background color */
   }
   
+  .date{
+    font-style: italic;
+    color: gray;
+  }
   .summary-buttons {
     flex: 1; /* 1/3 of the width */
     display: flex; /* Flexbox for buttons */

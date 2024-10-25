@@ -22,6 +22,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           )}
           <div>
             {/* TASK-> its not implemented opening camera if wanted connected to this icon */}
+            {location.pathname !== "/my-info" && (
           <img
                 src={
                   
@@ -31,6 +32,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                 alt=""
                 className="user-icon"
               />
+              )}
           </div>
 
 
