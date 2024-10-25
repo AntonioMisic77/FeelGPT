@@ -1,3 +1,4 @@
+/* Set dark and light mode styles on the background container */
 .bckg {
   position: relative;
   min-height: 100vh;
@@ -5,19 +6,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom right, #0066ff, #66ccff);
   overflow: hidden;
+  /* Dark and light mode backgrounds */
+  background: linear-gradient(to bottom right, #0066ff, #66ccff); /* Default light mode */
 }
 
-.dark-start {
+.bckg.dark {
   background: linear-gradient(to bottom right, #001f3f, #0074d9);
   color: white;
 }
 
-.light-start {
+.bckg.light {
   background: linear-gradient(to bottom right, #0066ff, #66ccff);
   color: black;
 }
+
+/* Center container styling */
+.container {
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+/* Rest of your styles... */
+
 
 /* Top right buttons */
 .top-right {
@@ -31,7 +44,7 @@
 
 
 /* Center container */
-.center {
+.center-start {
   display: flex;
   flex-direction: row;
   align-items: center;
