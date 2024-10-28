@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "../styles/navbar.css";
-import ChatListButton from "./ChatListButton";
 import { Link, useLocation } from "react-router-dom";
 
+/* PROBLEMS and TASK
+   -> make more uniformed icons*/
 const Navbar = ({ darkMode, setDarkMode }) => {
   const location = useLocation();
   return (

@@ -5,7 +5,15 @@ import VisageLoader from "./VisageLicenceLoad";
 import VisageAnalyzer from "./VisageAnalyzer";
 import CalendarCarousel from './CalendarCarousel';
 
+/* PROBLEMS and TASKS:
+  -> when there are multiple messages, upper disappear, they cant be seen any more 
+  -> add time beneath sent and received messages - down left
+  -> don't know if messages from LLM should appear letter by letter on in one piece
+  -> dark mode doesnt work -> but that is for later
+  > for camera part -> add drop down where user chooses if camera is used, and to display current camera input*/
 const Chat = ({ darkMode }) => {
+  
+  /* TASK: get messages from LLM  -> axios code down*/
   const [messages, setMessages] = useState([
     { text: "Good Morning! What are you up to today, given the fact that you haven't been feeling good yesterday?", sender: "them" },
     { text: " I woke up feeling pretty good today! The sun is shining, and I'm ready to tackle whatever comes my way.", sender: "me" },
@@ -15,6 +23,7 @@ const Chat = ({ darkMode }) => {
   const [showVisage, setShowVisage] = useState(false);
 
   const messagesEndRef = useRef(null);
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,6 +40,7 @@ const Chat = ({ darkMode }) => {
       setMessages([...messages, { text: inputValue, sender: "me" }]);
       setInputValue("");
 
+      //TASK
       // Optionally send the message to backend
       /* try {
         await axios.post("YOUR_BACKEND_API_URL", {

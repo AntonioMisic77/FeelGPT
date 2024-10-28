@@ -4,7 +4,11 @@ import "../styles/chat.css";
 import React, { useState } from "react";
 import VisageLoader from "./VisageLicenceLoad";
 
-
+/* PROBLEMS and TASK
+   -> change background 
+   -> add motivational text
+   -> make logo??
+   */
 const App = () => {
   const [darkMode, setDarkMode] = useState(false); // State to manage dark/light mode
 

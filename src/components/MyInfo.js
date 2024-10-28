@@ -6,6 +6,15 @@ import "../styles/chat.css";
 import "../styles/myinfo.css";
 import React, { useState } from "react";
 
+
+/* PROBLEMS and TASK
+  -> these are not all the settings we need -  think about what we need -> later
+  -> no change settings part implemented yet
+  -> disconnect from settings list functions - it shoulld be just a list
+  -> remove: tick disappear when clicked
+
+
+   */
 const MyInfo = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [cameraConsent, setCameraConsent] = useState(true);

@@ -1,6 +1,15 @@
 import React from "react";
 import "../styles/history.css";
 
+
+/* PROBLEMS and TASKS 
+  -> fix dates
+  -> make functions for buttons
+      -> delete all history
+      -> view chat
+      -> delete certain chat*/
+
+
 const History = () => {
   const summaries = [
     {

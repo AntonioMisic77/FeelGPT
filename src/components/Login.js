@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/login.css";
 
+
+/* PROBLEMS and TASK
+   -> not connected*/
+
 const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [email, setEmail] = useState("");

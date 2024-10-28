@@ -3,8 +3,14 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/signin.css";
 
-/* TASK -> fix positions of Additional Info */
-
+/* PROBLEMS and TASK
+   -> not connected
+   -> will have to add more info
+   -> make additional part scrollable ?? 
+   -> fix radio button -> when never choosen, dont show next part
+                       -> "daily" is marked when not hovered??
+   -> why is this page scrollable?
+*/
 const Signin = () => {
   const [consent, setConsent] = useState(false);
   const [notifications, setNotifications] = useState("daily"); // Options: 'daily', 'weekly'

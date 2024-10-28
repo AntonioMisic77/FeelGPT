@@ -5,6 +5,11 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
+/* PROBLEMS and TASKS
+  -> see what kind of data could be interesting to show
+  -> emotions from last month??
+  -> in what shape, maybe some kind of mood tracker
+  -> if multiple, turn to scroll container*/
 const Graph = () => {
   const data = {
     labels: ['Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat', 'Sun'],
