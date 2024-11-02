@@ -3,14 +3,16 @@ import "../styles/chat.css";
 import axios from "axios";
 import VisageLoader from "./VisageLicenceLoad"; 
 import VisageAnalyzer from "./VisageAnalyzer";
-import CalendarCarousel from './CalendarCarousel';
 
 /* PROBLEMS and TASKS:
   -> when there are multiple messages, upper disappear, they cant be seen any more 
   -> add time beneath sent and received messages - down left
   -> don't know if messages from LLM should appear letter by letter on in one piece
   -> dark mode doesnt work -> but that is for later
-  > for camera part -> add drop down where user chooses if camera is used, and to display current camera input*/
+  > for camera part -> add drop down where user chooses if camera is used, and to display current camera input
+  -> set camera, so that when choosen it appeares like on the left -> maybe get current info about emoutions, dots on face ??
+  -> should we put a component that that has dates and user can choose prior chats?
+  */
 const Chat = ({ darkMode }) => {
   
   /* TASK: get messages from LLM  -> axios code down*/
