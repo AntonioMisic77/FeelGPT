@@ -17,6 +17,55 @@
     justify-content: flex-end;
 }
 
+.big-container{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    height: 80vh; 
+
+    justify-content: flex-end;
+}
+
+.video-container {
+    display: flex;
+    justify-content: center; 
+    flex-direction: column;
+
+    align-items: center;
+    margin-right: 50px;
+
+}
+
+
+
+
+/* when video is enabled */
+.big-container.video-enabled {
+    flex-direction: row;
+  }
+
+  /* .video-container {
+    display: none;
+  }
+  .video-container.video-enabled {
+    display: block;
+  } */
+  .hidden-video {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+
+.video-enabled-chat{
+    width: 45vw;
+
+}
+  
+
+
+
 .light {
     background-color: white; 
     color: black

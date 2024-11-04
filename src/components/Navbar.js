@@ -1,61 +1,63 @@
-import React, { useState } from "react";
+import React from "react";
 import "../styles/navbar.css";
 import { Link, useLocation } from "react-router-dom";
 
-/* PROBLEMS and TASK
-   -> make more uniformed icons*/
-const Navbar = ({ darkMode, setDarkMode }) => {
+const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
   const location = useLocation();
+
+  //for camera input when user chooses
+  const toggleCamera = () => {
+    setIsRecordingVideo(prev => {
+      const newState = !prev; 
+      if (newState) {
+        console.log('Camera is on'); 
+      } else {
+        console.log('Camera is off');
+      }
+      return newState; 
+    });
+  };
+  
+
   return (
     <nav className={`navbar ${darkMode ? "dark" : "light"}`}>
       <div className="navbar-container">
         <div className="navbar-left">
-          {/* <ChatListButton/> */}
-          <p className="name "> Feel GPT</p>
+          <p className="name">Feel GPT</p>
         </div>
         <div className="navbar-right">
           {location.pathname !== "/" && (
             <Link className="link" to="/">
               <button type="button" className="submit-btn button-66-smaller">
-                  Chat
-                </button>
+                Chat
+              </button>
             </Link>
           )}
-          <div>
-            {/* TASK-> its not implemented opening camera if wanted connected to this icon */}
-            {location.pathname !== "/my-info" && (
-          <img
-                src={
-                  
-                    
-                    "../images/camera.png" 
-                }
-                alt=""
-                className="user-icon"
-              />
-              )}
+          {location.pathname !== "/my-info" && (
+          <div onClick={toggleCamera} style={{ cursor: 'pointer' }}>
+            <img
+              src="../images/camera.png" 
+              alt="Camera"
+              className="user-icon"
+            />
+          
           </div>
+          )}
 
-
-          <div class="checkbox-wrapper-64">
-            <label class="switch">
+          <div className="checkbox-wrapper-64">
+            <label className="switch">
               <input type="checkbox" onClick={() => setDarkMode(!darkMode)} />
-              <span class="slider"></span>
+              <span className="slider"></span>
             </label>
           </div>
 
           <div>
             <Link to="/my-info">
-            <img
-                src={
-                  location.pathname === "/my-info"
-                    ? "../images/logout.png" 
-                    : "../images/icon.png" 
-                }
+              <img
+                src={location.pathname === "/my-info" ? "../images/logout.png" : "../images/icon.png"}
                 alt=""
                 className="user-icon"
               />
-
             </Link>
           </div>
         </div>
