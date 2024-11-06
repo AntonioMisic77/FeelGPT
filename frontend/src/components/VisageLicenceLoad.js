@@ -78,7 +78,7 @@ const VisageLoader = () => {
 
       const analysisScript = document.createElement("script");
       analysisScript.id = "visageAnalysisDataScript";
-      analysisScript.src = "/lib/VisageAnalysisData.js";
+      analysisScript.src = "/lib/visageAnalysisData.js";
       analysisScript.async = true;
       document.body.appendChild(analysisScript);
 
