@@ -1,0 +1,13 @@
+{
+  "name": "Visage Analyzer",
+  "short_name": "VisageApp",
+  "description": "A web app that uses Visage SDK to analyze facial features, emotions, and more.",
+  "start_url": "/",
+  "display": "standalone",
+
+  "scope": "/",
+  "icons": [
+    
+  ],
+  "lang": "en-US"
+}
