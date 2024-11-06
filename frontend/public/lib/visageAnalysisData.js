@@ -1,5 +1,4 @@
-
-  var Module = typeof VisageModule !== 'undefined' ? VisageModule : {};
+var Module = typeof VisageModule !== 'undefined' ? VisageModule : {};
 
   if (!Module.expectedDataFileDownloads) {
     Module.expectedDataFileDownloads = 0;
