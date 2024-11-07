@@ -1,15 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/chat.css";
 import axios from "axios";
-import VisageLoader from "./VisageLicenceLoad";
-import VisageAnalyzer from "./VisageAnalyzer";
+import ImageCapture from "./ImageCapture";  // Import ImageCapture directly
+import VisageAnalyzer from "./VisageAnalyzer";  // Import VisageAnalyzer
 
-
-/* IMPORTANT -> i thought it would be better idea to get emotions from user each second 
-in period when the user is typing and get average or sum of emotions ( for better estimation) and average of years
-and max appearance of gender
-  -> implemented: each second emotions are recognized
-  -> ont implemented: storing data and calculating average/sum and the rest */
 const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   const [messages, setMessages] = useState([
     {
@@ -26,11 +20,24 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
     },
   ]);
   const [inputValue, setInputValue] = useState("");
-  const [showVisage, setShowVisage] = useState(false);
   const [isTyping, setIsTyping] = useState(false); // Track if user is typing
   const messagesEndRef = useRef(null);
-  const videoRef = useRef(null);
-  const typingIntervalRef = useRef(null);
+  const videoRef = useRef(null);  // Reference for the video element
+  const canvasRef = useRef(null);  // Reference for the canvas element
+
+  // Tracker and analysis data refs for visage processing
+  const ppixelsRef = useRef(null);
+  const pixelsRef = useRef(null);
+  const m_Tracker = useRef(null);
+  const TfaceDataArrayRef = useRef(null);
+  const tmpAnalysisDataRef = useRef(null);
+  const m_FaceAnalyserRef = useRef(null);
+
+  const mWidth = 640;
+  const mHeight = 480;
+
+  // Initialize VisageAnalyzer once and store its data
+  const [visageData, setVisageData] = useState(null);
 
   // Function that keeps the chat scrolled to the bottom
   useEffect(() => {
@@ -43,15 +50,6 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       setMessages([...messages, { text: inputValue, sender: "me" }]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
-
-      // Clear the visage interval
-      clearInterval(typingIntervalRef.current);
-      typingIntervalRef.current = null;
-
-      setShowVisage(false);
-      setTimeout(() => {
-        setShowVisage(true);
-      }, 100);
     }
   };
 
@@ -62,22 +60,6 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       sendMessage();
     }
   };
-
-  // Start visage analysis when typing starts
-  useEffect(() => {
-    if (isTyping && !typingIntervalRef.current) {
-      // Set an interval to toggle VisageAnalyzer every second
-      typingIntervalRef.current = setInterval(() => {
-        setShowVisage(false);
-        setTimeout(() => setShowVisage(true), 100);
-      }, 1000);
-    }
-
-    return () => {
-      clearInterval(typingIntervalRef.current);
-      typingIntervalRef.current = null;
-    };
-  }, [isTyping]);
 
   // Start video stream from the user's camera
   useEffect(() => {
@@ -101,6 +83,53 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       }
     };
   }, []);
+
+  // Use an interval to capture image every second when the user is typing
+  useEffect(() => {
+    let captureInterval;
+
+    if (isTyping) {
+      // Start an interval to capture the image every second
+      captureInterval = setInterval(() => {
+        if (videoRef.current && canvasRef.current) {
+          const ctx = canvasRef.current.getContext("2d");
+          ctx.drawImage(videoRef.current, 0, 0, mWidth, mHeight); // Capture the current frame
+          const imageCaptured = canvasRef.current.toDataURL(); // Convert the captured frame to data URL
+          setVisageData((prevData) => ({
+            ...prevData,
+            imageCaptured, // Update the image captured data
+          }));
+        }
+      }, 1000); // Capture every second
+
+    } else {
+      // If typing stops, clear the interval
+      clearInterval(captureInterval);
+    }
+
+    return () => {
+      // Clean up the interval when the component is unmounted or when typing stops
+      if (captureInterval) {
+        clearInterval(captureInterval);
+      }
+    };
+  }, [isTyping]); // Runs whenever isTyping changes
+
+  // Start visage analysis when typing starts
+  useEffect(() => {
+    if (isTyping && !visageData) {
+      // Initialize VisageAnalyzer once the user starts typing
+      const startVisageAnalyzer = () => {
+        setVisageData({
+          imageCaptured: null,
+          setImageCaptured: () => {},
+          // You can pass more relevant data here
+        });
+      };
+
+      startVisageAnalyzer();
+    }
+  }, [isTyping, visageData]); // Only start visage analyzer when typing starts and it's not initialized
 
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
@@ -136,7 +165,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              setIsTyping(true); 
+              setIsTyping(true);  // User is typing
             }}
             placeholder="Type a message"
             className="input-field"
@@ -152,8 +181,40 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
           </button>
         </div>
 
-        {/* Conditionally render VisageAnalyzer and pass the video stream */}
-        {showVisage && <VisageAnalyzer videoRef={videoRef} />}
+        {/* Initialize VisageAnalyzer only when the user starts typing */}
+        {visageData && (
+          <VisageAnalyzer
+            videoRef={videoRef}
+            canvasRef={canvasRef}
+            setVisageData={setVisageData}  // Set the data from VisageAnalyzer
+            mWidth={mWidth}
+            mHeight={mHeight}
+            ppixelsRef={ppixelsRef}
+            pixelsRef={pixelsRef}
+            m_Tracker={m_Tracker}
+            TfaceDataArrayRef={TfaceDataArrayRef}
+            tmpAnalysisDataRef={tmpAnalysisDataRef}
+            m_FaceAnalyserRef={m_FaceAnalyserRef}
+          />
+        )}
+
+        {/* Conditionally render ImageCapture and pass the required props */}
+        {visageData && (
+          <ImageCapture
+            videoRef={videoRef}
+            canvasRef={canvasRef}
+            imageCaptured={visageData.imageCaptured}
+            setImageCaptured={visageData.setImageCaptured}
+            mWidth={mWidth}
+            mHeight={mHeight}
+            pixelsRef={pixelsRef}
+            ppixelsRef={ppixelsRef}
+            m_Tracker={m_Tracker}
+            TfaceDataArrayRef={TfaceDataArrayRef}
+            tmpAnalysisDataRef={tmpAnalysisDataRef}
+            m_FaceAnalyserRef={m_FaceAnalyserRef}
+          />
+        )}
       </div>
     </div>
   );

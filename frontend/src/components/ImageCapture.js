@@ -18,7 +18,11 @@ const ImageCapture = ({
     console.log('Image capture started.');
 
     // Ensure video and canvas references are present and that image hasn't already been captured
-    if (videoRef.current && canvasRef.current && !imageCaptured) {
+    /* console.log('videoRef',videoRef.current);
+    console.log('canvasRef',canvasRef.current);
+    console.log('imageCaptured',imageCaptured); */
+    if (videoRef.current && canvasRef.current /* && !imageCaptured */) {
+      //console.log('ckp1');
       const captureFrame = () => {
         const canvas = canvasRef.current;
         const context = canvas?.getContext("2d");
@@ -37,6 +41,8 @@ const ImageCapture = ({
 
         // Populate pixelsRef with imageData
         if (pixelsRef.current) {
+          //console.log('ckp2');
+
           for (let i = 0; i < imageData.length; i++) {
             pixelsRef.current[i] = imageData[i];
           }
@@ -46,6 +52,7 @@ const ImageCapture = ({
 
         // Confirm if ppixelsRef and m_Tracker are set before tracking
         if (ppixelsRef.current && m_Tracker.current) {
+          //console.log('ckp3');
           const trackerReturnState = m_Tracker.current.track(
             mWidth,
             mHeight,
@@ -61,6 +68,8 @@ const ImageCapture = ({
             window.VisageModule.VFAFlags.VFA_AGE.value;
 
           if (trackerReturnState[0] === window.VisageModule.VisageTrackerStatus.TRACK_STAT_OK.value) {
+            //console.log('ckp4');
+
             const status = m_FaceAnalyserRef.current.analyseImage(
               mWidth,
               mHeight,
