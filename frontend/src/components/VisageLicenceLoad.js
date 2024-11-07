@@ -70,17 +70,19 @@ const VisageLoader = () => {
         //onRuntimeInitialized: onModuleInitialized // Add callback if needed
       };
 
-      const script = document.createElement("script");
-      script.id = "visageSDKScript";
-      script.src = "/lib/visageSDK.js";
-      script.async = true;
-      document.body.appendChild(script);
-
       const analysisScript = document.createElement("script");
       analysisScript.id = "visageAnalysisDataScript";
       analysisScript.src = "/lib/visageAnalysisData.js";
       analysisScript.async = true;
       document.body.appendChild(analysisScript);
+
+
+      const script = document.createElement("script");
+      script.id = "visageSDKScript";
+      script.src = "/lib/visageSDK.js";
+      script.async = true;
+      document.body.appendChild(script);
+      
 
       // Mark the SDK as loaded globally to prevent reloading
       window.visageSDKLoaded = true;
