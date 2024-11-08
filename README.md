@@ -34,8 +34,13 @@ cd FeelGPT
 ```
 
 3. **Build and start the containers**
+-  Development enviorment
 ```bash
-docker compose up --build
+docker compose -f docker-compose.dev.yaml
+```
+- Production enviorment
+```bash
+docker compose -f docker-compose.prod.yaml
 ```
 
 5. **Access the application**
