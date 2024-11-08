@@ -9,6 +9,7 @@ import vendorRouter from "./vendor";
 
 const router = express.Router();
 
+
 router.get(
   "/",
   createEndpoint({}, async (req, res) => {

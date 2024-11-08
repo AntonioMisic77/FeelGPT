@@ -20,7 +20,7 @@ app.get(
   "/",
   createEndpoint({}, (req, res) => {
     res.json({
-      result: "Hello Foodgram!",
+      result: "Hello FeelGPT new!",
     });
   })
 );

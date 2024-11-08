@@ -7,15 +7,19 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "3000:80"
+      - "3000:3000"
+      - "3001:80"
     environment:
       - REACT_APP_API_URL=http://backend:5000
     networks:
       - feelgpt-network
+    volumes:
+      - ./frontend/src:/app/src
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: dev
     container_name: backend
     ports:
       - "5000:5000"
@@ -24,6 +28,8 @@ services:
       - MONGO_URI=mongodb://root:rootpassword@mongodb:27017
     networks:
       - feelgpt-network
+    volumes:
+      - ./backend/src:/app/src
     depends_on:
       - mongodb
   mongodb:

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "start:prod": "node dist/src/index.js",
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon -L",
     "build": "tsc && tsc-alias",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
