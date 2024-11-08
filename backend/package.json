@@ -1,5 +1,5 @@
 {
-  "name": "foodgram-backend",
+  "name": "feelgpt-backend",
   "version": "1.2.0",
   "description": " Foodgram - A food advisory app that helps you make better food choices.",
   "main": "src/index.ts",
@@ -28,6 +28,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@azure-rest/ai-inference": "^1.0.0-beta.4",
+    "@langchain/core": "^0.3.17",
+    "@langchain/openai": "^0.3.12",
     "@prisma/client": "^4.9.0",
     "@types/multer": "^1.4.7",
     "bcrypt": "^5.1.0",
@@ -37,6 +40,7 @@
     "haversine-distance": "^1.2.1",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.0",
+    "langchain": "^0.3.5",
     "module-alias": "^2.2.2",
     "mongoose": "^8.8.0",
     "morgan": "^1.10.0",
