@@ -33,7 +33,7 @@ List the software or tools that need to be installed before setting up the proje
 ### Steps
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/project-name.git
+    git clone https://github.com/AntonioMisic77/FeelGPT.git
     ```
 2. Install dependencies:
     - For Node.js projects:
