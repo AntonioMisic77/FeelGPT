@@ -5,14 +5,7 @@
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
-
+- [Getting Started](#installation)
 ---
 
 ## Introduction
@@ -26,38 +19,26 @@ Designed for anyone looking to improve emotional awareness, this tool can be use
 ## Installation
 
 ### Prerequisites
-List the software or tools that need to be installed before setting up the project.
 - [Node](https://nodejs.org/en/download/package-manager)
 - [Docker](https://docs.docker.com/engine/install/)
 
-### Steps
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/AntonioMisic77/FeelGPT.git
-    ```
-2. Install dependencies:
-    - For Node.js projects:
-        ```bash
-        npm install
-        ```
-
-3. Set up environment variables (if applicable). Example:
-    ```bash
-    export API_KEY=your_api_key
-    ```
-
-4. Run the project:
-    - For development:
-        ```bash
-        npm start
-        ```
-
----
-## Usage
-
-### Starting the Project
-Include instructions on how to start the project, including running servers, services, or apps.
-
-Example:
+### Docker setup
+1. **Clone the repository**
 ```bash
-npm run dev
+git clone https://github.com/AntonioMisic77/FeelGPT.git
+```
+
+2. **Navigate to the project root**
+```bash
+cd FeelGPT
+```
+
+3. **Build and start the containers**
+```bash
+docker compose up --build
+```
+
+5. **Access the application**
+The frontend will be available at http://localhost:3000.
+The backend API will be available at http://localhost:5000.
+
