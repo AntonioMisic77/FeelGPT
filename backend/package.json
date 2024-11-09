@@ -14,8 +14,7 @@
     "db:seed": "npx prisma db seed",
     "migration:create": "npx prisma migrate dev --create-only",
     "migration:auto": "npx prisma migrate dev",
-    "migration:reset": "npx prisma migrate reset",
-    "prepare": "husky install"
+    "migration:reset": "npx prisma migrate reset"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -72,7 +71,6 @@
     "eslint-plugin-prefer-arrow-functions": "^3.1.4",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
-    "husky": "^8.0.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.3",
     "prisma": "^4.9.0",
