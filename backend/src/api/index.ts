@@ -3,9 +3,9 @@ import express from "express";
 import { createEndpoint } from "@/utils";
 
 import userRouter from "./user";
+import chatRouter from "./chat";
 
 const router = express.Router();
-
 
 router.get(
   "/",
@@ -16,10 +16,9 @@ router.get(
   })
 );
 
-
 router.use("/user", userRouter);
 router.use("/notification", userRouter);
-router.use("/conversation", userRouter);
+router.use("/chat", chatRouter);
 
 export { router as api };
 
