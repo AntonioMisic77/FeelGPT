@@ -2,10 +2,11 @@
 
 > This project develops an AI-powered chatbot that adapts its communication style based on the user's emotional state, detected through real-time facial analysis using a webcam or selfie camera. By combining emotion detection with a large language model (LLM), the chatbot provides personalized responses, helping users better understand and manage their emotions while fostering emotional intelligence. The system integrates emotion-detection technology (visage|SDK FaceAnalysis) and enriched knowledge on emotions, allowing the chatbot to deliver more natural and empathetic conversations.
 
-
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Getting Started](#installation)
+
 ---
 
 ## Introduction
@@ -19,31 +20,38 @@ Designed for anyone looking to improve emotional awareness, this tool can be use
 ## Installation
 
 ### Prerequisites
+
 - [Node](https://nodejs.org/en/download/package-manager)
 - [Docker](https://docs.docker.com/engine/install/)
 
 ### Docker setup
+
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/AntonioMisic77/FeelGPT.git
 ```
 
 2. **Navigate to the project root**
+
 ```bash
 cd FeelGPT
 ```
 
 3. **Build and start the containers**
--  Development enviorment
+
+- Development enviorment
+
 ```bash
-docker compose -f docker-compose.dev.yaml
+docker compose -f docker-compose.dev.yaml up
 ```
+
 - Production enviorment
+
 ```bash
-docker compose -f docker-compose.prod.yaml
+docker compose -f docker-compose.prod.yaml up
 ```
 
 5. **Access the application**
-The frontend will be available at http://localhost:3000.
-The backend API will be available at http://localhost:5000.
-
+   The frontend will be available at http://localhost:3001.
+   The backend API will be available at http://localhost:5000.
