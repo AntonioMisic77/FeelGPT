@@ -3,7 +3,8 @@ import express from "express";
 import { createEndpoint } from "@/utils";
 
 import userRouter from "./user";
-import chatRouter from "./chat";
+import notificationRouter from "./notification";
+import conversationRouter from "./conversation";
 
 const router = express.Router();
 
@@ -17,8 +18,8 @@ router.get(
 );
 
 router.use("/user", userRouter);
-router.use("/notification", userRouter);
-router.use("/chat", chatRouter);
+router.use("/notification", notificationRouter);
+router.use("/conversation", conversationRouter);
 
 export { router as api };
 

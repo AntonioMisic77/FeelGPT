@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:5000/api/v1/chat";
+const API_URL = "http://localhost:5000/api/v1";
 
 const chatService = {
   // Sends the latest chat message along with the detected emotion, age, gender to the backend.
@@ -9,7 +9,7 @@ const chatService = {
 
       // Send an HTTP POST request to the backend with the chat data
       const response = await axios.post(
-        `${process.env.BACKEND_URL || API_URL}/send`,
+        `${process.env.BACKEND_URL || API_URL}/conversation/chat/send`,
         chatData
       );
 

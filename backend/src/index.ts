@@ -1,6 +1,5 @@
 import "./paths";
 import app from "./app";
-import { ChatService } from "@/api/conversation/services/chat.service";
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

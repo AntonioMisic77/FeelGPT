@@ -4,7 +4,6 @@ import express from "express";
 import morgan from "morgan";
 
 import { api } from "@/api";
-import { connectDB } from "@/db"
 import { errorHandler, notFound404 } from "@/middlewares";
 import { createEndpoint } from "@/utils";
 

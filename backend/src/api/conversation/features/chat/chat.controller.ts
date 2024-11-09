@@ -23,6 +23,7 @@ export const sendMessage = (
 ) => {
   const { message, emotion, age, gender } = req.body;
 
+  console.log("I AM HEREEEEE")
   // Validate the request data
   if (!message || !emotion) {
     return res.status(400).json({ error: "Message and emotion are required." });
