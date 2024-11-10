@@ -7,15 +7,7 @@ import chatService from "../services/chatService"; // Import Chat Service
 const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   const [messages, setMessages] = useState([
     {
-      text: "Good Morning! What are you up to today, given the fact that you haven't been feeling good yesterday?",
-      sender: "them",
-    },
-    {
-      text: "I woke up feeling pretty good today! The sun is shining, and I'm ready to tackle whatever comes my way.",
-      sender: "me",
-    },
-    {
-      text: "That's awesome to hear! ☀️ I love those sunny mornings—they really set a positive tone for the day.",
+      text: "Welcome to FeelGPT. Iam here to listen and help you reflect on your emotions. How are you feeling today?",
       sender: "them",
     },
   ]);
@@ -47,7 +39,11 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   // Function to send a message
   const sendMessage = async () => {
     if (inputValue.trim()) {
-      setMessages([...messages, { text: inputValue, sender: "me" }, { text: "...", sender: "them" }]);
+      setMessages([
+        ...messages,
+        { text: inputValue, sender: "me" },
+        { text: "...", sender: "them" },
+      ]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
 
@@ -69,9 +65,12 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
         console.log("Backend response: ", response);
-        setMessages(
-          (prevMessages) => 
-            prevMessages.map((message, index) => index == prevMessages.length - 1 ? { ...message, text: response.reply } : message),
+        setMessages((prevMessages) =>
+          prevMessages.map((message, index) =>
+            index == prevMessages.length - 1
+              ? { ...message, text: response.reply }
+              : message
+          )
         );
       } catch (error) {
         console.error("Failed to send message: ", error);
