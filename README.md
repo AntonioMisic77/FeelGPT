@@ -24,6 +24,15 @@ Designed for anyone looking to improve emotional awareness, this tool can be use
 - [Node](https://nodejs.org/en/download/package-manager)
 - [Docker](https://docs.docker.com/engine/install/)
 
+### Enviornment variables
+
+To set up the backend, you'll need the following environment variables:
+
+| Variable name | Value |
+| --- | --- |
+|AZURE_PHI_ENDPOINT|YOUR_AZURE_PHI_ENDPOINT|
+|AZURE_PHI_API_KEY|YOUR_AZURE_PHI_API_KEY|
+
 ### Docker setup
 
 1. **Clone the repository**
