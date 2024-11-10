@@ -7,7 +7,7 @@ import chatService from "../services/chatService"; // Import Chat Service
 const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   const [messages, setMessages] = useState([
     {
-      text: "Welcome to FeelGPT. Iam here to listen and help you reflect on your emotions. How are you feeling today?",
+      text: "Welcome to FeelGPT. I am here to listen and help you reflect on your emotions. How are you feeling today?",
       sender: "them",
     },
   ]);
