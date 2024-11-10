@@ -47,7 +47,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   // Function to send a message
   const sendMessage = async () => {
     if (inputValue.trim()) {
-      setMessages([...messages, { text: inputValue, sender: "me" }]);
+      setMessages([...messages, { text: inputValue, sender: "me" }, { text: "...", sender: "them" }]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
 
@@ -70,10 +70,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         const response = await chatService.sendMessageWithEmotion(chatData);
         console.log("Backend response: ", response);
         setMessages(
-          (prevMessages) => [
-            ...prevMessages,
-            { text: response.reply, sender: "them" }
-        ]);
+          (prevMessages) => 
+            prevMessages.map((message, index) => index == prevMessages.length - 1 ? { ...message, text: response.reply } : message),
+        );
       } catch (error) {
         console.error("Failed to send message: ", error);
       }
