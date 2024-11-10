@@ -69,6 +69,11 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
         console.log("Backend response: ", response);
+        setMessages(
+          (prevMessages) => [
+            ...prevMessages,
+            { text: response.reply, sender: "them" }
+        ]);
       } catch (error) {
         console.error("Failed to send message: ", error);
       }
