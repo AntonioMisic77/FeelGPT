@@ -13,8 +13,6 @@ services:
       - REACT_APP_API_URL=http://backend:5000
     networks:
       - feelgpt-network
-    volumes:
-      - ./frontend/src:/app/src
   backend:
     build:
       context: ./backend
@@ -28,8 +26,6 @@ services:
       - MONGO_URI=mongodb://root:rootpassword@mongodb:27017
     networks:
       - feelgpt-network
-    volumes:
-      - ./backend/src:/app/src
     depends_on:
       - mongodb
   mongodb:
@@ -45,7 +41,7 @@ services:
     restart: always
     networks:
       - feelgpt-network
-
+      
 networks:
   feelgpt-network:
     driver: bridge

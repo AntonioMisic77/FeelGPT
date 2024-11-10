@@ -7,10 +7,6 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY prisma prisma
-
-RUN npx prisma generate
-
 # Prod Layer: Build the app and copy only the necessary files
 FROM base AS prod-build
 
@@ -24,15 +20,19 @@ FROM node:20-slim AS production
 
 WORKDIR /app
 
-COPY --from=prod-build /app/dist /app/dist
+COPY --from=prod-build /app/dist /app/dist  
 COPY --from=prod-build /app/package*.json /app/
-COPY --from=prod-build /app/prisma /app/prisma
 
-RUN npm install --only=production --ignore-scripts
+# Copy the .env file if it exists, for production testing
+COPY .env /app/.env
+
+
+
+RUN npm install --omit=dev --ignore-scripts
 
 EXPOSE 5000
 
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/index.js"]
 
 # Dev Layer: Copy the app and install all dependencies
 FROM base AS dev

@@ -2,13 +2,11 @@ import express from "express";
 
 import { createEndpoint } from "@/utils";
 
-import adminRouter from "./admin";
-import consumerRouter from "./consumer";
 import userRouter from "./user";
-import vendorRouter from "./vendor";
+import notificationRouter from "./notification";
+import conversationRouter from "./conversation";
 
 const router = express.Router();
-
 
 router.get(
   "/",
@@ -19,10 +17,9 @@ router.get(
   })
 );
 
-router.use("/consumer", consumerRouter);
-router.use("/vendor", vendorRouter);
-router.use("/admin", adminRouter);
 router.use("/user", userRouter);
+router.use("/notification", notificationRouter);
+router.use("/conversation", conversationRouter);
 
 export { router as api };
 

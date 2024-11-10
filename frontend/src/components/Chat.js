@@ -1,29 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/chat.css";
-import axios from "axios";
-import ImageCapture from "./ImageCapture";  // Import ImageCapture directly
-import VisageAnalyzer from "./VisageAnalyzer";  // Import VisageAnalyzer
+import ImageCapture from "./ImageCapture"; // Import ImageCapture directly
+import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
+import chatService from "../services/chatService"; // Import Chat Service
 
 const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   const [messages, setMessages] = useState([
     {
-      text: "Good Morning! What are you up to today, given the fact that you haven't been feeling good yesterday?",
-      sender: "them",
-    },
-    {
-      text: "I woke up feeling pretty good today! The sun is shining, and I'm ready to tackle whatever comes my way.",
-      sender: "me",
-    },
-    {
-      text: "That's awesome to hear! ☀️ I love those sunny mornings—they really set a positive tone for the day.",
+      text: "Welcome to FeelGPT. I am here to listen and help you reflect on your emotions. How are you feeling today?",
       sender: "them",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false); // Track if user is typing
   const messagesEndRef = useRef(null);
-  const videoRef = useRef(null);  // Reference for the video element
-  const canvasRef = useRef(null);  // Reference for the canvas element
+  const videoRef = useRef(null); // Reference for the video element
+  const canvasRef = useRef(null); // Reference for the canvas element
 
   // Tracker and analysis data refs for visage processing
   const ppixelsRef = useRef(null);
@@ -47,9 +39,42 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   // Function to send a message
   const sendMessage = async () => {
     if (inputValue.trim()) {
-      setMessages([...messages, { text: inputValue, sender: "me" }]);
+      setMessages([
+        ...messages,
+        { text: inputValue, sender: "me" },
+        { text: "...", sender: "them" },
+      ]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
+
+      // extract emotion detection values
+      const emotionsArray = Array.from(
+        tmpAnalysisDataRef.current?.get(0)?.getEmotionProbabilities() || []
+      );
+
+      const age = tmpAnalysisDataRef.current?.get(0)?.getAge();
+      const gender = tmpAnalysisDataRef.current?.get(0)?.getGender();
+
+      const chatData = {
+        message: inputValue,
+        emotion: emotionsArray,
+        age,
+        gender,
+      };
+
+      try {
+        const response = await chatService.sendMessageWithEmotion(chatData);
+        console.log("Backend response: ", response);
+        setMessages((prevMessages) =>
+          prevMessages.map((message, index) =>
+            index == prevMessages.length - 1
+              ? { ...message, text: response.reply }
+              : message
+          )
+        );
+      } catch (error) {
+        console.error("Failed to send message: ", error);
+      }
     }
   };
 
@@ -65,7 +90,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   useEffect(() => {
     const getCameraStream = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
         }
@@ -101,7 +128,6 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
           }));
         }
       }, 1000); // Capture every second
-
     } else {
       // If typing stops, clear the interval
       clearInterval(captureInterval);
@@ -141,7 +167,11 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         />
       </div>
 
-      <div className={`chat-container ${darkMode ? "dark" : "light"} ${isRecordingVideo ? "video-enabled-chat" : ""}`}>
+      <div
+        className={`chat-container ${darkMode ? "dark" : "light"} ${
+          isRecordingVideo ? "video-enabled-chat" : ""
+        }`}
+      >
         <div className="messages">
           {messages.map((message, index) => (
             <div className="message-container" key={index}>
@@ -165,7 +195,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              setIsTyping(true);  // User is typing
+              setIsTyping(true); // User is typing
             }}
             placeholder="Type a message"
             className="input-field"
@@ -186,7 +216,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
           <VisageAnalyzer
             videoRef={videoRef}
             canvasRef={canvasRef}
-            setVisageData={setVisageData}  // Set the data from VisageAnalyzer
+            setVisageData={setVisageData} // Set the data from VisageAnalyzer
             mWidth={mWidth}
             mHeight={mHeight}
             ppixelsRef={ppixelsRef}
