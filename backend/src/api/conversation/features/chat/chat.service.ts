@@ -63,6 +63,9 @@ async (chatInfo: ChatInfo) => {
     // Get the API key from environment variables
     const apiKey = process.env.AZURE_PHI_API_KEY ?? "";
 
+    console.log("Endpoint: ", endpoint);
+    console.log("API Key: ", apiKey);
+
     // Customize the endpoint to be able to use the Langchain framework
     const phiOIendpoint = endpoint + "/v1";
 
@@ -103,11 +106,18 @@ async (chatInfo: ChatInfo) => {
 
     // Try to invoke the chain with the input up to 2 times
     for(let i = 0;i < 2; i++){
+        console.log("Attempt: ", i);
         try {
+            console.log("Sending to LLM: ");
             // Invoke the chain with the input and return the response content
             response = await chain.invoke(input)
+            
+            // Log the response content
+            console.log("Response from LLM: ", response.content);
             return response.content;
         } catch (error: any) {
+                console.log("Error from LLM: ", error);
+                
                 // If an error occurs on the second attempt, throw an error with the error message
                 if (i == 1) {
                     if (error.error && error.error.message) {

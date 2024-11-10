@@ -61,7 +61,7 @@ export const sendMessage = async (
   // Send a success reply to the frontend with the LLM response
   res
     .status(200)
-    .json({ status: "success", reply: llmResponse });
+    .json({ status: "success", reply: llmResponse || "I can't help you with that." });
 };
 
 /**
