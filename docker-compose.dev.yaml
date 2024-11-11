@@ -10,11 +10,9 @@ services:
       - "3000:3000"
       - "3001:80"
     environment:
-      - REACT_APP_API_URL=http://backend:5000
+      - MY_REACT_APP_API_URL=http://localhost:5000/api/v1
     networks:
       - feelgpt-network
-    volumes:
-      - ./frontend/src:/app/src
   backend:
     build:
       context: ./backend
@@ -28,8 +26,6 @@ services:
       - MONGO_URI=mongodb://root:rootpassword@mongodb:27017
     networks:
       - feelgpt-network
-    volumes:
-      - ./backend/src:/app/src
     depends_on:
       - mongodb
   mongodb:

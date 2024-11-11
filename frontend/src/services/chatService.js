@@ -1,4 +1,6 @@
 import axios from "axios";
+
+// Use this URL for development
 const API_URL = "http://localhost:5000/api/v1";
 
 const chatService = {
@@ -9,7 +11,7 @@ const chatService = {
 
       // Send an HTTP POST request to the backend with the chat data
       const response = await axios.post(
-        `${process.env.BACKEND_URL || API_URL}/conversation/chat/send`,
+        `${process.env.REACT_APP_BACKEND_URL || API_URL}/conversation/chat/send`,
         chatData
       );
 
