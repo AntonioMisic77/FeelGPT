@@ -5,17 +5,18 @@ import { Link, useLocation } from "react-router-dom";
 const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const location = useLocation();
+  const [isCameraOn, setIsCameraOn] = useState(false); // New state for camera status
 
   useEffect(() => {
     // Close the dropdown when clicking outside of it
     const handleClickOutside = (event) => {
-      if (event.target.closest('.dropdown') === null) {
+      if (event.target.closest(".dropdown") === null) {
         setDropdownVisible(false);
       }
     };
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -38,7 +39,8 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
   const toggleCamera = () => {
     setIsRecordingVideo((prev) => {
       const newState = !prev;
-      console.log(newState ? 'Camera is on' : 'Camera is off');
+      setIsCameraOn(newState);
+      console.log(newState ? "Camera is on" : "Camera is off");
       return newState;
     });
   };
@@ -50,13 +52,7 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
           <p className="name">Feel GPT</p>
         </div>
         <div className="navbar-right">
-          {location.pathname !== "/" && (
-            <Link className="link" to="/">
-              <button type="button" className="submit-btn button-66-smaller">
-                Chat
-              </button>
-            </Link>
-          )}
+          
 
           <div className="checkbox-wrapper-64">
             <label className="switch">
@@ -64,6 +60,15 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
               <span className="slider"></span>
             </label>
           </div>
+
+          {location.pathname !== "/" && (
+            <Link className="link" to="/">
+              <button type="button" className="chat-button">
+                Chat
+              </button>
+            </Link>
+          )}
+          
 
           {location.pathname !== "/my-info" && (
             <div className="dropdown">
@@ -81,12 +86,18 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
               {dropdownVisible && (
                 <ul>
                   <li>
-                    <a href="#" onClick={() => handleOptionSelect("Toggle Camera")}>
-                      {setIsRecordingVideo ? "Show camera" : "Hide camera"}
+                    <a
+                      href="#"
+                      onClick={() => handleOptionSelect("Toggle Camera")}
+                    >
+                      {isCameraOn ? "Hide camera" : "Show camera"}
                     </a>
                   </li>
                   <li>
-                    <a href="#" onClick={() => handleOptionSelect("Disable Camera")}>
+                    <a
+                      href="#"
+                      onClick={() => handleOptionSelect("Disable Camera")}
+                    >
                       Disable camera
                     </a>
                   </li>
@@ -95,12 +106,18 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
             </div>
           )}
 
-<div>
+          <div>
             <Link to="/my-info">
               <img
-                src={location.pathname === "/my-info" ? "../images/logout.png" : "../images/user.png"}
+                src={
+                  location.pathname === "/my-info"
+                    ? "../images/logout.png"
+                    : "../images/user.png"
+                }
                 alt=""
-                className="user-icon"
+                className={
+                  location.pathname === "/my-info" ? "logout-icon" : "user-icon"
+                }
               />
             </Link>
           </div>

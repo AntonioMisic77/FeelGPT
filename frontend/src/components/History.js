@@ -1,5 +1,7 @@
 import React from "react";
 import "../styles/history.css";
+import "../styles/darkMode.css";
+
 
 
 /* PROBLEMS and TASKS 
@@ -10,7 +12,7 @@ import "../styles/history.css";
       -> delete certain chat*/
 
 
-const History = () => {
+const History = (darkMode) => {
   const summaries = [
     {
       id: 1,
@@ -45,11 +47,11 @@ const History = () => {
         {summaries.map((summary) => (
           <div>
           <p className="date">25. October 2024. </p>
-          <div className="summary-item" key={summary.id}>
+          <div className={`summary-item ${darkMode ? "dark" : "light"}`} key={summary.id}>
             
-            <div className="summary-text">{summary.text}</div>
+            <div className={`summary-text ${darkMode ? "dark" : "light"}`}>{summary.text}</div>
             <div className="summary-buttons">
-              <button className="summary-button">View chat</button>
+              <button className="summary-button view">View chat</button>
               <button className="summary-button">Delete chat</button>
             </div>
           </div></div>

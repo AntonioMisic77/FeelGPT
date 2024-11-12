@@ -16,7 +16,7 @@
   
   .summary-item {
     display: flex; /* Use flexbox for layout */
-    border: 1px solid #ddd; /* Border for each item */
+    border: 1px solid #668fac; /* Border for each item */
     margin-bottom: 10px; /* Space between items */
     overflow: hidden; /* Hide overflow */
   }
@@ -24,7 +24,7 @@
   .summary-text {
     flex: 3; /* 2/3 of the width */
     padding: 10px; /* Padding inside the text area */
-    background-color: #f9f9f9; /* Light background color */
+    background-color: rgb(240, 244, 248);; /* Light background color */
   }
   
   .date{
@@ -35,6 +35,7 @@
     flex: 1; /* 1/3 of the width */
     display: flex; /* Flexbox for buttons */
     flex-direction: column; /* Stack buttons vertically */
+    background-color: rgb(240, 244, 248);; 
     align-items: flex-end;
   }
   
@@ -43,13 +44,16 @@
     padding: 5px; /* Padding inside the button */
     border: none; /* Remove default border */
     border-radius: 4px; /* Rounded corners for buttons */
-    background-color: #007bff; /* Button background color */
+    background-color: #7896ab;; /* Button background color */
     color: white; /* Button text color */
     cursor: pointer; /* Pointer on hover */
     width: 100px;
   }
   
+  .view{
+    background-color: #607889;; /* Button background color */
+  }
   .summary-button:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #7896ab;; /* Darker shade on hover */
   }
   

@@ -4,6 +4,8 @@ import History from "../components/History";
 import Graph from "../components/Graph";
 import "../styles/chat.css";
 import "../styles/myinfo.css";
+import "../styles/darkMode.css";
+
 import React, { useState } from "react";
 
 
@@ -139,7 +141,7 @@ const MyInfo = () => {
               </div>
             </div>
 
-            <History />
+            <History darkMode={darkMode} />
           </div>
         </div>
       </div>

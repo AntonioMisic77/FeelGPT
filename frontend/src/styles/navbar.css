@@ -6,15 +6,13 @@ body {
   transition: background-color 0.3s ease;
 }
 
-
-
 .navbar.light {
   background-color: var(--root-background-light);
-    color: black
+  color: black;
 }
 .navbar.dark {
   background-color: var(--root-background-dark);
-    color: white
+  color: white;
 }
 .navbar-container {
   height: 60px;
@@ -23,37 +21,36 @@ body {
   align-items: center; /* Aligns items vertically in the center */
   padding: 30px 20px;
   width: 100vw;
-  box-sizing: border-box; 
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  /* Shadow below navbar */
-
+  box-sizing: border-box;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow below navbar */
 }
 
 .navbar-left,
 .navbar-right {
-    display: flex;
-    align-items: center; /* Aligns items in these sections vertically */
+  display: flex;
+  align-items: center; /* Aligns items in these sections vertically */
 }
 
 .user-picture {
-    margin-left: 10px;
-    border-radius: 50%;
-  }
-
-.name{
-    margin-left: 10px;
-    font-size: 24px; 
-  font-family: "Space Grotesk",-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  font-weight: 700;
-    
-  }
-
-  .user-picture {
-    width: 40px;
-    height: 40px;
-    margin-left: 10px; /* Adjust spacing for user picture */
-    border-radius: 50%;
+  margin-left: 10px;
+  border-radius: 50%;
 }
 
+.name {
+  margin-left: 10px;
+  font-size: 24px;
+  font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  font-weight: 700;
+}
+
+.user-picture {
+  width: 40px;
+  height: 40px;
+  margin-left: 10px; /* Adjust spacing for user picture */
+  border-radius: 50%;
+}
 
 .link {
   margin: 0 10px; /* Adjusted margin for horizontal spacing */
@@ -62,92 +59,110 @@ body {
 
 .name {
   margin-left: 10px; /* Adjust spacing for name */
-  font-size: 24px; 
-  font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 24px;
+  font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
   font-weight: 700;
 }
 
 .user-icon {
-  width: 45px; 
+  width: 45px;
   height: 45px;
   margin: 0 10px; /* Adjusted margin for user icon */
 }
 
+.logout-icon {
+  width: 35px;
+  height: 35px;
+  margin: 0 10px;
+  margin-left: 10px;
+}
+
 .camera-icon {
-  width: 60px; 
+  width: 60px;
   height: 60px;
   margin-left: 12px; /* Adjusted margin for user icon */
 }
 
+.chat-button{
+  padding: 6px 25px;
+  margin-bottom: 4px;
+  margin-left: 15px;
+  background-color: transparent;
+  border: 2px solid #adb5bd;
+  border-radius: 5px;
+  color: #85898c;
+  font-size: medium;
+}
 
-  .checkbox-wrapper-64 input[type="checkbox"] {
-    visibility: hidden;
-    display: none;
-    
-  }
 
-  .checkbox-wrapper-64 *,
-  .checkbox-wrapper-64 ::after,
-  .checkbox-wrapper-64 ::before {
-    box-sizing: border-box;
-  }
+.checkbox-wrapper-64 input[type="checkbox"] {
+  visibility: hidden;
+  display: none;
+}
 
-  /* The switch - the box around the slider */
-  .checkbox-wrapper-64 .switch {
-    font-size: 17px;
-    position: relative;
-    display: inline-block;
-    width: 3.5em;
-    height: 2em;
-  }
+.checkbox-wrapper-64 *,
+.checkbox-wrapper-64 ::after,
+.checkbox-wrapper-64 ::before {
+  box-sizing: border-box;
+}
 
-  /* Hide default HTML checkbox */
-  .checkbox-wrapper-64 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
+/* The switch - the box around the slider */
+.checkbox-wrapper-64 .switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
 
-  /* The slider */
-  .checkbox-wrapper-64 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #fff;
-    border: 2px solid #b5b5b0;
-    transition: .4s;
-    border-radius: 30px;
-  }
+/* Hide default HTML checkbox */
+.checkbox-wrapper-64 .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-  .checkbox-wrapper-64 .slider:before {
-    position: absolute;
-    content: "";
-    height: 1.4em;
-    width: 1.4em;
-    border-radius: 20px;
-    left: 0.27em;
-    bottom: 0.25em;
-    background-color: #adb5bd;
-    transition: .4s;
-  }
+/* The slider */
+.checkbox-wrapper-64 .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  border: 2px solid #b5b5b0;
+  transition: 0.4s;
+  border-radius: 30px;
+}
 
-  .checkbox-wrapper-64 input:checked + .slider {
-    background-color: #007bff;
-    border: 1px solid #007bff;
-  }
+.checkbox-wrapper-64 .slider:before {
+  position: absolute;
+  content: "";
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 20px;
+  left: 0.27em;
+  bottom: 0.25em;
+  background-color: #adb5bd;
+  transition: 0.4s;
+}
 
-  .checkbox-wrapper-64 input:focus + .slider {
-    box-shadow: 0 0 1px #007bff;
-  }
+.checkbox-wrapper-64 input:checked + .slider {
+  background-color: #0f1c2c;
+  border: 1px solid #0f1c2c;
+}
 
-  .checkbox-wrapper-64 input:checked + .slider:before {
-    transform: translateX(1.4em);
-    background-color: lightgray;
-  }
+.checkbox-wrapper-64 input:focus + .slider {
+  box-shadow: 0 0 1px #0f1c2c;
+}
 
+.checkbox-wrapper-64 input:checked + .slider:before {
+  transform: translateX(1.4em);
+  background-color: lightgray;
+}
 
 /*   .user-icon {
     width: 30px; 
@@ -156,21 +171,13 @@ body {
     margin-right: 10px;
   } */
 
-
-
-
 /* dropdown for camera */
 :root {
-
-  --dropdown-highlight: white;
+  --dropdown-highlight: rgba(211, 211, 211, 0.812);
   --dropdown-width: 160px;
-  --dropdown-background: lightgray;
+  --dropdown-background: rgba(211, 211, 211, 0.612);
   --dropdown-color: black;
-
-
 }
-
-
 
 /* Dropdown styles */
 .dropdown {
@@ -203,18 +210,19 @@ body {
   display: inline-block;
   padding: 10px 0.8rem;
   width: 100%;
-  color: var(--dropdown-color);
+  color: black;
   text-decoration: none;
 }
 
 .dropdown ul li a:hover {
   background-color: var(--dropdown-highlight);
-  color: var(--dropdown-background);
+  color: black;
+  width: 84%;
 }
 
 /* Dropdown triangle */
 .dropdown ul::before {
-  content: ' ';
+  content: " ";
   position: absolute;
   width: 0;
   height: 0;
@@ -224,4 +232,48 @@ body {
   border-style: solid;
   border-width: 0 10px 10px 10px;
   border-color: transparent transparent var(--dropdown-background) transparent;
+}
+
+/* blue button */
+
+/* button */
+.button-66-smaller {
+  background-color: #0a6bff;
+  border-radius: 4px;
+  border: 0;
+  box-shadow: rgba(1, 60, 136, 0.5) 0 -1px 3px 0 inset,
+    rgba(0, 44, 97, 0.1) 0 3px 6px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  font-size: 16px; /* Reduced font size */
+  font-weight: 700;
+  line-height: 20px; /* Adjusted line height */
+  margin-right: 10px;
+  min-height: 40px; /* Reduced minimum height */
+  min-width: 100px; /* Reduced minimum width */
+  padding: 10px 15px; /* Reduced padding */
+  position: relative;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.button-66-smaller:hover {
+  background-color: #065dd8;
+  transform: translateY(-2px);
+}
+
+@media (min-width: 768px) {
+  .button-66-smaller {
+    padding: 10px 30px; /* Adjusted padding for larger screens */
+    min-width: 120px; /* Reduced minimum width for larger screens */
+  }
 }

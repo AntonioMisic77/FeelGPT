@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/chat.css";
+import "../styles/darkMode.css";
 import ImageCapture from "./ImageCapture"; // Import ImageCapture directly
 import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
@@ -227,9 +228,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
           isRecordingVideo ? "video-enabled-chat" : ""
         }`}
       >
-        <div className="messages">
-          <div className="date-bar">Today</div> {/* Date Bar */}
-          {messages.map((message, index) => (
+        <div className={`messages ${darkMode ? "dark" : "light"}`}>
+        <div className={`date-bar ${darkMode ? "dark" : "light"}`}>Today</div> {/* Date Bar */}
+        {messages.map((message, index) => (
             <div className="message-container" key={index}>
               <div className={`message ${message.sender}`}>
                 {message.sender === "them" && (
@@ -239,7 +240,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
                     className="user-picture chat"
                   />
                 )}
-                <div className="message-border">{message.text}</div>
+                <div className={`message-border ${darkMode ? "dark" : "light"}`}>{message.text}</div>
 
                 <div className="message-meta">
                   <div className="timestamp">{message.timestamp}</div>
@@ -265,7 +266,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
             }}
             onInput={(e) => adjustHeight(e.target)}
             placeholder="Type a message"
-            className="input-field"
+            className={`input-field ${darkMode ? "dark" : "light"}`}
             rows="1"
             onKeyDown={EnterPressed}
           />
