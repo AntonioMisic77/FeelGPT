@@ -1,6 +1,6 @@
 import React from "react";
-import "../styles/history.css";
 import "../styles/darkMode.css";
+import "../styles/history.css";
 
 
 
@@ -11,13 +11,12 @@ import "../styles/darkMode.css";
       -> view chat
       -> delete certain chat*/
 
-
-const History = (darkMode) => {
-  const summaries = [
-    {
-      id: 1,
-      text: " Detected anxiety about upcoming work deadlines, leading to feelings of overwhelm. Explored the sources of this anxiety together.",
-    },
+      const History = ({ darkMode }) => {
+        const summaries = [
+          {
+            id: 1,
+            text: "Detected anxiety about upcoming work deadlines, leading to feelings of overwhelm. Explored the sources of this anxiety together.",
+          },
     {
       id: 2,
       text: "You experienced a panic attack triggered by stress at work. Discussed the emotional impact and the circumstances surrounding the event.",
@@ -39,25 +38,25 @@ const History = (darkMode) => {
       text: "Identified persistent negative thoughts, especially during alone time, contributing to anxiety. Explored the nature of these thoughts and their impact on well-being together.",
     },
   ];
-
   return (
     <div>
       <h2>History</h2>
-      <div className="summary-list">
+      <div className={`summary-list ${darkMode ? "dark" : "light"}`}>
         {summaries.map((summary) => (
-          <div>
-          <p className="date">25. October 2024. </p>
-          <div className={`summary-item ${darkMode ? "dark" : "light"}`} key={summary.id}>
-            
-            <div className={`summary-text ${darkMode ? "dark" : "light"}`}>{summary.text}</div>
-            <div className="summary-buttons">
-              <button className="summary-button view">View chat</button>
-              <button className="summary-button">Delete chat</button>
+          <div key={summary.id}>
+            <p className="date">25. October 2024. </p>
+            <div className={`summary-item ${darkMode ? "dark" : "light"}`}>
+              <div className={`summary-text ${darkMode ? "dark" : "light"}`}>
+                {summary.text}
+              </div>
+              <div className={`summary-buttons ${darkMode ? "dark" : "light"}`}>
+                <button className="summary-button view">View chat</button>
+                <button className="summary-button">Delete chat</button>
+              </div>
             </div>
-          </div></div>
+          </div>
         ))}
-
-        <button className="button-66-smaller down">Delete all history</button>
+        <button className={`button-66-smaller down ${darkMode ? "dark" : "light"}`}>Delete all history</button>
       </div>
     </div>
   );

@@ -1,45 +1,44 @@
 import Navbar from "../components/Navbar";
 import History from "../components/History";
-
 import Graph from "../components/Graph";
 import "../styles/chat.css";
 import "../styles/myinfo.css";
 import "../styles/darkMode.css";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-
-/* PROBLEMS and TASK
-  -> these are not all the settings we need -  think about what we need -> later
-  -> no change settings part implemented yet
-  -> disconnect from settings list functions - it shoulld be just a list
-  -> remove: tick disappear when clicked
-
-
-   */
 const MyInfo = () => {
-  const [darkMode, setDarkMode] = useState(false);
   const [cameraConsent, setCameraConsent] = useState(true);
   const [notifications, setNotifications] = useState("daily");
   const [notificationMethod, setNotificationMethod] = useState("push");
   const [language, setLanguage] = useState("EN");
+  const [showOverlay, setShowOverlay] = useState(false);
 
-  /* legend */
-  const items = [
-    "0 - No record",
-    "1 - Anger",
-    "2 - Disgust",
-    "3 - Fear ",
-    "4 - Happiness",
-    "5 - Sadness",
-    "6 - Surprise",
-    "7 - Neutral",
-  ];
+  // Initialize dark mode from localStorage or default to false if not set
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+
+  // Update localStorage whenever darkMode changes
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const toggleCameraConsent = () => setCameraConsent(!cameraConsent);
   const toggleNotifications = (value) => setNotifications(value);
   const toggleNotificationMethod = (value) => setNotificationMethod(value);
   const toggleLanguage = () => setLanguage(language === "EN" ? "FR" : "EN");
+
+  const handleSaveChanges = () => {
+    setShowOverlay(false); // Close overlay when saving
+  };
+
+  const handleOpenOverlay = () => {
+    setShowOverlay(true); // Open overlay
+  };
+
+  const items = [];
 
   return (
     <div className="app-container">
@@ -53,11 +52,9 @@ const MyInfo = () => {
           />
           <p className="username">user.name@gmail.com</p>
 
-          {/* Settings */}
           <div className="settings-container">
             <h3 className="section-title">Settings</h3>
             <hr className="divider" />
-
             {/* Camera Settings */}
             <ul className="settings-list">
               <li
@@ -67,8 +64,6 @@ const MyInfo = () => {
                 {cameraConsent && <span className="tick">✓</span>} Use Camera
               </li>
             </ul>
-
-            {/* Notification Settings */}
             <h3 className="section-title">Notification Settings</h3>
             <hr className="divider" />
             <ul className="settings-list">
@@ -93,8 +88,6 @@ const MyInfo = () => {
                 Push Notifications
               </li>
             </ul>
-
-            {/* Accessibility Settings */}
             <h3 className="section-title">Accessibility Settings</h3>
             <hr className="divider" />
             <ul className="settings-list">
@@ -115,17 +108,26 @@ const MyInfo = () => {
             </ul>
 
             <div className="button-right">
-              <button className="button-66-smaller down">
+              <button className="button-66-smaller manage" onClick={handleOpenOverlay}>
                 Manage Settings
               </button>
             </div>
           </div>
         </div>
-        {/* <div className="graphs-container">
-          
-        </div> */}
+
+        {/* Overlay Form */}
+        {showOverlay && (
+          <div className="overlay">
+            <div className="overlay-content">
+              <h3>Manage Settings</h3>
+              
+              <button onClick={handleSaveChanges}>Save Changes</button>
+              <button onClick={() => setShowOverlay(false)}>Close</button>
+            </div>
+          </div>
+        )}
+
         <div className="second-container">
-          {/* rename -> its upper-second-container */}
           <div className="legend-container">
             <div className="graph-legend-container">
               <Graph />
@@ -133,14 +135,12 @@ const MyInfo = () => {
                 <ul className="list">
                   {items.map((item, index) => (
                     <li key={index} className="list-item-legend">
-                      <span className="checkmark"></span> {/* Tick symbol */}
-                      {item}
+                      <span className="checkmark"></span> {item}
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-
             <History darkMode={darkMode} />
           </div>
         </div>

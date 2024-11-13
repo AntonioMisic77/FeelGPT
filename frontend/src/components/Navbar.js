@@ -52,11 +52,13 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
           <p className="name">Feel GPT</p>
         </div>
         <div className="navbar-right">
-          
-
           <div className="checkbox-wrapper-64">
             <label className="switch">
-              <input type="checkbox" onClick={() => setDarkMode(!darkMode)} />
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={() => setDarkMode((prevMode) => !prevMode)}
+              />
               <span className="slider"></span>
             </label>
           </div>
@@ -68,7 +70,6 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
               </button>
             </Link>
           )}
-          
 
           {location.pathname !== "/my-info" && (
             <div className="dropdown">

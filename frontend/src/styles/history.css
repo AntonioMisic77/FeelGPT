@@ -2,18 +2,24 @@
     /* TASK: remove hardcoded value from max-height */
     max-height: 500px; /* Set a max height for scrolling */
     overflow-y: auto;  /* Enable vertical scrolling */
-    padding: 10px; /* Padding around the list */
+    /* padding: 10px; */ /* Padding around the list */
     
     /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    box-shadow: inset 0px 10px 10px -10px rgba(0, 0, 0, 0.6), inset 0px -10px 10px -10px rgba(0, 0, 0, 0.6);
+
+  }
+
+  .summary-list.light{
+    background-color: white;
   }
   
   .summary-list::-webkit-scrollbar {
     display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
   }
   
-  
+
   .summary-item {
     display: flex; /* Use flexbox for layout */
     border: 1px solid #668fac; /* Border for each item */
@@ -23,7 +29,17 @@
   
   .summary-text {
     flex: 3; /* 2/3 of the width */
-    padding: 10px; /* Padding inside the text area */
+    padding: 10px 0px 10px 10px; /* Padding inside the text area */
+  }
+  
+
+  
+  .summary-item.light {
+    border: 1px solid #668fac; /* Border for each item */
+    margin-bottom: 10px; /* Space between items */
+  }
+  
+  .summary-text.light {
     background-color: rgb(240, 244, 248);; /* Light background color */
   }
   
@@ -57,3 +73,14 @@
     background-color: #7896ab;; /* Darker shade on hover */
   }
   
+
+  .down.light{
+    color:rgb(240, 244, 248);
+    margin-bottom: 10px;;
+    background-color: #0a6bff;
+  }
+
+  .down.light:hover {
+    background-color: #0a6bff;
+    transform: translateY(-2px);
+  }

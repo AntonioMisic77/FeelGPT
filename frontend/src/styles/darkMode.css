@@ -1,4 +1,4 @@
-
+/* CHAT COMPONENT */
 .input-container.dark{
     color: rgb(30, 44, 71);
 
@@ -17,7 +17,7 @@
 
 .me .message-border.dark{
     background-color: rgba(52, 71, 104, 0.815);
-    border: none;
+    
 }
 
 
@@ -26,10 +26,28 @@
     
 }
 
-.summary-item.dark{
+
+/* HISTORY COMPONENT */
+
+.summary-list.dark{
+    background-color: rgb(26, 41, 70); 
+}
+.summary-buttons.dark{
     background-color: #0f1c2c;  
 }
 
-.summary-text.dRK{
+.summary-text.dark{
     background-color: #0f1c2c;
 }
+
+
+
+.down.dark{
+    margin-bottom: 10px;;
+    background-color: #9b545f;
+  }
+
+  .down.dark:hover {
+    background-color: #9b545f;
+    transform: translateY(-2px);
+  }

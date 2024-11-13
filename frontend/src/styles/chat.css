@@ -33,7 +33,7 @@ body {
   display: flex;
   /* URGENT: this only add fixed padding
   mai problem: it doesnt fill the whole screen */
-  padding-bottom: 60px;
+  /* padding-bottom: 60px; */
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -61,6 +61,8 @@ body {
   flex-direction: row;
   height: 80vh;
   justify-content: flex-end;
+  /* TEMPORARY PADDING  */
+  margin-bottom: 65px;
 }
 
 .video-container {
