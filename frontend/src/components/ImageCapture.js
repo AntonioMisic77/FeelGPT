@@ -12,47 +12,34 @@ const ImageCapture = ({
   m_Tracker,
   TfaceDataArrayRef,
   tmpAnalysisDataRef,
-  m_FaceAnalyserRef
+  m_FaceAnalyserRef,
+  setEmotionValues, //For displaying emotions in switches and sending to backend
 }) => {
   useEffect(() => {
-    console.log('Image capture started.');
+    //console.log('Image capture started.');
 
-    // Ensure video and canvas references are present and that image hasn't already been captured
-    /* console.log('videoRef',videoRef.current);
-    console.log('canvasRef',canvasRef.current);
-    console.log('imageCaptured',imageCaptured); */
-    if (videoRef.current && canvasRef.current /* && !imageCaptured */) {
-      //console.log('ckp1');
+    if (videoRef.current && canvasRef.current) {
       const captureFrame = () => {
         const canvas = canvasRef.current;
         const context = canvas?.getContext("2d");
 
-        // Check if context was successfully retrieved
         if (!context) {
-          console.error("Failed to get canvas context.");
+          //console.error("Failed to get canvas context.");
           return;
         }
 
-        // Draw video frame onto canvas
         context.drawImage(videoRef.current, 0, 0, mWidth, mHeight);
-
-        // Extract pixel data from the canvas
         const imageData = context.getImageData(0, 0, mWidth, mHeight).data;
 
-        // Populate pixelsRef with imageData
         if (pixelsRef.current) {
-          //console.log('ckp2');
-
           for (let i = 0; i < imageData.length; i++) {
             pixelsRef.current[i] = imageData[i];
           }
-        } else {
+        } /* else {
           console.error("pixelsRef.current is not initialized.");
-        }
+        } */
 
-        // Confirm if ppixelsRef and m_Tracker are set before tracking
         if (ppixelsRef.current && m_Tracker.current) {
-          //console.log('ckp3');
           const trackerReturnState = m_Tracker.current.track(
             mWidth,
             mHeight,
@@ -68,8 +55,6 @@ const ImageCapture = ({
             window.VisageModule.VFAFlags.VFA_AGE.value;
 
           if (trackerReturnState[0] === window.VisageModule.VisageTrackerStatus.TRACK_STAT_OK.value) {
-            //console.log('ckp4');
-
             const status = m_FaceAnalyserRef.current.analyseImage(
               mWidth,
               mHeight,
@@ -83,25 +68,30 @@ const ImageCapture = ({
               const emotionsArray = Array.from(
                 tmpAnalysisDataRef.current.get(0).getEmotionProbabilities()
               );
-              console.log("ANGER:", emotionsArray[0]);
-              console.log("DISGUST:", emotionsArray[1]);
-              console.log("FEAR:", emotionsArray[2]);
-              console.log("HAPPINESS:", emotionsArray[3]);
-              console.log("SADNESS:", emotionsArray[4]);
-              console.log("SURPRISE:", emotionsArray[5]);
-              console.log("NEUTRAL:", emotionsArray[6]);
-            }
+              const age = tmpAnalysisDataRef.current.get(0).getAge();
+              const gender = tmpAnalysisDataRef.current.get(0).getGender();
 
-            console.log("Age:", tmpAnalysisDataRef.current.get(0).getAge());
-            console.log("Gender:", tmpAnalysisDataRef.current.get(0).getGender());
+              // Passing data to the CHAT -> all detected
+              const newEmotionValues = {
+                anger: emotionsArray[0],
+                disgust: emotionsArray[1],
+                fear: emotionsArray[2],
+                happiness: emotionsArray[3],
+                sadness: emotionsArray[4],
+                surprise: emotionsArray[5],
+                neutral: emotionsArray[6],
+              };
+
+              setEmotionValues(newEmotionValues); 
+              
+              
+            }
           }
         }
 
-        // Set imageCaptured to true to prevent multiple captures
         setImageCaptured(true);
       };
 
-      // Add delay to ensure video is ready before capturing
       setTimeout(captureFrame, 500);
     }
   }, [
@@ -115,7 +105,8 @@ const ImageCapture = ({
     m_Tracker,
     TfaceDataArrayRef,
     tmpAnalysisDataRef,
-    m_FaceAnalyserRef
+    m_FaceAnalyserRef,
+    setEmotionValues 
   ]);
 
   return (

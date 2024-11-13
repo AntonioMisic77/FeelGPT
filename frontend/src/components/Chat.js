@@ -5,12 +5,7 @@ import ImageCapture from "./ImageCapture"; // Import ImageCapture directly
 import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
 
-/* TASKS:
-1. change "date-bar" so that it display for today current date
-and when some prior chat is shown, its date
-2. change "emotionLabel" so it display the most detected emotion 
-3. into each slider from "sliders" feed current emotion value through "value" 
-4. make sure that you're saving times and dates with messages*/
+
 const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   const first_timestamp = new Date().toLocaleTimeString();
   const [messages, setMessages] = useState([
@@ -28,7 +23,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
     element.style.height = element.scrollHeight - 20 + "px"; // Adjust height to fit content
   };
 
-  //for top shadow on chat
+  
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false); // Track if user is typing
@@ -94,6 +89,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         gender,
       };
 
+      console.log('chatData:', chatData);
+
+      /* CONNECTION TO BACKEND */
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
         console.log("Backend response: ", response);
@@ -109,6 +107,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       }
     }
   };
+
+    //for data for switches
+    
 
   // When Enter is pressed while typing, messages will be sent
   const EnterPressed = (e) => {
@@ -173,6 +174,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
     };
   }, [isTyping]); // Runs whenever isTyping changes
 
+
+  
+
   // Start visage analysis when typing starts
   useEffect(() => {
     if (isTyping && !visageData) {
@@ -187,7 +191,38 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
 
       startVisageAnalyzer();
     }
-  }, [isTyping, visageData]); // Only start visage analyzer when typing starts and it's not initialized
+  }
+  
+  , [isTyping, visageData]); // Only start visage analyzer when typing starts and it's not initialized
+
+  //for switches
+
+  const [emotionValues, setEmotionValues] = useState({
+    anger: 0,
+    disgust: 0,
+    fear: 0,
+    happiness: 0,
+    sadness: 0,
+    surprise: 0,
+    neutral: 0,
+  });
+
+
+  useEffect(() => {
+    if (!isTyping) {
+      setEmotionValues({
+        anger: 0,
+        disgust: 0,
+        fear: 0,
+        happiness: 0,
+        sadness: 0,
+        surprise: 0,
+        neutral: 0,
+      });
+    } 
+  }, [emotionValues, isTyping]);
+  
+
 
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
@@ -201,25 +236,26 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         />
         {isRecordingVideo && (
           <div className="sliders">
-            <div>
-              <input type="range" class="win10-thumb" disabled value="64" />
-              <div className="slider-label">ANGER</div>
-              <input type="range" class="win10-thumb" disabled value="50" />
-              <div className="slider-label">DISGUST</div>
-              <input type="range" class="win10-thumb" disabled value="1" />
-              <div className="slider-label">FEAR</div>
-              <input type="range" class="win10-thumb" disabled value="100" />
-              <div className="slider-label">HAPPINESS</div>
-            </div>
-            <div>
-              <input type="range" class="win10-thumb" disabled value="4" />
-              <div className="slider-label">SADNESS</div>
-              <input type="range" class="win10-thumb" disabled value="78" />
-              <div className="slider-label">SURPRISE</div>
-              <input type="range" class="win10-thumb" disabled value="18" />
-              <div className="slider-label">NEUTRAL</div>
-            </div>
+          <div>
+            <input type="range" className="win10-thumb" value={emotionValues.anger*100} />
+            <div className="slider-label">ANGER</div>
+            <input type="range" className="win10-thumb" value={emotionValues.disgust*100} />
+            <div className="slider-label">DISGUST</div>
+            <input type="range" className="win10-thumb" value={emotionValues.fear*100}/>
+            <div className="slider-label">FEAR</div>
+            <input type="range" className="win10-thumb" value={emotionValues.happiness*100} />
+            <div className="slider-label">HAPPINESS</div>
           </div>
+          <div>
+            <input type="range" className="win10-thumb" value={emotionValues.sadness*100} />
+            <div className="slider-label">SADNESS</div>
+            <input type="range" className="win10-thumb" value={emotionValues.surprise*100} />
+            <div className="slider-label">SURPRISE</div>
+            <input type="range" className="win10-thumb" value={emotionValues.neutral*100} />
+            <div className="slider-label">NEUTRAL</div>
+          </div>
+        </div>
+        
         )}
       </div>
 
@@ -307,6 +343,8 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
             TfaceDataArrayRef={TfaceDataArrayRef}
             tmpAnalysisDataRef={tmpAnalysisDataRef}
             m_FaceAnalyserRef={m_FaceAnalyserRef}
+            setEmotionValues={setEmotionValues}
+
           />
         )}
       </div>
