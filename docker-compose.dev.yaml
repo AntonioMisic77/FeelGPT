@@ -10,7 +10,7 @@ services:
       - "3000:3000"
       - "3001:80"
     environment:
-      - MY_REACT_APP_API_URL=http://localhost:5000/api/v1
+      - MY_REACT_APP_BACKEND_URL=http://localhost:5000/api/v1
     networks:
       - feelgpt-network
   backend:
