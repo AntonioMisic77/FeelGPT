@@ -80,7 +80,11 @@ const ImageCapture = ({
                 sadness: emotionsArray[4],
                 surprise: emotionsArray[5],
                 neutral: emotionsArray[6],
+                age: age,
+                gender: gender
               };
+
+              console.log('newWmotionValues: ', newEmotionValues);
 
               setEmotionValues(newEmotionValues); 
               
