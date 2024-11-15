@@ -18,6 +18,8 @@ COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the build output to the Nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 80
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
