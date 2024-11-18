@@ -10,7 +10,7 @@ services:
       - "3000:3000"
       - "3001:80"
     environment:
-      - MY_REACT_APP_BACKEND_URL=http://localhost:5000/api/v1
+      - MY_REACT_APP_BACKEND_URL=http://localhost:5001/api/v1
     networks:
       - feelgpt-network
       
@@ -21,7 +21,7 @@ services:
       target: production
     container_name: backend
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - PORT=5000
       - MONGO_URI=mongodb://root:rootpassword@mongodb:27017

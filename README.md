@@ -63,4 +63,4 @@ docker compose -f docker-compose.prod.yaml up
 
 5. **Access the application**
    The frontend will be available at http://localhost:3001.
-   The backend API will be available at http://localhost:5000.
+   The backend API will be available at http://localhost:5001.
