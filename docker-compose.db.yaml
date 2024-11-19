@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+    mongodb:
+      build:
+        context: ./database/mongodb_rs
+        dockerfile: Dockerfile
+        args:
+          MONGO_VERSION: 4.4 
+      container_name: mongodb
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=root
+        - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+        - MONGO_INTID_DB=feelgptdb
+        - MONGO_REPLICA_PORT=27017
+        - MONGO_REPLICA_HOST=host.docker.internal
+      ports:
+        - "27017:27017"
+      restart: always
+      networks:
+        - feelgpt-network
+
+networks:
+  feelgpt-network:
+    name: feelgpt-network
+    driver: bridge
