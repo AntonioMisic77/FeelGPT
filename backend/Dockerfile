@@ -12,8 +12,10 @@ FROM base AS prod-build
 
 COPY . .
 
-RUN npm run build
+# generate Prisma Client
+RUN npx prisma generate
 
+RUN npm run build
 
 # Prod Layer: Copy the built app and install only production dependencies
 FROM node:20-slim AS production
