@@ -7,7 +7,7 @@ const VisageLoader = () => {
       console.log("Visage SDK script is not loaded, loading it now.");
 
       const licenseName = "596-415-364-170-725-752-183-283-483-532-575.vlc";
-      const licenseURL = "/lib/596-415-364-170-725-752-183-283-483-532-575.vlc";
+      const licenseURL = "./596-415-364-170-725-752-183-283-483-532-575.vlc";
 
       const locateFile = (dataFileName) => {
         return "/lib/" + dataFileName;

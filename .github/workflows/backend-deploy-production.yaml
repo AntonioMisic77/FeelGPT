@@ -2,7 +2,7 @@ name: backend-deploy-production
 
 on: 
    push:
-    branches: ["main","feature/ci-cd"]
+    branches: ["main"]
 
 jobs:
     build:
@@ -42,7 +42,7 @@ jobs:
           - uses: azure/login@v1
             with:
                 creds: '${{ secrets.AZURE_CREDENTIALS }}'
-                
+
           - name: Set Web App Environment Variables
             uses: Azure/appservice-settings@v1
             with:
