@@ -6,11 +6,12 @@ on:
     types : [opened, synchronize]
   push:
     branches: ["feature/ci-cd"]
-
     
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      MONGO_TEST_URI: ${{ secrets.MONGO_URI_TEST }}
     strategy:
       matrix:
         node-version: [20]
