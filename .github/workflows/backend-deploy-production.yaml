@@ -7,7 +7,6 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-
         steps:
             - uses: actions/checkout@v4
               with:
@@ -36,13 +35,19 @@ jobs:
             - run: |
                 docker build -t feelgptcr.azurecr.io/feelgptserver:${{ github.sha }} --target production .
                 docker push feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}
-
-            - name: Set Web App Enviorment Variables
-              uses: Azure/appservice-settings@v1
-              with:
-                app-name: 'feelgptserver'
-                app-settings-json:
-                  '[
+    deploy:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+          - uses: azure/login@v1
+            with:
+                creds: '${{ secrets.AZURE_CREDENTIALS }}'
+                
+          - name: Set Web App Environment Variables
+            uses: Azure/appservice-settings@v1
+            with:
+              app-name: 'feelgptserver'
+              app-settings-json: '[
                       {
                           "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
                           "value": "${{ secrets.REGISTRY_PASSWORD }}",
@@ -80,9 +85,10 @@ jobs:
                       }
                   ]'
 
-            - uses: azure/webapps-deploy@v2
-              with:
-                app-name: 'feelgptserver'
-                publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-                images: 'feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}'
+          - uses: azure/webapps-deploy@v2
+            with:
+              app-name: 'feelgptserver'
+              publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+              images: 'feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}'
+
             
