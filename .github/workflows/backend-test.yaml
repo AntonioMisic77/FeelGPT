@@ -1,0 +1,41 @@
+name: backed-test
+
+on:
+  pull_request:
+    branches: ["development"]
+    types : [opened, synchronize]
+  push:
+    branches: ["feature/ci-cd"]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      MONGO_TEST_URI: ${{ secrets.MONGO_URI_TEST }}
+      MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
+    strategy:
+      matrix:
+        node-version: [20]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: 'backend'
+        sparse-checkout-cone-mode: false
+
+    - name: Move backend directory to root
+      run: | 
+        ls -lah
+        shopt -s dotglob
+        mv backend/* .
+        rm -rf backend
+        ls -lah
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - run: npm ci
+    - run: npx prisma generate
+    - run: npm test

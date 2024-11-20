@@ -31,6 +31,7 @@ COPY --from=prod-build  /app/node_modules/.prisma/client ./node_modules/.prisma/
 # Copy the .env file if it exists, for production testing
 COPY .env /app/.env
 
+
 RUN npm install --omit=dev --ignore-scripts
 
 EXPOSE 5000
@@ -51,4 +52,6 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "npm run test && npm run dev"]
