@@ -69,7 +69,7 @@ jobs:
                           "name": "AZURE_PHI_ENDPOINT",
                           "value": "${{ secrets.AZURE_PHI_ENDPOINT }}",
                           "slotSetting": false
-                      },
+                      }
                   ]
 
             - uses: azure/webapps-deploy@v2
