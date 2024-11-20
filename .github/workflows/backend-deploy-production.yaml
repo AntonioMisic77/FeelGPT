@@ -72,6 +72,11 @@ jobs:
                           "name": "AZURE_PHI_ENDPOINT",
                           "value": "${{ secrets.AZURE_PHI_ENDPOINT }}",
                           "slotSetting": false
+                      },
+                      {
+                          "name": "MONGO_URI",
+                          "value": "${{ secrets.MONGO_URI }}",
+                          "slotSetting": false
                       }
                   ]'
 
