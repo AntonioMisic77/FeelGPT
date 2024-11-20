@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "start:prod": "node dist/src/index.js",
+    "test" : "node tests/mockTests.js",
     "dev": "nodemon -L",
     "build": "tsc && tsc-alias",
     "lint": "eslint src",
