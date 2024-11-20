@@ -28,6 +28,8 @@ services:
       - feelgpt-network
     depends_on:
       - mongodb
+    volumes:
+      - ./backend/src:/app/src
   mongodb:
     image: mongo:latest
     container_name: mongodb
