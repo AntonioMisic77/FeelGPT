@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MONGO_TEST_URI: ${{ secrets.MONGO_URI_TEST }}
+      MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
     strategy:
       matrix:
         node-version: [20]
