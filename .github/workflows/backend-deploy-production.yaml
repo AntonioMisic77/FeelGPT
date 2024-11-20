@@ -24,6 +24,9 @@ jobs:
               run: |
                     touch .env
                     ls -lah
+            - uses: azure/login@v1
+              with:
+                creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
             - uses: docker/login-action@v1
               with:
@@ -39,7 +42,7 @@ jobs:
               with:
                 app-name: 'feelgptserver'
                 app-settings-json: |
-                  [
+                  '[
                       {
                           "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
                           "value": "${{ secrets.REGISTRY_PASSWORD }}",
@@ -70,7 +73,7 @@ jobs:
                           "value": "${{ secrets.AZURE_PHI_ENDPOINT }}",
                           "slotSetting": false
                       }
-                  ]
+                  ]'
 
             - uses: azure/webapps-deploy@v2
               with:
