@@ -1,18 +1,18 @@
 version: "3.8"
 
 services:
-  frontend-dev:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend-dev
-    ports:
-      - "3000:3000"
-      - "3001:80"
-    environment:
-      - MY_REACT_APP_BACKEND_URL=http://localhost:5001/api/v1
-    networks:
-      - feelgpt-network
+  # frontend-dev:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: frontend-dev
+  #   ports:
+  #     - "3000:3000"
+  #     - "3001:80"
+  #   environment:
+  #     - MY_REACT_APP_BACKEND_URL=http://localhost:5001/api/v1
+  #   networks:
+  #     - feelgpt-network
   backend-dev:
     build:
       context: ./backend
@@ -24,6 +24,7 @@ services:
     environment:
       - PORT=5000
       - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/feelgptdev?authSource=admin&directConnection=true
+      - MONGO_TEST_URI=mongodb://root:rootpassword@mongodb:27017/feelgptdev?authSource=admin&directConnection=true
     networks:
       - feelgpt-network
     volumes:

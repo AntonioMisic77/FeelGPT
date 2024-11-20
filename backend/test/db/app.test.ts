@@ -2,13 +2,19 @@
 import request from 'supertest';
 import app from '../../src/app';
 import { PrismaClient } from '@prisma/client';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import { config } from 'dotenv';
 
 // Load environment variables from .env.test
 config({ path: '.env.test' });
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+    datasources: {
+        db: {
+            url: process.env.MONGO_TEST_URI
+        }
+    }
+});
 
 beforeAll(async () => {
     // Connect to the Prisma test database
@@ -20,19 +26,19 @@ beforeAll(async () => {
         throw error;
     }
 
-    // Connect to MongoDB test database
-    const MONGO_URI = process.env.MONGO_URI_TEST;
-    if (!MONGO_URI) {
-        throw new Error('MONGO_URI_TEST is not defined in environment variables.');
-    }
+    // // Connect to MongoDB test database
+    // const MONGO_URI = process.env.MONGO_TEST_URI;
+    // if (!MONGO_URI) {
+    //     throw new Error('MONGO_URI_TEST is not defined in environment variables.');
+    // }
 
-    try {
-        await mongoose.connect(MONGO_URI);
-        console.log('Connected to MongoDB test database.');
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        throw error;
-    }
+    // try {
+    //     await mongoose.connect(MONGO_URI);
+    //     console.log('Connected to MongoDB test database.');
+    // } catch (error) {
+    //     console.error('MongoDB connection error:', error);
+    //     throw error;
+    // }
 });
 
 afterAll(async () => {
@@ -44,13 +50,13 @@ afterAll(async () => {
         console.error('Error disconnecting Prisma:', error);
     }
 
-    // Disconnect from MongoDB
-    try {
-        await mongoose.connection.close();
-        console.log('Disconnected from MongoDB test database.');
-    } catch (error) {
-        console.error('Error disconnecting MongoDB:', error);
-    }
+    // // Disconnect from MongoDB
+    // try {
+    //     await mongoose.connection.close();
+    //     console.log('Disconnected from MongoDB test database.');
+    // } catch (error) {
+    //     console.error('Error disconnecting MongoDB:', error);
+    // }
 });
 
 describe('GET /db-health', () => {

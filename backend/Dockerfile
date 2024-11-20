@@ -51,21 +51,6 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "npm run test && npm run dev"]
 
-
-# Test Layer: Install dev dependencies and run tests
-FROM base AS test
-
-WORKDIR /app
-
-COPY . .
-
-# Install dev dependencies
-RUN npm install
-
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Run tests
-CMD ["npm", "test"]
