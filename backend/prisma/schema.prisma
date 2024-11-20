@@ -1,0 +1,73 @@
+// This is your Prisma schema file
+// Learn more at: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URI")
+}
+
+model User {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId // Primary key mapped to MongoDB's ObjectId
+  username     String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  lastLogin    DateTime?
+  profileImage String?
+
+  // Relationships
+  sessions    Session[] // One-to-many relationship: A user can have multiple sessions
+  ChatMessage ChatMessage[] // One-to-many relationship: A user can send multiple chat messages
+
+  @@map("users") // Maps the model to the "users" collection in MongoDB
+}
+
+// manages conversation sessions between user and the LLM
+model Session {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String    @db.ObjectId
+  sessionTitle     String
+  sessionSummary   String?
+  interactionCount Int       @default(0)
+  startTime        DateTime  @default(now())
+  endTime          DateTime?
+  status           String    @default("active") // Status of the session (e.g., active, completed, archieved)
+
+  // Relationships
+  // The user who owns the session; cascading delete ensures that all sessions are deleted if the user is deleted
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatMessages ChatMessage[] // One-to-many relationship: A session contains multiple chat messages
+
+  @@map("sessions")
+}
+
+// suggestion for improvement:
+// Instead of Chat / Response -> OnlyChat Message with type
+// Uneccesarry complexity would be reduced
+// pros: simplfied schema, reduces number of relations, quering momre efficent, fetching in chronological order, scalablility
+
+model ChatMessage {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId             String   @db.ObjectId
+  userId                String?  @db.ObjectId
+  messageType           String   @default("user")
+  content               String
+  timestamp             DateTime @default(now())
+  emotionalState        String?
+  emotionsProbabilities Json?
+  gender                String?
+  age                   Int?
+  additionalInformation Json?
+
+  // Relationships
+  // The session this message belongs to; cascading delete ensures that all messages are deleted if the session is deleted
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  // The user who sent the message; cascading delete ensures that all user messages are deleted if the user is deleted
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
