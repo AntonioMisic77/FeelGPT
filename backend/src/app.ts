@@ -28,18 +28,22 @@ app.get(
 // Testing Prisma client
 const prisma = new PrismaClient();
 app.get(
-  "/db-test",
+  "/db-health",
   createEndpoint({}, async (req, res) => {
     try {
-      const testUser = await prisma.user.create({
-        data: {
-          username: "testuser",
-          email: `testuser-${Date.now()}@example.com`,
-          passwordHash: "hashed_password",
-        },
+      await prisma.$connect();
+
+      res.json({
+        result: "Database connection is working",
       });
     } catch (error) {
-      console.error("Database operation failed:", error);
+      console.error("Database connection failed:", error);
+
+      res.status(500).json({
+        result: "Database connection failed",
+      });
+    } finally {
+      await prisma.$disconnect();
     }
   })
 );
