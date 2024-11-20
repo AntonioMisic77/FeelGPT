@@ -2,10 +2,9 @@ name: backed-test
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: ["development"]
     types : [opened, synchronize]
-  push:
-    branches: ["feature/ci-cd"]
+
     
 jobs:
   build:

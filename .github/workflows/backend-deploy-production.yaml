@@ -1,0 +1,37 @@
+name: backend-deploy-production
+
+on: 
+   push:
+    branches: ["main","feature/ci-cd"]
+    
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                sparse-checkout: 'backend'
+                sparse-checkout-cone-mode: false
+            - name: Move backend directory to root
+              run: |
+                    ls -lah
+                    shopt -s dotglob
+                    mv backend/* .
+                    rm -rf backend
+                    ls -lah
+            - uses: actions/docker-login@v1
+              with:
+                login-server: feelgptcr.azurecr.io
+                username: ${{ secrets.REGISTRY_USERNAME }}
+                password: ${{ secrets.REGISTRY_PASSWORD }}  
+            - run: |
+                docker build -t feelgptcr.azurecr.io/feelgptserver:${{ github.sha }} --target production .
+                docker push feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}
+
+            - uses: azure/webapps-deploy@v2
+              with:
+                app-name: 'feelgptserver'
+                publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+                images: 'feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}'
+            
