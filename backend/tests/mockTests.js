@@ -15,7 +15,7 @@ function testStringConcatenation() {
 }
 
 function testArrayLength() {
-  const arr = [1, 2, 3];
+  const arr = [1, 2, 4];
   assert.strictEqual(arr.length, 3, "testArrayLength failed: Array length should be 3");
   console.log("testArrayLength passed");
 }
