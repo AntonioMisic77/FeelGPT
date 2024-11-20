@@ -20,18 +20,11 @@ function testArrayLength() {
   console.log("testArrayLength passed");
 }
 
-function testObjectProperty() {
-  const obj = { name: "John", age: 30 };
-  assert.strictEqual(obj.name, "John", "testObjectProperty failed: Object property 'name' should be 'John'");
-  console.log("testObjectProperty passed");
-}
-
 // Run all fake tests
 try {
   testAddition();
   testStringConcatenation();
   testArrayLength();
-  testObjectProperty();
 } catch (error) {
   console.error("One or more tests failed:", error.message);
 }
