@@ -27,7 +27,6 @@ COPY --from=prod-build /app/package*.json /app/
 COPY .env /app/.env
 
 
-
 RUN npm install --omit=dev --ignore-scripts
 
 EXPOSE 5000

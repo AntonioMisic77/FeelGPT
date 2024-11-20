@@ -34,6 +34,44 @@ jobs:
                 docker build -t feelgptcr.azurecr.io/feelgptserver:${{ github.sha }} --target production .
                 docker push feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}
 
+            - name: Set Web App Enviorment Variables
+              uses: Azure/appservice-settings@v2
+              with:
+                app-name: 'feelgptserver'
+                app-settings-json: |
+                  [
+                      {
+                          "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                          "value": "${{ secrets.REGISTRY_PASSWORD }}",
+                          "slotSetting": false
+                      },
+                      {
+                          "name": "DOCKER_REGISTRY_SERVER_URL",
+                          "value": "https://feelgptcr.azurecr.io",
+                          "slotSetting": false
+                      },
+                      {
+                          "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                          "value": "${{ secrets.REGISTRY_USERNAME }}",
+                          "slotSetting": false
+                      },
+                      {
+                          "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                          "value": "false",
+                          "slotSetting": false
+                      },
+                      {
+                          "name": "AZURE_PHI_API_KEY",
+                          "value": "${{ secrets.AZURE_PHI_API_KEY }}",
+                          "slotSetting": false
+                      },
+                      {
+                          "name": "AZURE_PHI_ENDPOINT",
+                          "value": "${{ secrets.AZURE_PHI_ENDPOINT }}",
+                          "slotSetting": false
+                      },
+                  ]
+
             - uses: azure/webapps-deploy@v2
               with:
                 app-name: 'feelgptserver'
