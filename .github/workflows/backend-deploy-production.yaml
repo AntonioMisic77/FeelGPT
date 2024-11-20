@@ -20,6 +20,10 @@ jobs:
                     mv backend/* .
                     rm -rf backend
                     ls -lah
+            - name: Create .env file
+              run: |
+                    touch .env
+                    ls -lah
 
             - uses: docker/login-action@v1
               with:
