@@ -2,7 +2,9 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"]
+      "@/*": [
+        "*"
+      ]
     },
     "outDir": "dist",
     "sourceMap": true,
@@ -14,5 +16,10 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./*.js", "src/**/*.ts", "test/**/*.ts", "prisma/**/*.ts"]
+  "include": [
+    "./*.js",
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "prisma/**/*.ts"
+  ]
 }
