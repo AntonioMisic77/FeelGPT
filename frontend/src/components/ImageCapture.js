@@ -86,6 +86,7 @@ const ImageCapture = ({
               };
 
 
+              //console.log(newEmotionValues);
               setEmotionValues(newEmotionValues); 
               
               
