@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
+      AZURE_PHI_ENDPOINT: ${{ secrets.AZURE_PHI_ENDPOINT }}
+      AZURE_PHI_API_KEY: ${{ secrets.AZURE_PHI_API_KEY }}
+      MAIL_USERNAME: ${{ secrets.EMAIL_USER }}
+      MAIL_PASSWORD: ${{ secrets.EMAIL_PASS }}
     strategy:
       matrix:
         node-version: [20]
