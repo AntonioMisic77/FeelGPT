@@ -13,6 +13,11 @@ body {
 }
 
 
+.live-video{
+  border-radius: 10px;
+}
+
+
 .light {
   background-color: var(--root-background-light);
   color: black
@@ -261,7 +266,7 @@ textarea {
     color: gray;
   }
   50% {
-    color: #FFD700; /* Gold for happiness */
+    color: #FFD700; 
   }
   100% {
     color: gray;
@@ -273,7 +278,7 @@ textarea {
     color: gray;
   }
   50% {
-    color: #1E90FF; /* Blue for sadness */
+    color: #1E90FF; 
   }
   100% {
     color: gray;
@@ -285,7 +290,7 @@ textarea {
     color: gray;
   }
   50% {
-    color: #FF6347; /* Red for anger */
+    color: #FF6347; 
   }
   100% {
     color: gray;
@@ -297,7 +302,7 @@ textarea {
     color: gray;
   }
   50% {
-    color: #DC143C; /* Crimson for fear */
+    color: #5e287a; 
   }
   100% {
     color: gray;
@@ -309,12 +314,13 @@ textarea {
     color: gray;
   }
   50% {
-    color: #32CD32; /* Lime green for surprise */
+    color: #32CD32; 
   }
   100% {
     color: gray;
   }
 }
+
 
 /* Default styles for the emotion label */
 .emotion-label {
@@ -349,8 +355,16 @@ textarea {
   animation-name: SURPRISE;
 }
 
+.SURPRISE {
+  animation-name: NEUTRAL;
+}
+
 
 /* sliders */
+
+.win10-thumb{
+  background-color: inherit;
+}
 
 .sliders{
   display:flex;
