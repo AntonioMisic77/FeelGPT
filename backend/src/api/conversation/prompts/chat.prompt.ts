@@ -39,10 +39,27 @@ If a user question appears offensive, harmful, violent, or otherwise inappropria
 # End of Instructions for Interaction
 `;
 
-export const chatPrompt = `Context:
+export const chatUserPrompt = `Context:
 - Emotional probabilities: Happines: {happines}, Sadness: {sadness}, Anger: {anger}, Fear: {fear}, Surprise: {surprise}, Neutral: {neutral}, Disgust: {disgust}
 - Age: {age}
 - Gender: {gender}
+
+You have been provided with the history of the conversation. 
+Do not answer all of the user's questions. Answer only the this question and ask a follow-up question to continue the conversation.
+Please continue the conversation with the user.
+
+Question: "{question}"
+`;
+
+export const chatUserHistoryPrompt = `
+This is User's message from the last conversation. 
+**Don't** respond to this message. 
+Use it as a context for the next message.
+
+Context:
+ - User was feeling {strongest_emotion} in the last message
+ - Users Age: {age}
+ - Users Gender: {gender}
 
 Question: "{question}"
 `;
