@@ -21,7 +21,8 @@ const ImageCapture = ({
     if (videoRef.current && canvasRef.current) {
       const captureFrame = () => {
         const canvas = canvasRef.current;
-        const context = canvas?.getContext("2d");
+        const context = canvas?.getContext("2d", { willReadFrequently: true });
+
 
         if (!context) {
           //console.error("Failed to get canvas context.");
@@ -84,7 +85,6 @@ const ImageCapture = ({
                 gender: gender
               };
 
-              console.log('newWmotionValues: ', newEmotionValues);
 
               setEmotionValues(newEmotionValues); 
               

@@ -50,9 +50,8 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
   // Function to send a message
   const sendMessage = async () => {
     if (inputValue.trim()) {
-      // for time and date below messages
+      // For time and date below messages
       const timestamp = new Date().toLocaleTimeString();
-      
       setMessages([
         ...messages,
         {
@@ -65,28 +64,38 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
       ]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
-
+  
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
         textareaRef.current.blur();
       }
-
-      // extract emotion detection values
-      const emotionsArray = Array.from(
-        tmpAnalysisDataRef.current?.get(0)?.getEmotionProbabilities() || []
+  
+      // Remove first value (0,0,0,...)
+      const emotionWhileTypingCleaned = emotionWhileTyping.slice(1);
+      // Extract data from emotionWhileTyping
+      const emotionsArray = emotionWhileTypingCleaned.map(({ age, gender, ...emotions }) => emotions);
+  
+      const averageAge =
+      emotionWhileTypingCleaned.reduce((sum, { age }) => sum + (age || 0), 0) /
+      emotionWhileTypingCleaned.filter(({ age }) => age !== null).length || null;
+  
+      const genderCounts = emotionWhileTypingCleaned.reduce((counts, { gender }) => {
+        if (gender) counts[gender] = (counts[gender] || 0) + 1;
+        return counts;
+      }, {});
+      const mostCommonGender = Object.keys(genderCounts).reduce((a, b) =>
+        genderCounts[a] > genderCounts[b] ? a : b,
+        null
       );
-
-      const age = tmpAnalysisDataRef.current?.get(0)?.getAge();
-      const gender = tmpAnalysisDataRef.current?.get(0)?.getGender();
-
+  
       const chatData = {
         message: inputValue,
-        emotion: emotionsArray,
-        age,
-        gender,
+        emotion: emotionsArray, // Array of emotion arrays from typing session
+        age: averageAge, // Average age from detected values
+        gender: mostCommonGender, // Most common gender detected
       };
 
-      console.log("chatData:", chatData);
+
 
       /* CONNECTION TO BACKEND */
       try {
@@ -178,7 +187,6 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         setVisageData({
           imageCaptured: null,
           setImageCaptured: () => {},
-          // You can pass more relevant data here
         });
       };
 
@@ -207,12 +215,13 @@ useEffect(() => {
   if (isTyping) {
     // Clear history at the start of a new typing session
     setEmotionWhileTyping([]);
-  }  else {
-    if (emotionWhileTyping.length > 0) {
-      console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
-    } 
+  } else {
+    if (emotionValues) {
+      setEmotionWhileTyping((prev) => [...prev, emotionValues]);
+    }
+    //console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
 
-    // Reset emotionValues only after recording has ended and history has been stored
+    // Reset emotionValues after capturing
     setEmotionValues({
       anger: 0,
       disgust: 0,
@@ -233,6 +242,8 @@ useEffect(() => {
     setEmotionWhileTyping((prev) => [...prev, emotionValues]);
   }
 }, [emotionValues, isTyping]);
+
+
 
 //for emotion lable -> now gets max from last detection
 const [dominantEmotion, setDominantEmotion] = useState(null);
