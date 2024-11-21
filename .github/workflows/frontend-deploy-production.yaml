@@ -3,6 +3,8 @@ name: frontend-deploy-production
 on:
   push:
     branches: ["main"]
+    paths:
+      - 'frontend/**'
 
 jobs:
     build:
