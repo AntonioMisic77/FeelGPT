@@ -5,7 +5,12 @@ import ImageCapture from "./ImageCapture"; // Import ImageCapture directly
 import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
 
-const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
+const Chat = ({
+  darkMode,
+  isRecordingVideo,
+  setRecordingVideo,
+  IsCameraEnabled,
+}) => {
   const first_timestamp = new Date().toLocaleTimeString();
   const [messages, setMessages] = useState([
     {
@@ -52,13 +57,14 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
     if (inputValue.trim()) {
       // For time and date below messages
       const timestamp = new Date().toLocaleTimeString();
+
       setMessages([
         ...messages,
         {
           text: inputValue,
           sender: "me",
           timestamp,
-          emotionLabel: dominantEmotion,
+          emotionLabel: IsCameraEnabled ? dominantEmotion : "",
         },
         { text: "...", sender: "them", timestamp },
       ]);
@@ -69,6 +75,14 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         textareaRef.current.style.height = "auto";
         textareaRef.current.blur();
       }
+
+
+      const processedEmotionsCleaned = processedEmotions.slice(1);
+      const processedEmotionsSending = processedEmotionsCleaned.map(
+          ({ dominant_emotion }) => ({
+            dominant_emotion, // Wrap it in an object
+          })
+        );
 
       // Remove first value (0,0,0,...)
       const emotionWhileTypingCleaned = emotionWhileTyping.slice(1);
@@ -92,9 +106,9 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
 
       const chatData = {
         message: inputValue,
-        emotion: emotionsArray, // Array of emotion arrays while typing 
-        age: averageAge, // Average age detected
-        gender: mostCommonGender, // Most common gender detected
+        emotion:  IsCameraEnabled ? processedEmotionsSending :[],// Array of emotion arrays while typing 
+        age: IsCameraEnabled ? averageAge : undefined, // Average age detected
+        gender: IsCameraEnabled ? mostCommonGender : undefined, // Most common gender detected
       };
 
       /* CONNECTION TO BACKEND */
@@ -196,84 +210,84 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
 
   //for switches
   const [emotionValues, setEmotionValues] = useState({
-    anger: 0,
-    disgust: 0,
-    fear: 0,
-    happiness: 0,
-    sadness: 0,
-    surprise: 0,
-    neutral: 0,
-    age: null,
-    gender: null,
-  });
+  anger: 0,
+  disgust: 0,
+  fear: 0,
+  happiness: 0,
+  sadness: 0,
+  surprise: 0,
+  neutral: 0,
+  age: null,
+  gender: null,
+});
 
-  // in this is stored all emotions while typing
-  const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
+// in this is stored all emotions while typing
+const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
 
-  // Capture the emotions during typing and reset after typing stops
-  useEffect(() => {
-    if (isTyping) {
-      // Clear history at the start of a new typing session
-      setEmotionWhileTyping([]);
-    } else {
-      if (emotionValues) {
-        setEmotionWhileTyping((prev) => [...prev, emotionValues]);
-      }
-      //console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
-
-      // Reset emotionValues after capturing
-      setEmotionValues({
-        anger: 0,
-        disgust: 0,
-        fear: 0,
-        happiness: 0,
-        sadness: 0,
-        surprise: 0,
-        neutral: 0,
-        age: null,
-        gender: null,
-      });
-    }
-  }, [isTyping]);
-
-  // Track each new set of emotion values while typing
-  useEffect(() => {
-    if (isTyping) {
-      setEmotionWhileTyping((prev) => [...prev, emotionValues]);
-    }
-  }, [emotionValues, isTyping]);
-
-  //for emotion lable -> now gets max from last detection
-  const [dominantEmotion, setDominantEmotion] = useState(null);
-  useEffect(() => {
+// Capture the emotions during typing and reset after typing stops
+useEffect(() => {
+  if (isTyping) {
+    // Clear history at the start of a new typing session
+    setEmotionWhileTyping([]);
+  }  else {
     if (emotionWhileTyping.length > 0) {
-      const lastEmotionValues =
-        emotionWhileTyping[emotionWhileTyping.length - 1];
+      console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
+    } 
 
-      // Exclude age and gender from the calculation
-      const { age, gender, ...emotions } = lastEmotionValues;
+    // Reset emotionValues only after recording has ended and history has been stored
+    setEmotionValues({
+      anger: 0,
+      disgust: 0,
+      fear: 0,
+      happiness: 0,
+      sadness: 0,
+      surprise: 0,
+      neutral: 0,
+      age: null,
+      gender: null,
+    });
+  }
+}, [isTyping]);
 
-      // Determine the dominant emotion
-      let maxEmotion = null;
-      let maxEmotionValue = -Infinity;
-      for (const [emotion, value] of Object.entries(emotions)) {
-        if (value > maxEmotionValue) {
-          maxEmotionValue = value;
-          maxEmotion = emotion;
-        }
+// Track each new set of emotion values while typing
+useEffect(() => {
+  if (isTyping) {
+    setEmotionWhileTyping((prev) => [...prev, emotionValues]);
+  }
+}, [emotionValues, isTyping]);
+
+//for emotion lable -> now gets max from last detection
+const [dominantEmotion, setDominantEmotion] = useState(null);
+useEffect(() => {
+  if (emotionWhileTyping.length > 0) {
+    const lastEmotionValues = emotionWhileTyping[emotionWhileTyping.length - 1];
+
+    // Exclude age and gender from the calculation
+    const { age, gender, ...emotions } = lastEmotionValues;
+
+    // Determine the dominant emotion
+    let maxEmotion = null;
+    let maxEmotionValue = -Infinity;
+    for (const [emotion, value] of Object.entries(emotions)) {
+      if (value > maxEmotionValue) {
+        maxEmotionValue = value;
+        maxEmotion = emotion;
       }
-
-      setDominantEmotion(maxEmotion);
-    } else {
-      setDominantEmotion(null); // Reset if no data
     }
-  }, [emotionWhileTyping]);
 
+    setDominantEmotion(maxEmotion);
+  } else {
+    setDominantEmotion(null); // Reset if no data
+  }
+}, [emotionWhileTyping]);
+
+  
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
       <div
         className={`video-container ${isRecordingVideo ? "video-enabled" : ""}`}
       >
+        {/* didnt work when video was rerendering  each time camera was enabled/disabled */}
         <video
           className={`live-video ${isRecordingVideo ? "" : "hidden-video"}`}
           ref={videoRef}
@@ -286,24 +300,48 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.anger * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    anger: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">ANGER</div>
               <input
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.disgust * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    disgust: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">DISGUST</div>
               <input
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.fear * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    fear: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">FEAR</div>
               <input
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.happiness * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    happiness: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">HAPPINESS</div>
             </div>
@@ -312,23 +350,42 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.sadness * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    sadness: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">SADNESS</div>
               <input
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.surprise * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    surprise: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">SURPRISE</div>
               <input
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.neutral * 100}
+                onChange={(e) =>
+                  setEmotionValues((prev) => ({
+                    ...prev,
+                    neutral: e.target.value / 100,
+                  }))
+                }
               />
               <div className="slider-label">NEUTRAL</div>
             </div>
           </div>
         )}
+     
       </div>
 
       <div
@@ -361,6 +418,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
                     <div
                       className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
                     >
+                   
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>
                   )}
@@ -377,7 +435,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              setIsTyping(true); // User is typing
+              if (IsCameraEnabled) setIsTyping(true); // Only track typing if the camera is enabled
             }}
             onInput={(e) => adjustHeight(e.target)}
             placeholder="Type a message"
@@ -391,7 +449,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         </div>
 
         {/* Initialize VisageAnalyzer only when the user starts typing */}
-        {visageData && (
+        {IsCameraEnabled && visageData && (
           <VisageAnalyzer
             videoRef={videoRef}
             canvasRef={canvasRef}
@@ -408,7 +466,7 @@ const Chat = ({ darkMode, isRecordingVideo, setRecordingVideo }) => {
         )}
 
         {/* Conditionally render ImageCapture and pass the required props */}
-        {visageData && (
+        {IsCameraEnabled && visageData && (
           <ImageCapture
             videoRef={videoRef}
             canvasRef={canvasRef}

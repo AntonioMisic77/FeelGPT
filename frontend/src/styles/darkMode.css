@@ -51,3 +51,23 @@
     background-color: #9b545f;
     transform: translateY(-2px);
   }
+
+
+
+.info-container.dark{
+    background-color: #0f1c2c;
+    border: none; 
+}
+.info-container.light{
+
+background-color: rgb(240, 244, 248);; 
+border: none;
+}
+
+.overlay-content.dark{
+    background-color: #0f1c2c;
+}
+
+.settings-form{
+    background-color: transparent;
+}
