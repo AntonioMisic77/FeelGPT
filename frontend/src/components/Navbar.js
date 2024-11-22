@@ -2,10 +2,27 @@ import React, { useState, useEffect } from "react";
 import "../styles/navbar.css";
 import { Link, useLocation } from "react-router-dom";
 
-const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
+const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled}) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const location = useLocation();
   const [isCameraOn, setIsCameraOn] = useState(false); // New state for camera status
+  const [isCameraEn, setIsCameraEn] = useState(false); 
+
+  const handleSetIsCameraEnabled = setIsCameraEnabled || (() => {});
+
+
+  useEffect(() => {
+    const storedCameraEn = localStorage.getItem("isCameraEn");
+    if (storedCameraEn !== null) {
+      setIsCameraEn(JSON.parse(storedCameraEn)); 
+      handleSetIsCameraEnabled(JSON.parse(storedCameraEn));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save the updated isCameraEn value to localStorage whenever it changes
+    localStorage.setItem("isCameraEn", JSON.stringify(isCameraEn));
+  }, [isCameraEn]);
 
   useEffect(() => {
     // Close the dropdown when clicking outside of it
@@ -28,11 +45,13 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
 
   // Close the dropdown when an option is selected
   const handleOptionSelect = (option) => {
-    console.log(option); // Option chosen
     if (option === "Toggle Camera") {
       toggleCamera();
     }
-    setDropdownVisible(false); // Close dropdown after option is selected
+    if (option === "Enable/Disable Camera") {
+      enableCamera();
+    }
+    setDropdownVisible(false);
   };
 
   // For camera input when user chooses
@@ -40,10 +59,19 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
     setIsRecordingVideo((prev) => {
       const newState = !prev;
       setIsCameraOn(newState);
-      console.log(newState ? "Camera is on" : "Camera is off");
       return newState;
     });
   };
+
+  // For camera enabled
+  const enableCamera = () => {
+    setIsCameraEnabled((prev) => {
+      const newState = !prev;
+      setIsCameraEn(newState);
+      return newState;
+    });
+  };
+
 
   return (
     <nav className={`navbar ${darkMode ? "dark" : "light"}`}>
@@ -97,9 +125,11 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo }) => {
                   <li>
                     <a
                       href="#"
-                      onClick={() => handleOptionSelect("Disable Camera")}
+                      onClick={() =>
+                        handleOptionSelect("Enable/Disable Camera")
+                      }
                     >
-                      Disable camera
+                      {isCameraEn ? "Disable camera" : "Enable camera"}
                     </a>
                   </li>
                 </ul>
