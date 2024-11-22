@@ -108,7 +108,7 @@ const Chat = ({
         message: inputValue,
         emotion:  IsCameraEnabled ? processedEmotionsSending :[],// Array of emotion arrays while typing 
         age: IsCameraEnabled ? averageAge : undefined, // Average age detected
-        gender: IsCameraEnabled ? mostCommonGender : undefined, // Most common gender detected
+        gender: IsCameraEnabled ? mostCommonGender :undefined, // Most common gender detected
       };
 
       /* CONNECTION TO BACKEND */
@@ -210,78 +210,95 @@ const Chat = ({
 
   //for switches
   const [emotionValues, setEmotionValues] = useState({
-  anger: 0,
-  disgust: 0,
-  fear: 0,
-  happiness: 0,
-  sadness: 0,
-  surprise: 0,
-  neutral: 0,
-  age: null,
-  gender: null,
-});
+    anger: 0,
+    disgust: 0,
+    fear: 0,
+    happiness: 0,
+    sadness: 0,
+    surprise: 0,
+    neutral: 0,
+    age: null,
+    gender: null,
+  });
 
-// in this is stored all emotions while typing
-const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
 
-// Capture the emotions during typing and reset after typing stops
-useEffect(() => {
-  if (isTyping) {
-    // Clear history at the start of a new typing session
-    setEmotionWhileTyping([]);
-  }  else {
-    if (emotionWhileTyping.length > 0) {
-      console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
-    } 
+  // in this is stored all emotions while typing
+  const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
 
-    // Reset emotionValues only after recording has ended and history has been stored
-    setEmotionValues({
-      anger: 0,
-      disgust: 0,
-      fear: 0,
-      happiness: 0,
-      sadness: 0,
-      surprise: 0,
-      neutral: 0,
-      age: null,
-      gender: null,
-    });
-  }
-}, [isTyping]);
-
-// Track each new set of emotion values while typing
-useEffect(() => {
-  if (isTyping) {
-    setEmotionWhileTyping((prev) => [...prev, emotionValues]);
-  }
-}, [emotionValues, isTyping]);
-
-//for emotion lable -> now gets max from last detection
-const [dominantEmotion, setDominantEmotion] = useState(null);
-useEffect(() => {
-  if (emotionWhileTyping.length > 0) {
-    const lastEmotionValues = emotionWhileTyping[emotionWhileTyping.length - 1];
-
-    // Exclude age and gender from the calculation
-    const { age, gender, ...emotions } = lastEmotionValues;
-
-    // Determine the dominant emotion
-    let maxEmotion = null;
-    let maxEmotionValue = -Infinity;
-    for (const [emotion, value] of Object.entries(emotions)) {
-      if (value > maxEmotionValue) {
-        maxEmotionValue = value;
-        maxEmotion = emotion;
+  // Capture the emotions during typing and reset after typing stops
+  useEffect(() => {
+    if (isTyping) {
+      // Clear history at the start of a new typing session
+      setEmotionWhileTyping([]);
+    } else {
+      if (emotionValues) {
+        setEmotionWhileTyping((prev) => [...prev, emotionValues]);
       }
+      //console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
+
+      // Reset emotionValues after capturing
+      setEmotionValues({
+        anger: 0,
+        disgust: 0,
+        fear: 0,
+        happiness: 0,
+        sadness: 0,
+        surprise: 0,
+        neutral: 0,
+        age: null,
+        gender: null,
+      });
     }
+  }, [isTyping]);
 
-    setDominantEmotion(maxEmotion);
-  } else {
-    setDominantEmotion(null); // Reset if no data
-  }
-}, [emotionWhileTyping]);
+  // Track each new set of emotion values while typing
+  useEffect(() => {
+    if (isTyping) {
+      setEmotionWhileTyping((prev) => [...prev, emotionValues]);
+    }
+  }, [emotionValues, isTyping]);
 
+  //for emotion lable -> now gets max from last detection
+  const [dominantEmotion, setDominantEmotion] = useState(null);
+  const [processedEmotions, setProcessedEmotions] = useState(null);
+  useEffect(() => {
+    if (emotionWhileTyping.length > 0) {
+      // Process the emotionWhileTyping array
+      const processedEmotions = emotionWhileTyping.map((emotionValues) => {
+        // Extract age, gender, and emotions
+        const { age, gender, ...emotions } = emotionValues;
   
+        // Determine the dominant emotion
+        let maxEmotion = null;
+        let maxEmotionValue = -Infinity;
+        for (const [emotion, value] of Object.entries(emotions)) {
+          if (value > maxEmotionValue) {
+            maxEmotionValue = value;
+            maxEmotion = emotion;
+          }
+        }
+  
+        // Return the desired object format
+        return {
+          dominant_emotion: maxEmotion,
+          age,
+          gender,
+        };
+      });
+  
+      // Set the processed list (optional, if you need to store it somewhere)
+      setProcessedEmotions(processedEmotions);
+  
+      // Set the last dominant emotion
+      const lastEmotion = processedEmotions[processedEmotions.length - 1];
+      setDominantEmotion(lastEmotion.dominant_emotion);
+    } else {
+      setProcessedEmotions([]); // Reset the list if no data
+      setDominantEmotion(null); // Reset the dominant emotion if no data
+    }
+  }, [emotionWhileTyping]);
+  
+
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
       <div
