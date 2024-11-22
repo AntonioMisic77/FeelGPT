@@ -36,7 +36,7 @@ RUN npm install --omit=dev --ignore-scripts
 
 EXPOSE 5000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
 
 # Dev Layer: Copy the app and install all dependencies
 FROM base AS dev

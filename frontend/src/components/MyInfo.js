@@ -1,6 +1,8 @@
 import Navbar from "../components/Navbar";
 import History from "../components/History";
 import Graph from "../components/Graph";
+import InfoForm from "../components/InfoForm";
+
 import "../styles/chat.css";
 import "../styles/myinfo.css";
 import "../styles/darkMode.css";
@@ -44,7 +46,7 @@ const MyInfo = () => {
     <div className="app-container">
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className={`info-page-container ${darkMode ? "dark" : "light"}`}>
-        <div className="info-container">
+        <div className={`info-container ${darkMode ? "dark" : "light"}` }>
           <img
             src="https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
             alt="User"
@@ -53,63 +55,21 @@ const MyInfo = () => {
           <p className="username">user.name@gmail.com</p>
 
           <div className="settings-container">
-            <h3 className="section-title">Settings</h3>
+            <h3 className="section-title">Conversation Reminders</h3>
             <hr className="divider" />
             {/* Camera Settings */}
-            <ul className="settings-list">
-              <li
-                className={`settings-item ${cameraConsent ? "selected" : ""}`}
-                onClick={toggleCameraConsent}
-              >
-                {cameraConsent && <span className="tick">✓</span>} Use Camera
-              </li>
-            </ul>
-            <h3 className="section-title">Notification Settings</h3>
+            <p>How often: daily</p>
+            <p> When: 12:00</p>
+            <p> How: email</p>
+            <h3 className="section-title">Settings</h3>
             <hr className="divider" />
-            <ul className="settings-list">
-              <li
-                className={`settings-item ${
-                  notifications === "daily" ? "selected" : ""
-                }`}
-                onClick={() => toggleNotifications("daily")}
-              >
-                {notifications === "daily" && <span className="tick">✓</span>}{" "}
-                Daily Notifications
-              </li>
-              <li
-                className={`settings-item ${
-                  notificationMethod === "push" ? "selected" : ""
-                }`}
-                onClick={() => toggleNotificationMethod("push")}
-              >
-                {notificationMethod === "push" && (
-                  <span className="tick">✓</span>
-                )}{" "}
-                Push Notifications
-              </li>
-            </ul>
-            <h3 className="section-title">Accessibility Settings</h3>
-            <hr className="divider" />
-            <ul className="settings-list">
-              <li
-                className={`settings-item ${
-                  language === "EN" ? "selected" : ""
-                }`}
-                onClick={toggleLanguage}
-              >
-                {language === "EN" && <span className="tick">✓</span>} English
-              </li>
-              <li
-                className={`settings-item ${!darkMode ? "selected" : ""}`}
-                onClick={() => setDarkMode(!darkMode)}
-              >
-                {!darkMode && <span className="tick">✓</span>} Light Mode
-              </li>
-            </ul>
+            <p> Language: English</p>
+            <p> Respose tone: empathic</p>
+            
 
             <div className="button-right">
               <button className="button-66-smaller manage" onClick={handleOpenOverlay}>
-                Manage Settings
+                Update Settings
               </button>
             </div>
           </div>
@@ -118,11 +78,16 @@ const MyInfo = () => {
         {/* Overlay Form */}
         {showOverlay && (
           <div className="overlay">
-            <div className="overlay-content">
-              <h3>Manage Settings</h3>
-              
-              <button onClick={handleSaveChanges}>Save Changes</button>
-              <button onClick={() => setShowOverlay(false)}>Close</button>
+            <div className={`overlay-content ${darkMode ? "dark" : "light"}` }>
+              <h3>Update settings</h3>
+              <InfoForm darkMode={darkMode}/>
+              <div className="update-buttons">
+              <button onClick={handleSaveChanges}
+              className="summary-button">Save Changes</button>
+              <button 
+              className="summary-button"
+              onClick={() => setShowOverlay(false)}>Close</button>
+            </div>
             </div>
           </div>
         )}
