@@ -49,8 +49,12 @@ cd FeelGPT
 
 3. **Build and start the containers**
 
-- Development enviorment
+- Setup the MongoDb database first
+```bash
+docker compose -f docker-compose.db.yaml up
+```
 
+- Development enviorment
 ```bash
 docker compose -f docker-compose.dev.yaml up
 ```

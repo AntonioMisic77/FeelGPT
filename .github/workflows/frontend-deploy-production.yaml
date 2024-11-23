@@ -1,0 +1,85 @@
+name: frontend-deploy-production
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'frontend/**'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                sparse-checkout: 'frontend'
+                sparse-checkout-cone-mode: false
+            - name: Move frontend directory to root
+              run: |
+                    ls -lah
+                    shopt -s dotglob
+                    mv frontend/* .
+                    rm -rf frontend
+                    ls -lah
+            - name: Add Visage SDK LICENSE
+              uses: mobiledevops/secret-to-file-action@v1
+              with:
+                base64-encoded-secret: ${{ secrets.VISAGE_SDK_LICENCE }}
+                filename: "596-415-364-170-725-752-183-283-483-118-322.vlc"
+                working-directory: ./public
+            - name: Set up the LICENCE
+              working-directory: ./src/components
+              run: grep -rli '283-483-532-575.vlc' * | xargs -i@ sed -i 's/283-483-532-575.vlc/283-483-118-322.vlc/g' @
+            - uses: azure/login@v1
+              with:
+                creds: '${{ secrets.AZURE_CREDENTIALS }}'
+            - uses: docker/login-action@v1
+              with:
+                registry: feelgptcr.azurecr.io
+                username: ${{ secrets.REGISTRY_USERNAME }}
+                password: ${{ secrets.REGISTRY_PASSWORD }}
+            - run: |
+                docker build -t feelgptcr.azurecr.io/feelgptui:${{ github.sha }} .
+                docker push feelgptcr.azurecr.io/feelgptui:${{ github.sha }}
+    deploy:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - uses: azure/login@v1
+              with:
+                  creds: '${{ secrets.AZURE_CREDENTIALS }}'
+            - name: Set Web App Environment Variables
+              uses: Azure/appservice-settings@v1
+              with:
+                app-name: 'feelgptui'
+                app-settings-json: '[
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            "value": "${{ secrets.REGISTRY_PASSWORD }}",
+                            "slotSetting": false
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                            "value": "${{ secrets.REGISTRY_USERNAME }}",
+                            "slotSetting": false
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "https://feelgptcr.azurecr.io",
+                            "slotSetting": false
+                        },
+                        {
+                            "name": "MY_REACT_APP_BACKEND_URL",
+                            "value": "${{ secrets.BACKEND_URL }}",
+                            "slotSetting": false
+                        }
+                    ]'
+            - uses: azure/webapps-deploy@v2
+              with:
+                 app-name: 'feelgptui'
+                 publish-profile: ${{ secrets.AZURE_WEBAPP_UI_PUBLISH_PROFILE }}
+                 images: 'feelgptcr.azurecr.io/feelgptui:${{ github.sha }}'
+              
+          
+            
+    
