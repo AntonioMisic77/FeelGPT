@@ -16,7 +16,7 @@ const Login = () => {
     setError(null); // Reset any previous errors
 
     try {
-      const response = await axiosInstance.post("/auth/login", {
+      const response = await axiosInstance.post("/user/auth/login", {
         email,
         password,
       });

@@ -30,7 +30,7 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/auth/signin", {
+      await axiosInstance.post("/user/auth/register", {
         email,
         password,
       });
