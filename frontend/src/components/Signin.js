@@ -30,11 +30,11 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/signin", {
+      await axiosInstance.post("/auth/signin", {
         email,
         password,
       });
-      window.location.href = "/dashboard";
+      window.location.href = "/login";
     } catch (err) {
       console.error("Signin error:", err);
     }
