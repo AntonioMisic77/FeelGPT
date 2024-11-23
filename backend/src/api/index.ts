@@ -6,6 +6,7 @@ import userRouter from "./user";
 import notificationRouter from "./notification";
 import conversationRouter from "./conversation";
 
+
 const router = express.Router();
 
 router.get(
@@ -20,7 +21,6 @@ router.get(
 router.use("/user", userRouter);
 router.use("/notification", notificationRouter);
 router.use("/conversation", conversationRouter);
-
 export { router as api };
 
 export default router;
