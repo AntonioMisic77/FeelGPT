@@ -72,7 +72,7 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    window.location.href = "/start";
+    window.location.href = "/chat";
   };
 
   return (
@@ -93,8 +93,8 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
             </label>
           </div>
 
-          {location.pathname !== "/" && (
-            <Link className="link" to="/">
+          {location.pathname === "/my-info" && (
+            <Link className="link" to="/chat">
               <button type="button" className="chat-button">
                 Chat
               </button>
