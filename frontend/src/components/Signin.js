@@ -1,19 +1,15 @@
-import React, { useState } from "react";
+// src/components/Signin.js
 
+import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/signin.css";
+import axiosInstance from "../api/axiosInstance";
 
-/* PROBLEMS and TASK
-   -> not connected
-   -> will have to add more info
-   -> make additional part scrollable ?? 
-   -> fix radio button -> when never choosen, dont show next part
-                       -> "daily" is marked when not hovered??
-   -> why is this page scrollable?
-*/
 const Signin = () => {
   const [consent, setConsent] = useState(false);
-  const [notifications, setNotifications] = useState("daily"); // Options: 'daily', 'weekly'
+  const [notifications, setNotifications] = useState("daily");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleConsentChange = () => {
     setConsent(!consent);
@@ -23,6 +19,51 @@ const Signin = () => {
     setNotifications(e.target.value);
   };
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axiosInstance.post("/user/auth/register", {
+        email,
+        password,
+      });
+      window.location.href = "/login";
+    } catch (err) {
+      console.error("Signin error:", err);
+    }
+  };
+
+
+  const [responseTone, setResponseTone] = useState("neutral");
+  const [reminderFrequency, setReminderFrequency] = useState("never");
+  const [reminderTime, setReminderTime] = useState("");
+  const [selectedDay, setSelectedDay] = useState(""); // Single day selection
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(""); // Language selection
+  const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or radio)
+
+  const handleDaySelection = (e) => {
+    setSelectedDay(e.target.value); // Update to a single selected day
+  };
+
+  const handleLanguageSelection = (e) => {
+    setSelectedLanguage(e.target.value); // Update selected language
+  };
+
+  const handleReminderTypeSelection = (e) => {
+    setSelectedReminderType(e.target.value); // Update selected reminder type
+  };
+
+
+
+
   return (
     <div className="body-signin">
       <div className="sign-in-container">
@@ -31,14 +72,23 @@ const Signin = () => {
           <form>
             <div>
               <label className="signin-label">Email</label>
-              <input className="signin-input" type="email" placeholder="Enter your email" required />
+              <input
+                className="signin-input"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={handleEmailChange}
+                required
+              />
             </div>
             <div>
-              <label className="signin-label" >Password</label>
+              <label className="signin-label">Password</label>
               <input
-              className="signin-input"
+                className="signin-input"
                 type="password"
                 placeholder="Enter your password"
+                value={password}
+                onChange={handlePasswordChange}
                 required
               />
             </div>
@@ -46,172 +96,134 @@ const Signin = () => {
         </div>
 
         <div className="additional-info">
-          <h2 className="info-title">Additional Info</h2>
-          <div className="consent-container">
-            <label className="question-label">
-              Would you like to you use your camera for better performance?
-            </label>
-            <div class="checkbox-wrapper-10">
-              <input
-                class="tgl tgl-flip"
-                id="cb5"
-                type="checkbox"
-                checked={consent}
-                onChange={handleConsentChange}
-              />
-              <label
-                class="tgl-btn"
-                data-tg-off="Nope"
-                data-tg-on="Yeah!"
-                for="cb5"
-              ></label>
-            </div>
+        <h1 className="form-title">Additional info</h1>
+        <div className="preferences">
+          <label>Response Tone</label>
+          <input
+          className="win10-thumb"
+            type="range"
+            min="1"
+            max="3"
+            value={
+              responseTone === "empathetic"
+                ? 1
+                : responseTone === "neutral"
+                ? 2
+                : 3
+            }
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              setResponseTone(
+                value === 1
+                  ? "empathetic"
+                  : value === 2
+                  ? "neutral"
+                  : "professional"
+              );
+            }}
+          />
+          <div className="tone-labels">
+            <span>Empathetic</span>
+            <span>Neutral</span>
+            <span>Professional</span>
           </div>
+        </div>
 
+        <div className="reminder-frequency">
+          <label>Conversation Reminders</label>
+          <input
+            type="range"
+            className="win10-thumb"
+            min="1"
+            max="3"
+            value={
+              reminderFrequency === "never"
+                ? 1
+                : reminderFrequency === "daily"
+                ? 2
+                : 3
+            }
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              setReminderFrequency(
+                value === 1 ? "never" : value === 2 ? "daily" : "weekly"
+              );
+            }}
+          />
+          <div className="reminder-labels">
+            <span>Never</span>
+            <span>Daily</span>
+            <span>Weekly</span>
+          </div>
+        </div>
+
+        {reminderFrequency === "daily" || reminderFrequency === "weekly" ? (
           <div>
-            <label className="question-label radio-label">Do you want to get notifications for conversations?</label>
-            <div class="horizontal-radio">
-              <div class="radio-wrapper-5">
-                <label for="example-5" class="forCircle">
+            {/* Reminder Type Radio Buttons */}
+            <div className="reminder-type">
+              <label>Select Reminder Type:</label>
+              <div className="radio-buttons">
+                <label>
                   <input
-                    id="example-5"
                     type="radio"
-                    name="radio-examples"
-                    value="daily"
-                    checked={notifications === "daily"}
-                    onChange={handleNotificationsChange}
+                    value="email"
+                    checked={selectedReminderType === "email"}
+                    onChange={handleReminderTypeSelection}
                   />
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                    </svg>
-                  </span>
+                  Email
                 </label>
-                <label for="example-5">daily</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="push"
+                    checked={selectedReminderType === "push"}
+                    onChange={handleReminderTypeSelection}
+                  />
+                  Push Notification
+                </label>
               </div>
+            </div>
 
-              <div class="radio-wrapper-5">
-                <label for="example-5" class="forCircle">
-                  <input
-                    id="example-5"
-                    type="radio"
-                    name="radio-examples"
-                    value="weekly"
-                    checked={notifications === "daily"}
-                    onChange={handleNotificationsChange}
-                  />
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                    </svg>
-                  </span>
-                </label>
-                <label for="example-5">weekly</label>
-              </div>
+            {/* Pick Time for Daily/Weekly Reminders */}
+            <div className="time-picker">
+              <label>Pick a Time:</label>
+              <input
+                className={`form-control`}
 
-              <div class="radio-wrapper-5">
-                <label for="example-5" class="forCircle">
-                  <input
-                    id="example-5"
-                    type="radio"
-                    name="radio-examples"
-                    value="never"
-                    checked={notifications === "daily"}
-                    onChange={handleNotificationsChange}
-                  />
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                    </svg>
-                  </span>
-                </label>
-                <label for="example-5">never</label>
-              </div>
+                type="time"
+                value={reminderTime}
+                onChange={(e) => setReminderTime(e.target.value)}
+              />
             </div>
           </div>
-          {(notifications === "weekly" || notifications === "daily") && (
-            <div>
-              <label className="question-label radio-label">How would you like to receive notifications?</label>
-              <div class="horizontal-radio">
-                <div class="radio-wrapper-5">
-                  <label for="example-5" class="forCircle">
-                    <input
-                      id="example-5"
-                      type="radio"
-                      name="notificationMethod"
-                      value="mail"
-                      checked={notifications === "daily"}
-                      onChange={handleNotificationsChange}
-                    />
-                    <span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5"
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                      >
-                        <circle
-                          data-name="ellipse"
-                          cx="8"
-                          cy="8"
-                          r="8"
-                        ></circle>
-                      </svg>
-                    </span>
-                  </label>
-                  <label for="example-5">Email</label>
-                </div>
+        ) : null}
 
-                <div class="radio-wrapper-5">
-                  <label for="example-5" class="forCircle">
-                    <input
-                      id="example-5"
-                      type="radio"
-                      name="notificationMethod"
-                      value="push"
-                      checked={notifications === "daily"}
-                      onChange={handleNotificationsChange}
-                    />
-                    <span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5"
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                      >
-                        <circle
-                          data-name="ellipse"
-                          cx="8"
-                          cy="8"
-                          r="8"
-                        ></circle>
-                      </svg>
-                    </span>
-                  </label>
-                  <label for="example-5">Push notification</label>
-                </div>
-              </div>
+        {reminderFrequency === "weekly" && (
+          <div className="week">
+            <label>Select Day:</label>
+            <div className="week-picker">
+              <select
+              
+                value={selectedDay}
+                onChange={handleDaySelection}
+                className={`form-control`}
+              >
+                <option value="">Select a day</option>
+                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                  <option key={day} value={day}>
+                    {day}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
+          </div>
+        )}
+      
+
         </div>
       </div>
       <div className="submit-container-signin">
-        <button type="submit" className="submit-btn button-66">
+        <button type="button" className="submit-btn button-66" onClick={handleSubmit}>
           Submit
         </button>
       </div>

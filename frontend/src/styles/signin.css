@@ -14,13 +14,13 @@
     display: flex;
 
     width: 80vw; /* Adjust width as necessary */
-    height: 60vh; /* Adjust height as necessary */
+    height: auto; /* Adjust height as necessary */
     border: 1px solid #ccc; /* Optional border */
     border-radius: 8px; /* Optional rounding */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional shadow */
   }
   
-  
+
   .sign-in-form {
     background-color: white;
     padding: 20px;
@@ -29,7 +29,7 @@
   
   .additional-info {
     background-color: lightgray;
-    padding: 20px;
+    padding: 40px;
     flex: 1; 
   }
   

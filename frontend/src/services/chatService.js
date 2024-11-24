@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use this URL for development
-const API_URL = "http://localhost:5000/api/v1";
+const API_URL = "http://localhost:5001/api/v1";
 
 const chatService = {
   // Sends the latest chat message along with the detected emotion, age, gender to the backend.

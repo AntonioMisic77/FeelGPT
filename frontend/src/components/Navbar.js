@@ -1,3 +1,5 @@
+// src/components/Navbar.js
+
 import React, { useState, useEffect } from "react";
 import "../styles/navbar.css";
 import { Link, useLocation } from "react-router-dom";
@@ -25,7 +27,6 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
   }, [isCameraEn]);
 
   useEffect(() => {
-    // Close the dropdown when clicking outside of it
     const handleClickOutside = (event) => {
       if (event.target.closest(".dropdown") === null) {
         setDropdownVisible(false);
@@ -37,13 +38,11 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
     };
   }, []);
 
-  // Toggle the dropdown visibility when the camera icon is clicked
   const toggleDropdown = (e) => {
-    e.preventDefault(); // Prevent default behavior of <details>
+    e.preventDefault();
     setDropdownVisible(!dropdownVisible);
   };
 
-  // Close the dropdown when an option is selected
   const handleOptionSelect = (option) => {
     if (option === "Toggle Camera") {
       toggleCamera();
@@ -54,7 +53,6 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
     setDropdownVisible(false);
   };
 
-  // For camera input when user chooses
   const toggleCamera = () => {
     setIsRecordingVideo((prev) => {
       const newState = !prev;
@@ -72,6 +70,10 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
     });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    window.location.href = "/";
+  };
 
   return (
     <nav className={`navbar ${darkMode ? "dark" : "light"}`}>
@@ -91,8 +93,8 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
             </label>
           </div>
 
-          {location.pathname !== "/" && (
-            <Link className="link" to="/">
+          {location.pathname === "/my-info" && (
+            <Link className="link" to="/chat">
               <button type="button" className="chat-button">
                 Chat
               </button>
@@ -111,7 +113,6 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
                 </a>
               </summary>
 
-              {/* Show dropdown only if it's visible */}
               {dropdownVisible && (
                 <ul>
                   <li>
@@ -138,19 +139,23 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
           )}
 
           <div>
-            <Link to="/my-info">
+            {location.pathname === "/my-info" ? (
               <img
-                src={
-                  location.pathname === "/my-info"
-                    ? "../images/logout.png"
-                    : "../images/user.png"
-                }
-                alt=""
-                className={
-                  location.pathname === "/my-info" ? "logout-icon" : "user-icon"
-                }
+                src="../images/logout.png"
+                alt="Logout"
+                className="logout-icon"
+                onClick={handleLogout}
+                style={{ cursor: "pointer" }}
               />
-            </Link>
+            ) : (
+              <Link to="/my-info">
+                <img
+                  src="../images/user.png"
+                  alt="User"
+                  className="user-icon"
+                />
+              </Link>
+            )}
           </div>
         </div>
       </div>
