@@ -72,7 +72,7 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    window.location.href = "/chat";
+    window.location.href = "/";
   };
 
   return (

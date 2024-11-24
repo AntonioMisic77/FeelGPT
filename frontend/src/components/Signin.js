@@ -34,7 +34,7 @@ const Signin = () => {
         email,
         password,
       });
-      window.location.href = "/login";
+      window.location.href = "/chat";
     } catch (err) {
       console.error("Signin error:", err);
     }

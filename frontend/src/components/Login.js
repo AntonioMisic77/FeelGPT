@@ -28,7 +28,7 @@ const Login = () => {
       localStorage.setItem("authToken", token);
 
       // Redirect to the dashboard or home page
-      window.location.href = "/dashboard"; // Change the path as needed
+      window.location.href = "/chat"; // Change the path as needed
     } catch (err) {
       console.error("Login error:", err);
       setError(
