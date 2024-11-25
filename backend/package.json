@@ -11,7 +11,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "db:migrate": "npx prisma migrate deploy",
-    "db:seed": "npx prisma db seed",
+    "seed": "ts-node prisma/seed.ts",
     "migration:create": "npx prisma migrate dev --create-only",
     "migration:auto": "npx prisma migrate dev",
     "migration:reset": "npx prisma migrate reset",

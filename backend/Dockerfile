@@ -16,6 +16,7 @@ COPY . .
 RUN npx prisma generate
 
 RUN npm run build
+RUN npm run seed
 
 # Prod Layer: Copy the built app and install only production dependencies
 FROM node:20-alpine AS production
