@@ -4,7 +4,7 @@
   "description": " Foodgram - A food advisory app that helps you make better food choices.",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node src/api/user/features/auth/auth.service.ts",
     "start:prod": "node dist/src/index.js",
     "dev": "nodemon -L",
     "build": "tsc && tsc-alias",
