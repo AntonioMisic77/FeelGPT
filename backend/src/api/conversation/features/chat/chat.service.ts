@@ -86,6 +86,8 @@ async (chatInfo: ChatInfo, chatHistory: ChatMessageDto[]) => {
             user_message
     ]);
 
+    console.log("Chat prompt: ", chatprompt);
+
     // Create a chain by piping the chat prompt template to the model
     const chain = chatprompt.pipe(model);
 
