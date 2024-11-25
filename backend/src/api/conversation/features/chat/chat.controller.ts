@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { generateLLMResponseLangchain } from "./chat.service";
+import { get } from "http";
 
 /**
  * Interface defining the structure of the request body.
@@ -10,6 +11,19 @@ interface ChatRequestBody {
   age: number;
   gender: number; // 1 = male, 0 = female
 }
+
+export interface ChatMessageDto {
+  messageType: string;
+  content: string;
+  emotionalState: string;
+  emotionsProbabilities: number[];
+  age: number;
+  gender: string;
+}
+
+
+const chatHistory : ChatMessageDto[] = [];
+
 
 let replyMessage = "";
 
@@ -22,7 +36,6 @@ export const sendMessage = async (
   req: Request<{}, {}, ChatRequestBody>,
   res: Response
 ) => {
-  // Extract message, emotion, age, and gender from the request body
   const { message, emotion, age, gender } = req.body;
 
   // Validate the request data
@@ -30,19 +43,33 @@ export const sendMessage = async (
     return res.status(400).json({ error: "Message and emotion are required." });
   }
 
-  // Log the received message, emotion, age, and gender
+  // Log the received data
   console.log("Received message:", message);
   console.log("Detected emotion:", emotion);
   console.log("Received age:", age);
   console.log("Detected gender:", gender);
 
-  // Define the names of the emotions
-  const emotionsName = ["anger", "disgust", "fear", "happiness", "sadness", "surprise", "neutral"];
+  const emotionsName = [
+    "anger",
+    "disgust",
+    "fear",
+    "happiness",
+    "sadness",
+    "surprise",
+    "neutral",
+  ];
 
   // Map the received emotions to an array of objects with name and probability
-  const emotions = emotion.map((e, i) => ({ name: emotionsName[i], probability: +e || 0 }));
+  const emotions = emotion.map((e, i) => ({
+    name: emotionsName[i],
+    probability: +e || 0,
+  }));
 
-  // Create a chatInfo object with the message, age, emotions, and gender
+  // Get the emotion with the highest probability
+  const highest_probability_emotion = emotions.reduce((prev, current) =>
+    prev.probability > current.probability ? prev : current
+  );
+
   const chatInfo = {
     message: message,
     age: age,
@@ -50,13 +77,41 @@ export const sendMessage = async (
     gender: gender == 0 ? "female" : "male"
   }
 
+  // TODO - Replace the dummy history with the actual chat history from mongodb
+  const dummy_history = chatHistory;
+
   let llmResponse;
   try {
     // Generate a response from the LLM using the chatInfo object
-    llmResponse = await generateLLMResponseLangchain(chatInfo);
+    llmResponse = await generateLLMResponseLangchain(chatInfo,dummy_history);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
+
+  if (!llmResponse) {
+    llmResponse = "I can't help you with that.";
+  }
+
+  // TODO
+  // store the chat history in mongodb not in memory
+
+  chatHistory.push({
+      messageType: "user",
+      content: message,
+      emotionalState: highest_probability_emotion.name,
+      emotionsProbabilities: emotions.map(e => e.probability),
+      age: age,
+      gender: gender == 0 ? "female" : "male"
+  });
+
+  chatHistory.push({
+      messageType: "assistant",
+      content: llmResponse.toString(),
+      emotionalState: highest_probability_emotion.name,
+      emotionsProbabilities: emotions.map(e => e.probability),
+      age: age,
+      gender: gender == 0 ? "female" : "male"
+  });
   
   // Send a success reply to the frontend with the LLM response
   res
@@ -78,3 +133,4 @@ export const getReply = (req: Request, res: Response) => {
   // Send the reply message to the frontend
   res.status(200).json({ status: "success", reply: replyMessage });
 };
+
