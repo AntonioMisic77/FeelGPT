@@ -72,7 +72,7 @@ async (chatInfo: ChatInfo, chatHistory: ChatMessageDto[]) => {
     const model = new ChatOpenAI({
         model: "azureai",
         apiKey: apiKey,
-        temperature: 0.8,
+        temperature: 0.2,
     },{ baseURL : phiOIendpoint });
 
     // Create a system message prompt template from the chat system prompt
@@ -145,7 +145,7 @@ const customizeHistoryMessage = (message: ChatMessageDto) => {
     let content = message.content;
 
     if(message.messageType == "user"){
-       content = chatUserHistoryPrompt.replace("{strongest_emotion}", message.emotionalState);
+       content = chatUserHistoryPrompt.replace("{strongest_emotion}", message.emotionalState || "neutral");
     } 
 
     return ChatMessagePromptTemplate.fromTemplate(content, message.messageType);

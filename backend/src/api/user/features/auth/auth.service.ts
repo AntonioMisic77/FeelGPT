@@ -11,6 +11,11 @@ const generateToken = (userId: string): string => {
     return jwt.sign({ userId }, SECRET_KEY, { expiresIn: "24h" });
 };
 
+export const getUserIdFromToken = (token: string): string => {
+    const decoded = jwt.verify(token, SECRET_KEY) as { userId: string };
+    return decoded.userId;
+}
+
 // Service to register a user
 export const registerUser = async (
     email: string,
