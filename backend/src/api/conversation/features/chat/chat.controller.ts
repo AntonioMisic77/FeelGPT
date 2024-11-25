@@ -92,9 +92,6 @@ export const sendMessage = async (
     llmResponse = "I can't help you with that.";
   }
 
-  // Find the emotion with the highest probability
-  const highest_probability_emotion = emotions.reduce((prev, current) => (prev.probability > current.probability) ? prev : current);
-
   // TODO
   // store the chat history in mongodb not in memory
 
