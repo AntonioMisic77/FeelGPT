@@ -65,10 +65,19 @@ export const sendMessage = async (
     probability: +e || 0,
   }));
 
+  
   // Get the emotion with the highest probability
-  const highest_probability_emotion = emotions.reduce((prev, current) =>
-    prev.probability > current.probability ? prev : current
-  );
+  let highest_probability_emotion = null;
+
+  if (emotions.length > 0) {
+    highest_probability_emotion = emotions.reduce((prev, current) =>
+      prev.probability > current.probability ? prev : current
+    );
+  } else {
+    // Handle the case when there are no emotions
+    console.log("No emotions found");
+    highest_probability_emotion = { name: "neutral", probability: 1 };
+  }
 
   const chatInfo = {
     message: message,

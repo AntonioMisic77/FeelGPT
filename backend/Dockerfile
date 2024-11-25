@@ -16,7 +16,6 @@ COPY . .
 RUN npx prisma generate
 
 RUN npm run build
-RUN npm run seed
 
 # Prod Layer: Copy the built app and install only production dependencies
 FROM node:20-alpine AS production
@@ -34,6 +33,8 @@ COPY .env /app/.env
 
 
 RUN npm install --omit=dev --ignore-scripts
+RUN npm uninstall bcrypt
+RUN npm install bcrypt
 
 EXPOSE 5000
 
