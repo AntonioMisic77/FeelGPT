@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { prisma } from "@/db";
 
 const SECRET_KEY = "your_secret_key"; // Replace with a strong secret key
 const RESET_TOKEN_EXPIRY = "15m";
