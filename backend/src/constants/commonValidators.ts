@@ -1,12 +1,6 @@
 import bcrypt from "bcrypt";
 import { z } from "zod";
 
-export const CNIC_VALIDATOR = z
-  .string()
-  .trim()
-  .min(1)
-  .regex(/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/);
-
 export const NAME_VALIDATOR = z.string().trim().min(1);
 
 export const PHONE_NUMBER_VALIDATOR = z
@@ -32,3 +26,4 @@ export const ID_VALIDATOR = z.string().trim().uuid();
 export const DESCRIPTION_VALIDATOR = z.string().trim().min(0);
 export const PRICE_VALIDATOR = z.number().min(0);
 export const IMAGE_URL_VALIDATOR = z.string().trim().url();
+export const DATETIME_VALIDATOR = z.string().trim().datetime();

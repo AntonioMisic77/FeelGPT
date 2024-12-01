@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { registerUser, loginUser } from "./auth.service";
+import { createEndpoint, getUserInfo } from "@/utils";
+import { prisma } from "@/db";
+import { UpdateUserInfoValidator } from "./user.validator";
 
 // Register Endpoint
 export const register = async (req: Request, res: Response) => {
@@ -24,3 +27,24 @@ export const login = async (req: Request, res: Response) => {
     res.status(401).json({ error: error.message });
   }
 };
+
+export const updateUserInfo = createEndpoint(
+  UpdateUserInfoValidator,
+  async (req, res) => {
+    const { user } = getUserInfo(req);
+
+    const { ...updateUserInfo } = req.body;
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        ...updateUserInfo,
+      },
+    });
+    const { passwordHash: notUsed, ...restUser } = updatedUser;
+    res.json({
+      result: restUser,
+    });
+  }
+);
