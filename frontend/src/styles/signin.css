@@ -18,7 +18,7 @@
 .sign-in-container {
   display: flex;
 
-  width: 80vw;
+  width: 85%;
   /* Adjust width as necessary */
   height: auto;
   /* Adjust height as necessary */
@@ -39,7 +39,7 @@
 .sign-in-form {
   background-color: white;
   padding: 20px;
-  flex: 1;
+  flex: 2;
 }
 
 .additional-info {
@@ -238,10 +238,10 @@ input::placeholder {
   /* Use flexbox for layout */
   justify-content: flex-end;
   /* Align items to the right */
-  width: 80vw;
+  width: 90%;
   /* Adjust width as necessary */
   /* Ensure container takes up the full width */
-  padding-top: 10px;
+  padding-top: 50px;
   /* Add some space above the button */
 }
 

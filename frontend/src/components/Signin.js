@@ -20,14 +20,9 @@ const Signin = () => {
   const [selectedDay, setSelectedDay] = useState(""); // Single day selection
   const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
 
-  // State variables for loading, error, and validation
+  // State variables for loading, error
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [formErrors, setFormErrors] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
 
   // Handlers for form fields
   const handleConsentChange = () => {
@@ -58,29 +53,9 @@ const Signin = () => {
     setSelectedReminderType(e.target.value); // Update selected reminder type
   };
 
-  // Form validation
-  const validateForm = () => {
-    const errors = {};
-    if (!username) errors.username = "Username is required";
-    if (!email) {
-      errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      errors.email = "Email address is invalid";
-    }
-    if (!password) errors.password = "Password is required";
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
   // Updated handleSubmit to include validation
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Reset errors before validating
-    setFormErrors({});
-    if (!validateForm()) {
-      return; // Stop form submission if validation fails
-    }
 
     // Reset the error state before sending the request
     setError(null);
@@ -135,7 +110,7 @@ const Signin = () => {
       <div className="sign-in-container">
         <div className="sign-in-form">
           <h1 className="form-title">Feel GPT Sign In Form</h1>
-          <form>
+          <form onSubmit={handleSubmit}>
             {/* Username Input Field */}
             <div>
               <label className="signin-label">Username</label>
@@ -147,7 +122,6 @@ const Signin = () => {
                 onChange={handleUsernameChange}
                 required
               />
-              {formErrors.username && <div className="error-message">{formErrors.username}</div>}
             </div>
 
             {/* Email Input Field */}
@@ -161,7 +135,6 @@ const Signin = () => {
                 onChange={handleEmailChange}
                 required
               />
-              {formErrors.email && <div className="error-message">{formErrors.email}</div>}
             </div>
 
             {/* Password Input Field */}
@@ -175,7 +148,13 @@ const Signin = () => {
                 onChange={handlePasswordChange}
                 required
               />
-              {formErrors.password && <div className="error-message">{formErrors.password}</div>}
+            </div>
+
+            {/* Submit Button */}
+            <div className="submit-container-signin">
+              <button type="submit" className="submit-btn button-66">
+                Submit
+              </button>
             </div>
           </form>
         </div>
@@ -318,13 +297,7 @@ const Signin = () => {
       {/* Loading State */}
       {loading ? (
         <div className="loading-spinner">Loading...</div>
-      ) : (
-        <div className="submit-container-signin">
-          <button type="button" className="submit-btn button-66" onClick={handleSubmit}>
-            Submit
-          </button>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 };
