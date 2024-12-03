@@ -10,10 +10,12 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState(""); // Add state for password
   const [error, setError] = useState(null); // Optional: Add state for error messages
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null); // Reset any previous errors
+    setLoading(true); // Set loading state
 
     try {
       const response = await axiosInstance.post("/user/auth/login", {
@@ -24,16 +26,38 @@ const Login = () => {
       // Assuming the backend returns a token in response.data.token
       const { token } = response.data;
 
+      if (!token) {
+        throw new Error('No authentication token received.');
+      }
+
       // Store the token in localStorage
       localStorage.setItem("authToken", token);
 
       // Redirect to the dashboard or home page
-      window.location.href = "/chat"; // Change the path as needed
+      window.location.replace("/chat"); // Prevent going back to the login page
+
     } catch (err) {
       console.error("Login error:", err);
-      setError(
-        err.response?.data?.message || "An error occurred during login."
-      );
+
+      // Improved error handling: check different error types
+      let errorMessage = "An error occurred during login.";
+      if (err.response) {
+        // Backend error
+        errorMessage = err.response?.data?.message || errorMessage;
+        if (err.response.status === 401) {
+          errorMessage = "Invalid email or password.";
+        }
+      } else if (err.request) {
+        // No response was received (e.g., network issues)
+        errorMessage = "Network error. Please try again later.";
+      } else {
+        // Other errors (e.g., unexpected client-side error)
+        errorMessage = err.message || errorMessage;
+      }
+
+      setError(errorMessage);
+    } finally {
+      setLoading(false); // Reset loading state after the request
     }
   };
 
@@ -83,8 +107,12 @@ const Login = () => {
               </div>
               {error && <p className="error-message">{error}</p>} {/* Optional: Display error */}
               <div className="submit-container">
-                <button type="submit" className="submit-btn button-66">
-                  Log in
+                <button
+                  type="submit"
+                  className="submit-btn button-66"
+                  disabled={loading} // Disable button when loading
+                >
+                  {loading ? "Logging in..." : "Log in"} {/* Show loading text */}
                 </button>
               </div>
             </form>
