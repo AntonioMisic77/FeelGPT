@@ -6,12 +6,21 @@ import "../styles/signin.css";
 import axiosInstance from "../api/axiosInstance";
 
 const Signin = () => {
+  // Existing state variables
   const [consent, setConsent] = useState(false);
   const [notifications, setNotifications] = useState("daily");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
+  // New state variables for additional info
+  const [responseTone, setResponseTone] = useState("neutral");
+  const [reminderFrequency, setReminderFrequency] = useState("never");
+  const [reminderTime, setReminderTime] = useState("");
+  const [selectedDay, setSelectedDay] = useState(""); // Single day selection
+  const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
+
+  // Handlers for form fields
   const handleConsentChange = () => {
     setConsent(!consent);
   };
@@ -32,13 +41,28 @@ const Signin = () => {
     setUsername(e.target.value);
   };
 
+  const handleDaySelection = (e) => {
+    setSelectedDay(e.target.value); // Update to a single selected day
+  };
+
+  const handleReminderTypeSelection = (e) => {
+    setSelectedReminderType(e.target.value); // Update selected reminder type
+  };
+
+  // Updated handleSubmit to include additional fields
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Include all required fields in the POST request
       const response = await axiosInstance.post("/user/auth/register", {
         username,
         email,
-        password
+        password,
+        responseTone,
+        reminderFrequency,
+        reminderType: selectedReminderType,
+        reminderTime,
+        selectedDay, // Include if reminderFrequency is "weekly"
       });
 
       const { token } = response.data;
@@ -51,36 +75,13 @@ const Signin = () => {
     }
   };
 
-
-  const [responseTone, setResponseTone] = useState("neutral");
-  const [reminderFrequency, setReminderFrequency] = useState("never");
-  const [reminderTime, setReminderTime] = useState("");
-  const [selectedDay, setSelectedDay] = useState(""); // Single day selection
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(""); // Language selection
-  const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or radio)
-
-  const handleDaySelection = (e) => {
-    setSelectedDay(e.target.value); // Update to a single selected day
-  };
-
-  const handleLanguageSelection = (e) => {
-    setSelectedLanguage(e.target.value); // Update selected language
-  };
-
-  const handleReminderTypeSelection = (e) => {
-    setSelectedReminderType(e.target.value); // Update selected reminder type
-  };
-
-
-
-
   return (
     <div className="body-signin">
       <div className="sign-in-container">
         <div className="sign-in-form">
           <h1 className="form-title">Feel GPT Sign In Form</h1>
           <form>
+            {/* Username Input Field */}
             <div>
               <label className="signin-label">Username</label>
               <input
@@ -92,6 +93,8 @@ const Signin = () => {
                 required
               />
             </div>
+
+            {/* Email Input Field */}
             <div>
               <label className="signin-label">Email</label>
               <input
@@ -103,6 +106,8 @@ const Signin = () => {
                 required
               />
             </div>
+
+            {/* Password Input Field */}
             <div>
               <label className="signin-label">Password</label>
               <input
@@ -118,8 +123,9 @@ const Signin = () => {
         </div>
 
         <div className="additional-info">
-          <h1 className="form-title">Additional info</h1>
+          <h1 className="form-title">Additional Info</h1>
           <div className="preferences">
+            {/* Response Tone Slider */}
             <label>Response Tone</label>
             <input
               className="win10-thumb"
@@ -151,6 +157,7 @@ const Signin = () => {
             </div>
           </div>
 
+          {/* Conversation Reminders Slider */}
           <div className="reminder-frequency">
             <label>Conversation Reminders</label>
             <input
@@ -179,7 +186,8 @@ const Signin = () => {
             </div>
           </div>
 
-          {reminderFrequency === "daily" || reminderFrequency === "weekly" ? (
+          {/* Conditional Rendering Based on Reminder Frequency */}
+          {(reminderFrequency === "daily" || reminderFrequency === "weekly") && (
             <div>
               {/* Reminder Type Radio Buttons */}
               <div className="reminder-type">
@@ -210,25 +218,24 @@ const Signin = () => {
               <div className="time-picker">
                 <label>Pick a Time:</label>
                 <input
-                  className={`form-control`}
-
+                  className="form-control"
                   type="time"
                   value={reminderTime}
                   onChange={(e) => setReminderTime(e.target.value)}
                 />
               </div>
             </div>
-          ) : null}
+          )}
 
+          {/* Conditional Rendering for Weekly Reminders */}
           {reminderFrequency === "weekly" && (
             <div className="week">
               <label>Select Day:</label>
               <div className="week-picker">
                 <select
-
                   value={selectedDay}
                   onChange={handleDaySelection}
-                  className={`form-control`}
+                  className="form-control"
                 >
                   <option value="">Select a day</option>
                   {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
@@ -240,8 +247,6 @@ const Signin = () => {
               </div>
             </div>
           )}
-
-
         </div>
       </div>
       <div className="submit-container-signin">
