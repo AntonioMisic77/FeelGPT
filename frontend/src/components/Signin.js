@@ -82,7 +82,7 @@ const Signin = () => {
       localStorage.setItem("authToken", token);
 
       // Redirect after successful registration
-      window.location.href = "/chat";
+      window.location.replace("/chat");
     } catch (err) {
       setLoading(false); // Stop loading state
 
