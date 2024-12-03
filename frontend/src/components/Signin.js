@@ -6,7 +6,7 @@ import "../styles/signin.css";
 import axiosInstance from "../api/axiosInstance";
 
 const Signin = () => {
-  // Existing state variables
+  // State variables
   const [consent, setConsent] = useState(false);
   const [notifications, setNotifications] = useState("daily");
   const [email, setEmail] = useState("");
@@ -19,6 +19,15 @@ const Signin = () => {
   const [reminderTime, setReminderTime] = useState("");
   const [selectedDay, setSelectedDay] = useState(""); // Single day selection
   const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
+
+  // State variables for loading, error, and validation
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
   // Handlers for form fields
   const handleConsentChange = () => {
@@ -49,10 +58,37 @@ const Signin = () => {
     setSelectedReminderType(e.target.value); // Update selected reminder type
   };
 
-  // Updated handleSubmit to include additional fields
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    if (!username) errors.username = "Username is required";
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Email address is invalid";
+    }
+    if (!password) errors.password = "Password is required";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Updated handleSubmit to include validation
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Reset errors before validating
+    setFormErrors({});
+    if (!validateForm()) {
+      return; // Stop form submission if validation fails
+    }
+
+    // Reset the error state before sending the request
+    setError(null);
+
     try {
+      // Set loading state to true
+      setLoading(true);
+
       // Include all required fields in the POST request
       const response = await axiosInstance.post("/user/auth/register", {
         username,
@@ -67,11 +103,30 @@ const Signin = () => {
 
       const { token } = response.data;
 
+      // Store the auth token and redirect the user
       localStorage.setItem("authToken", token);
 
+      // Redirect after successful registration
       window.location.href = "/chat";
     } catch (err) {
-      console.error("Signin error:", err);
+      setLoading(false); // Stop loading state
+
+      // Log and handle different error cases
+      if (err.response) {
+        // Server responded with a status other than 200 range
+        console.error("Response error:", err.response);
+        setError(err.response.data.message || "An error occurred. Please try again.");
+      } else if (err.request) {
+        // No response was received from the server
+        console.error("Request error:", err.request);
+        setError("Network error. Please check your connection.");
+      } else {
+        // Something else went wrong
+        console.error("Error:", err.message);
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false); // Stop loading regardless of success or failure
     }
   };
 
@@ -92,6 +147,7 @@ const Signin = () => {
                 onChange={handleUsernameChange}
                 required
               />
+              {formErrors.username && <div className="error-message">{formErrors.username}</div>}
             </div>
 
             {/* Email Input Field */}
@@ -105,6 +161,7 @@ const Signin = () => {
                 onChange={handleEmailChange}
                 required
               />
+              {formErrors.email && <div className="error-message">{formErrors.email}</div>}
             </div>
 
             {/* Password Input Field */}
@@ -118,6 +175,7 @@ const Signin = () => {
                 onChange={handlePasswordChange}
                 required
               />
+              {formErrors.password && <div className="error-message">{formErrors.password}</div>}
             </div>
           </form>
         </div>
@@ -249,11 +307,24 @@ const Signin = () => {
           )}
         </div>
       </div>
-      <div className="submit-container-signin">
-        <button type="button" className="submit-btn button-66" onClick={handleSubmit}>
-          Submit
-        </button>
-      </div>
+
+      {/* Error Handling Display */}
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading ? (
+        <div className="loading-spinner">Loading...</div>
+      ) : (
+        <div className="submit-container-signin">
+          <button type="button" className="submit-btn button-66" onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
+      )}
     </div>
   );
 };
