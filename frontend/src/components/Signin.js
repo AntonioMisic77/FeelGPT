@@ -1,20 +1,30 @@
-import React, { useState } from "react";
+// src/components/Signin.js
 
+import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/signin.css";
+import axiosInstance from "../api/axiosInstance";
 
-/* PROBLEMS and TASK
-   -> not connected
-   -> will have to add more info
-   -> make additional part scrollable ?? 
-   -> fix radio button -> when never choosen, dont show next part
-                       -> "daily" is marked when not hovered??
-   -> why is this page scrollable?
-*/
 const Signin = () => {
+  // State variables
   const [consent, setConsent] = useState(false);
-  const [notifications, setNotifications] = useState("daily"); // Options: 'daily', 'weekly'
+  const [notifications, setNotifications] = useState("daily");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
 
+  // New state variables for additional info
+  const [responseTone, setResponseTone] = useState("neutral");
+  const [reminderFrequency, setReminderFrequency] = useState("never");
+  const [reminderTime, setReminderTime] = useState("");
+  const [selectedDay, setSelectedDay] = useState(""); // Single day selection
+  const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
+
+  // State variables for loading, error
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Handlers for form fields
   const handleConsentChange = () => {
     setConsent(!consent);
   };
@@ -23,198 +33,271 @@ const Signin = () => {
     setNotifications(e.target.value);
   };
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleDaySelection = (e) => {
+    setSelectedDay(e.target.value); // Update to a single selected day
+  };
+
+  const handleReminderTypeSelection = (e) => {
+    setSelectedReminderType(e.target.value); // Update selected reminder type
+  };
+
+  // Updated handleSubmit to include validation
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Reset the error state before sending the request
+    setError(null);
+
+    try {
+      // Set loading state to true
+      setLoading(true);
+
+      // Include all required fields in the POST request
+      const response = await axiosInstance.post("/user/auth/register", {
+        username,
+        email,
+        password,
+        responseTone,
+        reminderFrequency,
+        reminderType: selectedReminderType,
+        reminderTime,
+        selectedDay, // Include if reminderFrequency is "weekly"
+      });
+
+      const { token } = response.data;
+
+      // Store the auth token and redirect the user
+      localStorage.setItem("authToken", token);
+
+      // Redirect after successful registration
+      window.location.replace("/chat");
+    } catch (err) {
+      setLoading(false); // Stop loading state
+
+      // Log and handle different error cases
+      if (err.response) {
+        // Server responded with a status other than 200 range
+        console.error("Response error:", err.response);
+        setError(err.response.data.message || "An error occurred. Please try again.");
+      } else if (err.request) {
+        // No response was received from the server
+        console.error("Request error:", err.request);
+        setError("Network error. Please check your connection.");
+      } else {
+        // Something else went wrong
+        console.error("Error:", err.message);
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false); // Stop loading regardless of success or failure
+    }
+  };
+
   return (
     <div className="body-signin">
       <div className="sign-in-container">
         <div className="sign-in-form">
           <h1 className="form-title">Feel GPT Sign In Form</h1>
-          <form>
+          <form onSubmit={handleSubmit}>
+            {/* Username Input Field */}
             <div>
-              <label className="signin-label">Email</label>
-              <input className="signin-input" type="email" placeholder="Enter your email" required />
-            </div>
-            <div>
-              <label className="signin-label" >Password</label>
+              <label className="signin-label">Username</label>
               <input
-              className="signin-input"
-                type="password"
-                placeholder="Enter your password"
+                className="signin-input"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={handleUsernameChange}
                 required
               />
+            </div>
+
+            {/* Email Input Field */}
+            <div>
+              <label className="signin-label">Email</label>
+              <input
+                className="signin-input"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={handleEmailChange}
+                required
+              />
+            </div>
+
+            {/* Password Input Field */}
+            <div>
+              <label className="signin-label">Password</label>
+              <input
+                className="signin-input"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="submit-container-signin">
+              <button type="submit" className="submit-btn button-66">
+                Submit
+              </button>
             </div>
           </form>
         </div>
 
         <div className="additional-info">
-          <h2 className="info-title">Additional Info</h2>
-          <div className="consent-container">
-            <label className="question-label">
-              Would you like to you use your camera for better performance?
-            </label>
-            <div class="checkbox-wrapper-10">
-              <input
-                class="tgl tgl-flip"
-                id="cb5"
-                type="checkbox"
-                checked={consent}
-                onChange={handleConsentChange}
-              />
-              <label
-                class="tgl-btn"
-                data-tg-off="Nope"
-                data-tg-on="Yeah!"
-                for="cb5"
-              ></label>
+          <h1 className="form-title">Additional Info</h1>
+          <div className="preferences">
+            {/* Response Tone Slider */}
+            <label>Response Tone</label>
+            <input
+              className="win10-thumb"
+              type="range"
+              min="1"
+              max="3"
+              value={
+                responseTone === "empathetic"
+                  ? 1
+                  : responseTone === "neutral"
+                    ? 2
+                    : 3
+              }
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                setResponseTone(
+                  value === 1
+                    ? "empathetic"
+                    : value === 2
+                      ? "neutral"
+                      : "professional"
+                );
+              }}
+            />
+            <div className="tone-labels">
+              <span>Empathetic</span>
+              <span>Neutral</span>
+              <span>Professional</span>
             </div>
           </div>
 
-          <div>
-            <label className="question-label radio-label">Do you want to get notifications for conversations?</label>
-            <div class="horizontal-radio">
-              <div class="radio-wrapper-5">
-                <label for="example-5" class="forCircle">
-                  <input
-                    id="example-5"
-                    type="radio"
-                    name="radio-examples"
-                    value="daily"
-                    checked={notifications === "daily"}
-                    onChange={handleNotificationsChange}
-                  />
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                    </svg>
-                  </span>
-                </label>
-                <label for="example-5">daily</label>
-              </div>
-
-              <div class="radio-wrapper-5">
-                <label for="example-5" class="forCircle">
-                  <input
-                    id="example-5"
-                    type="radio"
-                    name="radio-examples"
-                    value="weekly"
-                    checked={notifications === "daily"}
-                    onChange={handleNotificationsChange}
-                  />
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                    </svg>
-                  </span>
-                </label>
-                <label for="example-5">weekly</label>
-              </div>
-
-              <div class="radio-wrapper-5">
-                <label for="example-5" class="forCircle">
-                  <input
-                    id="example-5"
-                    type="radio"
-                    name="radio-examples"
-                    value="never"
-                    checked={notifications === "daily"}
-                    onChange={handleNotificationsChange}
-                  />
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                    </svg>
-                  </span>
-                </label>
-                <label for="example-5">never</label>
-              </div>
+          {/* Conversation Reminders Slider */}
+          <div className="reminder-frequency">
+            <label>Conversation Reminders</label>
+            <input
+              type="range"
+              className="win10-thumb"
+              min="1"
+              max="3"
+              value={
+                reminderFrequency === "never"
+                  ? 1
+                  : reminderFrequency === "daily"
+                    ? 2
+                    : 3
+              }
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                setReminderFrequency(
+                  value === 1 ? "never" : value === 2 ? "daily" : "weekly"
+                );
+              }}
+            />
+            <div className="reminder-labels">
+              <span>Never</span>
+              <span>Daily</span>
+              <span>Weekly</span>
             </div>
           </div>
-          {(notifications === "weekly" || notifications === "daily") && (
+
+          {/* Conditional Rendering Based on Reminder Frequency */}
+          {(reminderFrequency === "daily" || reminderFrequency === "weekly") && (
             <div>
-              <label className="question-label radio-label">How would you like to receive notifications?</label>
-              <div class="horizontal-radio">
-                <div class="radio-wrapper-5">
-                  <label for="example-5" class="forCircle">
+              {/* Reminder Type Radio Buttons */}
+              <div className="reminder-type">
+                <label>Select Reminder Type:</label>
+                <div className="radio-buttons">
+                  <label>
                     <input
-                      id="example-5"
                       type="radio"
-                      name="notificationMethod"
-                      value="mail"
-                      checked={notifications === "daily"}
-                      onChange={handleNotificationsChange}
+                      value="email"
+                      checked={selectedReminderType === "email"}
+                      onChange={handleReminderTypeSelection}
                     />
-                    <span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5"
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                      >
-                        <circle
-                          data-name="ellipse"
-                          cx="8"
-                          cy="8"
-                          r="8"
-                        ></circle>
-                      </svg>
-                    </span>
+                    Email
                   </label>
-                  <label for="example-5">Email</label>
-                </div>
-
-                <div class="radio-wrapper-5">
-                  <label for="example-5" class="forCircle">
+                  <label>
                     <input
-                      id="example-5"
                       type="radio"
-                      name="notificationMethod"
                       value="push"
-                      checked={notifications === "daily"}
-                      onChange={handleNotificationsChange}
+                      checked={selectedReminderType === "push"}
+                      onChange={handleReminderTypeSelection}
                     />
-                    <span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5"
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                      >
-                        <circle
-                          data-name="ellipse"
-                          cx="8"
-                          cy="8"
-                          r="8"
-                        ></circle>
-                      </svg>
-                    </span>
+                    Push Notification
                   </label>
-                  <label for="example-5">Push notification</label>
                 </div>
+              </div>
+
+              {/* Pick Time for Daily/Weekly Reminders */}
+              <div className="time-picker">
+                <label>Pick a Time:</label>
+                <input
+                  className="form-control"
+                  type="time"
+                  value={reminderTime}
+                  onChange={(e) => setReminderTime(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Conditional Rendering for Weekly Reminders */}
+          {reminderFrequency === "weekly" && (
+            <div className="week">
+              <label>Select Day:</label>
+              <div className="week-picker">
+                <select
+                  value={selectedDay}
+                  onChange={handleDaySelection}
+                  className="form-control"
+                >
+                  <option value="">Select a day</option>
+                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           )}
         </div>
       </div>
-      <div className="submit-container-signin">
-        <button type="submit" className="submit-btn button-66">
-          Submit
-        </button>
-      </div>
+
+      {/* Error Handling Display */}
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading ? (
+        <div className="loading-spinner">Loading...</div>
+      ) : null}
     </div>
   );
 };

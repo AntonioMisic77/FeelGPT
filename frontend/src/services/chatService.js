@@ -1,7 +1,4 @@
-import axios from "axios";
-
-// Use this URL for development
-const API_URL = "http://localhost:5000/api/v1";
+import axiosInstance from "../api/axiosInstance";
 
 const chatService = {
   // Sends the latest chat message along with the detected emotion, age, gender to the backend.
@@ -10,8 +7,8 @@ const chatService = {
       console.log("Sending chat data: ", chatData);
 
       // Send an HTTP POST request to the backend with the chat data
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL || API_URL}/conversation/chat/send`,
+      const response = await axiosInstance.post(
+        "/conversation/chat/send",
         chatData
       );
 
@@ -26,8 +23,8 @@ const chatService = {
   // method to get reply from backend
   async getReply() {
     try {
-      const response = await axios.get(
-        `${process.env.BACKEND_URL || API_URL}/reply`
+      const response = await axiosInstance.get(
+        "/reply"
       );
       return response.data.reply;
     } catch (error) {

@@ -195,7 +195,7 @@ const InfoForm = (darkMode) => {
                     checked={selectedReminderType === "push"}
                     onChange={handleReminderTypeSelection}
                   />
-                  Radio
+                  Push Notification
                 </label>
               </div>
             </div>

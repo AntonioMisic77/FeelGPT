@@ -33,6 +33,8 @@ COPY .env /app/.env
 
 
 RUN npm install --omit=dev --ignore-scripts
+RUN npm uninstall bcrypt
+RUN npm install bcrypt
 
 EXPOSE 5000
 
