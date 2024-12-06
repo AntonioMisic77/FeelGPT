@@ -6,11 +6,13 @@ import { UpdateUserInfoValidator } from "./user.validator";
 
 // Register Endpoint
 export const register = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, notificationFrequency, 
+    notificationMode, notificationTime, responseTone } = req.body;
   const profileImage = req.file ? req.file.buffer.toString("base64") : undefined;
 
   try {
-    const result = await registerUser(email, password, username, profileImage);
+    const result = await registerUser(email, password, username, profileImage, notificationFrequency, 
+      notificationMode, notificationTime, responseTone);
     res.status(201).json(result);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
