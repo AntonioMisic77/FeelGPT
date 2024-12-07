@@ -26,9 +26,9 @@ const App = () => {
 
           <Route path="/my-info"
             element={
-              // <AuthGuard>
-              <MyInfo />
-              // </AuthGuard>
+              <AuthGuard>
+                <MyInfo />
+              </AuthGuard>
             }
           />
 
