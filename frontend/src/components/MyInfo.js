@@ -1,3 +1,5 @@
+// src/pages/MyInfo.js
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import History from "../components/History";
 import Graph from "../components/Graph";
@@ -6,8 +8,6 @@ import InfoForm from "../components/InfoForm";
 import "../styles/chat.css";
 import "../styles/myinfo.css";
 import "../styles/darkMode.css";
-
-import React, { useState, useEffect } from "react";
 
 const MyInfo = () => {
   const [cameraConsent, setCameraConsent] = useState(true);
@@ -46,7 +46,7 @@ const MyInfo = () => {
     <div className="app-container">
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className={`info-page-container ${darkMode ? "dark" : "light"}`}>
-        <div className={`info-container ${darkMode ? "dark" : "light"}` }>
+        <div className={`info-container ${darkMode ? "dark" : "light"}`}>
           <img
             src="https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
             alt="User"
@@ -58,14 +58,13 @@ const MyInfo = () => {
             <h3 className="section-title">Conversation Reminders</h3>
             <hr className="divider" />
             {/* Camera Settings */}
-            <p>How often: daily</p>
-            <p> When: 12:00</p>
-            <p> How: email</p>
+            <p>How often: {notifications}</p>
+            <p>When: 12:00</p>
+            <p>How: {notificationMethod}</p>
             <h3 className="section-title">Settings</h3>
             <hr className="divider" />
-            <p> Language: English</p>
-            <p> Respose tone: empathic</p>
-            
+            <p>Language: {language === "EN" ? "English" : "French"}</p>
+            <p>Response tone: empathic</p>
 
             <div className="button-right">
               <button className="button-66-smaller manage" onClick={handleOpenOverlay}>
@@ -78,16 +77,15 @@ const MyInfo = () => {
         {/* Overlay Form */}
         {showOverlay && (
           <div className="overlay">
-            <div className={`overlay-content ${darkMode ? "dark" : "light"}` }>
+            <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
               <h3>Update settings</h3>
-              <InfoForm darkMode={darkMode}/>
+              <InfoForm darkMode={darkMode} />
               <div className="update-buttons">
-              <button onClick={handleSaveChanges}
-              className="summary-button">Save Changes</button>
-              <button 
-              className="summary-button"
-              onClick={() => setShowOverlay(false)}>Close</button>
-            </div>
+                <button onClick={handleSaveChanges} className="summary-button">Save Changes</button>
+                <button
+                  className="summary-button"
+                  onClick={() => setShowOverlay(false)}>Close</button>
+              </div>
             </div>
           </div>
         )}
