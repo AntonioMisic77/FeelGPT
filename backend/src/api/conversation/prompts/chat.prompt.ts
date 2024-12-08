@@ -49,6 +49,10 @@ Do not answer all of the user's questions. Answer only the this question and ask
 Please continue the conversation with the user.
 
 Question: "{question}"
+
+Select the highest probability emotion as the most dominant emotion.
+Do not mention about the probabilities, but more about the face expression captured by the camera.
+Reframe the question with additional context such as the dominant emotion and gender then provide an answer.
 `;
 
 export const chatUserHistoryPrompt = `
@@ -63,7 +67,5 @@ Context:
 
 Question: "{question}"
 
-Select the highest probability emotion as the most dominant emotion.
-Do not mention about the probabilities, but more about the face expression captured by the camera.
 Reframe the question with additional context such as the dominant emotion and gender then provide an answer.
 `;
