@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URI")
+}
+
+enum NotificationFrequency {
+  DAILY
+  WEEKLY
+  NEVER
+}
+
+enum NotificationMode {
+  EMAIL
+  PUSH_NOTIFICATION
+}
+
+enum ResponseTone {
+  EMPATHETIC
+  NEUTRAL
+  PROFESSIONAL
+}
+
+model User {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId // Primary key mapped to MongoDB's ObjectId
+  username     String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  lastLogin    DateTime?
+  profileImage String?
+
+  // Notification preferences
+  notificationFrequency NotificationFrequency @default(DAILY) // Frequency: daily, weekly, never
+  notificationMode      NotificationMode      @default(EMAIL) // Mode: email, push notification
+  notificationTime      DateTime              @default(now()) // Time for recurring notifications
+
+  responseTone          ResponseTone          @default(NEUTRAL)
+
+  // Relationships
+  sessions      Session[]      // One-to-many relationship: A user can have multiple sessions
+  chatMessages  ChatMessage[]  // One-to-many relationship: A user can send multiple chat messages
+  notifications Notification[] // One-to-many relationship: A user can have multiple notifications
+
+  @@map("users") // Maps the model to the "users" collection in MongoDB
+}
+
+model Session {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String    @db.ObjectId
+  sessionTitle     String
+  sessionSummary   String?
+  interactionCount Int       @default(0)
+  startTime        DateTime  @default(now())
+  endTime          DateTime?
+  status           String    @default("active") // Status of the session (e.g., active, completed, archived)
+
+  // Relationships
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatMessages ChatMessage[] // One-to-many relationship: A session contains multiple chat messages
+
+  @@map("sessions")
+}
+
+model ChatMessage {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId             String   @db.ObjectId
+  userId                String?  @db.ObjectId
+  messageType           String   @default("user")
+  content               String
+  timestamp             DateTime @default(now())
+  emotionalState        String?
+  emotionsProbabilities Json?
+  gender                String?
+  age                   Int?
+  additionalInformation Json?
+
+  // Relationships
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  content   String   // The notification content
+  isRead    Boolean  @default(false)      // Whether the notification has been read
+  createdAt DateTime @default(now())      // Timestamp for when the notification was created
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}

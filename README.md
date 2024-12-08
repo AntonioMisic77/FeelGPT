@@ -49,8 +49,12 @@ cd FeelGPT
 
 3. **Build and start the containers**
 
-- Development enviorment
+- Setup the MongoDb database first
+```bash
+docker compose -f docker-compose.db.yaml up
+```
 
+- Development enviorment
 ```bash
 docker compose -f docker-compose.dev.yaml up
 ```
@@ -63,4 +67,4 @@ docker compose -f docker-compose.prod.yaml up
 
 5. **Access the application**
    The frontend will be available at http://localhost:3001.
-   The backend API will be available at http://localhost:5000.
+   The backend API will be available at http://localhost:5001.

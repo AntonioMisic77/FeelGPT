@@ -1,10 +1,12 @@
 import ModelClient from "@azure-rest/ai-inference";
 import {AzureKeyCredential} from "@azure/core-auth";
-import {chatSystemPrompt, chatPrompt } from "../../prompts";
+import {chatSystemPrompt, chatUserPrompt, chatUserHistoryPrompt } from "../../prompts";
 import { ChatInfo } from "../../data";
 
 import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts";
+import { } from "@langchain/core/dist/chat_history";
+import { ChatMessagePromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts";
+import { ChatMessageDto } from "./chat.controller";
 
 /**
  * Generates a response from the LLM using Azure Inference.
@@ -56,15 +58,12 @@ async (chatInfo: ChatInfo) => {
  * @throws {Error} - Throws an error if the LLM returns an error.
  */
 export const generateLLMResponseLangchain = 
-async (chatInfo: ChatInfo) => {
+async (chatInfo: ChatInfo, chatHistory: ChatMessageDto[]) => {
     // Get the endpoint from environment variables 
     const endpoint = process.env.AZURE_PHI_ENDPOINT ?? "";
     
     // Get the API key from environment variables
     const apiKey = process.env.AZURE_PHI_API_KEY ?? "";
-
-    console.log("Endpoint: ", endpoint);
-    console.log("API Key: ", apiKey);
 
     // Customize the endpoint to be able to use the Langchain framework
     const phiOIendpoint = endpoint + "/v1";
@@ -73,17 +72,21 @@ async (chatInfo: ChatInfo) => {
     const model = new ChatOpenAI({
         model: "azureai",
         apiKey: apiKey,
-        temperature: 0.8,
+        temperature: 0.2,
     },{ baseURL : phiOIendpoint });
 
     // Create a system message prompt template from the chat system prompt
-    const message = SystemMessagePromptTemplate.fromTemplate(chatSystemPrompt);
+    const system_message = SystemMessagePromptTemplate.fromTemplate(chatSystemPrompt);
+    const user_message = ChatMessagePromptTemplate.fromTemplate(chatUserPrompt, "user");
 
     // Create a chat prompt template from the system message and chat prompt
     const chatprompt = ChatPromptTemplate.fromMessages([
-            message,
-            chatPrompt
+            system_message,
+            ...chatHistory.map((message) =>  customizeHistoryMessage(message)),
+            user_message
     ]);
+
+    console.log("Chat prompt: ", chatprompt);
 
     // Create a chain by piping the chat prompt template to the model
     const chain = chatprompt.pipe(model);
@@ -108,7 +111,6 @@ async (chatInfo: ChatInfo) => {
     for(let i = 0;i < 2; i++){
         console.log("Attempt: ", i);
         try {
-            console.log("Sending to LLM: ");
             // Invoke the chain with the input and return the response content
             response = await chain.invoke(input)
             
@@ -129,4 +131,22 @@ async (chatInfo: ChatInfo) => {
                 i++;
         }
     }
+}
+
+
+// Function which customizes the message to be used in the chat prompt
+
+// TODO 
+//customize user and ai messages as you want. Maybe in last user message include the context  in a way that we add just most probable emotion and age with gender
+// if message type is assistant, summaries the message and include it in the prompt
+// roles: user, assistant
+
+const customizeHistoryMessage = (message: ChatMessageDto) => {
+    let content = message.content;
+
+    if(message.messageType == "user"){
+       content = chatUserHistoryPrompt.replace("{strongest_emotion}", message.emotionalState || "neutral");
+    } 
+
+    return ChatMessagePromptTemplate.fromTemplate(content, message.messageType);
 }
