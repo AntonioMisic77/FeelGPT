@@ -40,7 +40,7 @@ const VisageAnalyzer = ({
           tmpAnalysisDataRef.current.push_back(new window.VisageModule.AnalysisData());
         }
 
-        console.log("VisageModule and Tracker initialized");
+        //console.log("VisageModule and Tracker initialized");
       }
     };
 

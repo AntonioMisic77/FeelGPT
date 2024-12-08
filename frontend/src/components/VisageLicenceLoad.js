@@ -4,7 +4,7 @@ const VisageLoader = () => {
   useEffect(() => {
     // Check if the VisageModule has already been initialized globally
     if (!window.visageSDKLoaded) {
-      console.log("Visage SDK script is not loaded, loading it now.");
+      //console.log("Visage SDK script is not loaded, loading it now.");
 
       const licenseName = "596-415-364-170-725-752-183-283-483-532-575.vlc";
       const licenseURL = "./596-415-364-170-725-752-183-283-483-532-575.vlc";
@@ -59,7 +59,7 @@ const VisageLoader = () => {
               true,
               false,
               function () {
-                console.log("License file successfully loaded.");
+                //console.log("License file successfully loaded.");
               },
               function () {
                 alert("Loading License Failed!");
@@ -86,9 +86,9 @@ const VisageLoader = () => {
 
       // Mark the SDK as loaded globally to prevent reloading
       window.visageSDKLoaded = true;
-    } else {
+    } /* else {
       console.log("Visage SDK script has already been loaded.");
-    }
+    } */
 
     return () => {};
   }, []);

@@ -7,9 +7,14 @@ import { getUserIdFromToken } from "@/api/user/features/auth/auth.service";
 /**
  * Interface defining the structure of the request body.
  */
+
+type Emotion = {
+  dominant_emotion: string;
+};
+
 interface ChatRequestBody {
   message: string;
-  emotion: string[];
+  emotion: Emotion[];
   age: number;
   gender: number; // 1 = male, 0 = female
 }
@@ -69,17 +74,25 @@ export const sendMessage = async (
     "neutral",
   ];
 
-  // Map the received emotions to an array of objects with name and probability
-  const emotions = emotion.map((e, i) => ({
-    name: emotionsName[i],
-    probability: +e || 0,
+  // // Map the received emotions to an array of objects with name and probability
+  // const emotions = emotion.map((e, i) => ({
+  //   name: emotionsName[i],
+  //   probability: +e || 0,
+  // }));
+
+  // Map each emotion to a count
+  const emotions = emotionsName.map(name => ({
+    name,
+    probability: emotion.filter(e => e.dominant_emotion === name).length,
   }));
+
+  console.log("Preprocessed emotion:", emotions);
 
   //Get the emotion with the highest probability
 
   let highest_probability_emotion = {
     name: "neutral",
-    probability: 1
+    probability: 0
   }
 
   if(emotions.length > 0) {
