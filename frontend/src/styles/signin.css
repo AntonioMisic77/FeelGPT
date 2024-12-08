@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .body-signin {
   display: flex;
   flex-direction: column;
@@ -362,3 +363,334 @@ input::placeholder {
   margin-top: 1px;
   user-select: none;
 }
+=======
+.body-signin {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    background-color: #f0f0f0; /* Optional background color */
+    font-family: "Space Grotesk",-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+
+  }
+  
+  .sign-in-container {
+    display: flex;
+
+    width: 80vw; /* Adjust width as necessary */
+    height: 60vh; /* Adjust height as necessary */
+    border: 1px solid #ccc; /* Optional border */
+    border-radius: 8px; /* Optional rounding */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional shadow */
+  }
+  
+  
+  .sign-in-form {
+    background-color: white;
+    padding: 20px;
+    flex: 1;
+  }
+  
+  .additional-info {
+    background-color: lightgray;
+    padding: 20px;
+    flex: 1; 
+  }
+  
+  .form-title {
+    font-size: 24px; 
+    margin-bottom: 20px; 
+  }
+  
+  .info-title {
+    font-size: 20px; 
+    margin-bottom: 15px; 
+  }
+  
+  .signin-label {
+    display: block; 
+    margin-bottom: 5px; 
+    margin-top: 20px;
+    margin-left: 5px;
+    border-color: gray;
+
+  }
+  
+
+
+  .signin-input {
+    width: 80%; 
+    padding: 8px; 
+    margin-top: 5px;
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    font-family: "Space Grotesk",-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+
+    
+  }
+  
+  input[type="checkbox"],
+  input[type="radio"] {
+    margin-right: 8px; 
+    margin-top: 0px;
+    
+  }
+
+ 
+
+  input::placeholder{
+    color: gray
+    
+  }
+
+  .question-label{
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    display: block;
+  }
+
+
+  /* check box */
+
+
+
+  .checkbox-wrapper-10 .tgl {
+    display: none;
+  }
+  .checkbox-wrapper-10 .tgl,
+  .checkbox-wrapper-10 .tgl:after,
+  .checkbox-wrapper-10 .tgl:before,
+  .checkbox-wrapper-10 .tgl *,
+  .checkbox-wrapper-10 .tgl *:after,
+  .checkbox-wrapper-10 .tgl *:before,
+  .checkbox-wrapper-10 .tgl + .tgl-btn {
+    box-sizing: border-box;
+  }
+  .checkbox-wrapper-10 .tgl::-moz-selection,
+  .checkbox-wrapper-10 .tgl:after::-moz-selection,
+  .checkbox-wrapper-10 .tgl:before::-moz-selection,
+  .checkbox-wrapper-10 .tgl *::-moz-selection,
+  .checkbox-wrapper-10 .tgl *:after::-moz-selection,
+  .checkbox-wrapper-10 .tgl *:before::-moz-selection,
+  .checkbox-wrapper-10 .tgl + .tgl-btn::-moz-selection,
+  .checkbox-wrapper-10 .tgl::selection,
+  .checkbox-wrapper-10 .tgl:after::selection,
+  .checkbox-wrapper-10 .tgl:before::selection,
+  .checkbox-wrapper-10 .tgl *::selection,
+  .checkbox-wrapper-10 .tgl *:after::selection,
+  .checkbox-wrapper-10 .tgl *:before::selection,
+  .checkbox-wrapper-10 .tgl + .tgl-btn::selection {
+    background: none;
+  }
+  .checkbox-wrapper-10 .tgl + .tgl-btn {
+    outline: 0;
+    display: block;
+    width: 4em;
+    height: 2em;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  }
+  .checkbox-wrapper-10 .tgl + .tgl-btn:after,
+  .checkbox-wrapper-10 .tgl + .tgl-btn:before {
+    position: relative;
+    display: block;
+    content: "";
+    width: 50%;
+    height: 100%;
+  }
+  .checkbox-wrapper-10 .tgl + .tgl-btn:after {
+    left: 0;
+  }
+  .checkbox-wrapper-10 .tgl + .tgl-btn:before {
+    display: none;
+  }
+  .checkbox-wrapper-10 .tgl:checked + .tgl-btn:after {
+    left: 50%;
+  }
+
+  .checkbox-wrapper-10 .tgl-flip + .tgl-btn {
+    padding: 2px;
+    transition: all 0.2s ease;
+    font-family: sans-serif;
+    perspective: 100px;
+  }
+  .checkbox-wrapper-10 .tgl-flip + .tgl-btn:after,
+  .checkbox-wrapper-10 .tgl-flip + .tgl-btn:before {
+    display: inline-block;
+    transition: all 0.4s ease;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    line-height: 2em;
+    font-weight: bold;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    border-radius: 4px;
+  }
+  .checkbox-wrapper-10 .tgl-flip + .tgl-btn:after {
+    content: attr(data-tg-on);
+    background: #55a581;
+    transform: rotateY(-180deg);
+  }
+  .checkbox-wrapper-10 .tgl-flip + .tgl-btn:before {
+    background: #c65146;
+    content: attr(data-tg-off);
+  }
+  .checkbox-wrapper-10 .tgl-flip + .tgl-btn:active:before {
+    transform: rotateY(-20deg);
+  }
+  .checkbox-wrapper-10 .tgl-flip:checked + .tgl-btn:before {
+    transform: rotateY(180deg);
+  }
+  .checkbox-wrapper-10 .tgl-flip:checked + .tgl-btn:after {
+    transform: rotateY(0);
+    left: 0;
+    background: #7FC6A6;
+  }
+  .checkbox-wrapper-10 .tgl-flip:checked + .tgl-btn:active:after {
+    transform: rotateY(20deg);
+  }
+
+
+  .consent-container {
+    /* display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px; */
+}
+
+.submit-container-signin {
+  display: flex;                   /* Use flexbox for layout */
+  justify-content: flex-end;       /* Align items to the right */
+  width: 80vw; /* Adjust width as necessary */                    /* Ensure container takes up the full width */
+  padding-top: 10px;               /* Add some space above the button */
+}
+
+
+
+.horizontal-radio{
+    display: flex;                   /* Use flexbox for layout */
+  justify-content: flex-start;     /* Align items to the left */
+  padding-top: 10px; 
+}
+
+/* radio buttons */
+
+
+
+
+  .radio-wrapper-5 {
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+  }
+
+  .radio-wrapper-5 label.forCircle {
+    align-items: center;
+    border: 0 solid #eee;
+    border-radius: 9999px;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    padding: .75rem;
+    position: relative;
+    scrollbar-width: thin !important;
+  }
+  
+  .radio-wrapper-5 input[type=radio] {
+    appearance: none;
+    border: 1px solid #b0bec5;
+    border-radius: 9999px;
+    box-sizing: border-box;
+    color: blue;
+    cursor: pointer;
+    font-family: inherit;
+    font-feature-settings: inherit;
+    font-size: 100%;
+    font-variation-settings: inherit;
+    font-weight: inherit;
+    height: 1.25rem;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    scrollbar-width: thin !important;
+    transition: all .15s cubic-bezier(.4, 0, .2, 1);
+    width: 1.25rem;
+  }
+  
+  .radio-wrapper-5 input[type=radio]:before {
+    background-color: rgb(42, 98, 127);
+    border: 0 solid #eee;
+    border-radius: 9999px;
+    box-sizing: border-box;
+    content: '';
+    display: block;
+    height: 3rem;
+    left: 50%;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity .15s cubic-bezier(.4, 0, .2, 1);
+    width: 3rem;
+  }
+  
+  .radio-wrapper-5 input[type=radio]:placeholder {
+    color: #bdbdbd;
+    opacity: 1;
+  }
+  
+  .radio-wrapper-5 input[type=radio]:checked:before {
+    background-color: rgb(33 33 33/1);
+  }
+  
+  .radio-wrapper-5 input[type=radio]:hover:not(:disabled):before {
+    opacity: .1;
+  }
+  
+  .radio-wrapper-5 label.forCircle span {
+    border: 0 solid #eee;
+    box-sizing: border-box;
+    color: blue;
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    scrollbar-width: thin !important;
+    top: 50%;
+    transform: matrix(1, 0, 0, 1, -7, -7);
+    transition: opacity .15s cubic-bezier(.4, 0, .2, 1);
+  }
+
+  .radio-wrapper-5 input[type=radio]:checked ~ span {
+    opacity: 1;
+  }
+  
+  .radio-wrapper-5 svg {
+    display: block;
+    height: .875rem;
+    vertical-align: middle;
+    width: .875rem;
+  }
+  
+  .radio-wrapper-5 label {
+    color: black;
+    cursor: pointer;
+    font-weight: 300;
+    margin-top: 1px;
+    user-select: none;
+  }
+>>>>>>> main
