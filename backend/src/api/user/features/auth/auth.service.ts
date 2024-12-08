@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import {NotificationFrequency, NotificationMode, ResponseTone} from "@prisma/client";
+import { prisma } from "@/db";
 
 const SECRET_KEY = "your_secret_key"; // Replace with a strong secret key
 const RESET_TOKEN_EXPIRY = "15m";
@@ -21,7 +21,11 @@ export const registerUser = async (
     email: string,
     password: string,
     username?: string,
-    profileImage?: string
+    profileImage?: string,
+    notificationFrequency?: NotificationFrequency , 
+    notificationMode?: NotificationMode, 
+    notificationTime?: Date, 
+    responseTone?: ResponseTone
 ) => {
     // Check if the email is already in use
 
@@ -43,6 +47,10 @@ export const registerUser = async (
             email,
             passwordHash,
             profileImage,
+            notificationFrequency,
+            notificationMode,
+            notificationTime,
+            responseTone
         },
     });
 
