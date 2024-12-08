@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 :root {
   --root-background-light: white;
   --root-background-dark: darkblue;
@@ -14,36 +13,20 @@ body {
 .navbar.dark {
   background-color: var(--root-background-dark);
   color: white;
-=======
-.navbar.light {
-    background-color: white; 
-    color: black
-}
-.navbar.dark {
-    background-color:  gray; 
-    color: white
->>>>>>> main
 }
 .navbar-container {
   height: 60px;
   display: flex;
   justify-content: space-between; /* Ensures space between left and right sections */
   align-items: center; /* Aligns items vertically in the center */
-<<<<<<< HEAD
   padding: 30px 20px;
   width: 100vw;
   box-sizing: border-box;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow below navbar */
-=======
-  padding: 10px 20px;
-  width: 100vw;
-  box-sizing: border-box; 
->>>>>>> main
 }
 
 .navbar-left,
 .navbar-right {
-<<<<<<< HEAD
   display: flex;
   align-items: center; /* Aligns items in these sections vertically */
 }
@@ -69,32 +52,6 @@ body {
   margin-left: 10px; /* Adjust spacing for user picture */
   border-radius: 50%;
 }
-=======
-    display: flex;
-    align-items: center; /* Aligns items in these sections vertically */
-}
-
-.user-picture {
-    margin-left: 10px;
-    border-radius: 50%;
-  }
-
-.name{
-    margin-left: 10px;
-    font-size: 24px; 
-  font-family: "Space Grotesk",-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  font-weight: 700;
-    
-  }
-
-  .user-picture {
-    width: 40px;
-    height: 40px;
-    margin-left: 10px; /* Adjust spacing for user picture */
-    border-radius: 50%;
-}
-
->>>>>>> main
 
 .link {
   margin: 0 10px; /* Adjusted margin for horizontal spacing */
@@ -103,20 +60,14 @@ body {
 
 .name {
   margin-left: 10px; /* Adjust spacing for name */
-<<<<<<< HEAD
   font-size: 24px;
   font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
-=======
-  font-size: 24px; 
-  font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
->>>>>>> main
   font-weight: 700;
 }
 
 .user-icon {
-<<<<<<< HEAD
   width: 45px;
   height: 45px;
   margin: 0 10px; /* Adjusted margin for user icon */
@@ -215,91 +166,10 @@ body {
 }
 
 /*   .user-icon {
-=======
-  width: 30px; 
-  height: 30px;
-  margin: 0 10px; /* Adjusted margin for user icon */
-}
-
-
-/* mode*/
-
-  .checkbox-wrapper-64 input[type="checkbox"] {
-    visibility: hidden;
-    display: none;
-    
-  }
-
-  .checkbox-wrapper-64 *,
-  .checkbox-wrapper-64 ::after,
-  .checkbox-wrapper-64 ::before {
-    box-sizing: border-box;
-  }
-
-  /* The switch - the box around the slider */
-  .checkbox-wrapper-64 .switch {
-    font-size: 17px;
-    position: relative;
-    display: inline-block;
-    width: 3.5em;
-    height: 2em;
-  }
-
-  /* Hide default HTML checkbox */
-  .checkbox-wrapper-64 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  /* The slider */
-  .checkbox-wrapper-64 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #fff;
-    border: 1px solid #adb5bd;
-    transition: .4s;
-    border-radius: 30px;
-  }
-
-  .checkbox-wrapper-64 .slider:before {
-    position: absolute;
-    content: "";
-    height: 1.4em;
-    width: 1.4em;
-    border-radius: 20px;
-    left: 0.27em;
-    bottom: 0.25em;
-    background-color: #adb5bd;
-    transition: .4s;
-  }
-
-  .checkbox-wrapper-64 input:checked + .slider {
-    background-color: #007bff;
-    border: 1px solid #007bff;
-  }
-
-  .checkbox-wrapper-64 input:focus + .slider {
-    box-shadow: 0 0 1px #007bff;
-  }
-
-  .checkbox-wrapper-64 input:checked + .slider:before {
-    transform: translateX(1.4em);
-    background-color: #fff;
-  }
-
-
-  .user-icon {
->>>>>>> main
     width: 30px; 
     height: 30px;
     margin-left: 20px; 
     margin-right: 10px;
-<<<<<<< HEAD
   } */
 
 /* dropdown for camera */
@@ -407,46 +277,4 @@ body {
     padding: 10px 30px; /* Adjusted padding for larger screens */
     min-width: 120px; /* Reduced minimum width for larger screens */
   }
-=======
-  }
-
-
-  /* button */
-  .button-66-smaller {
-    background-color: #0a6bff;
-    border-radius: 4px;
-    border: 0;
-    box-shadow: rgba(1, 60, 136, .5) 0 -1px 3px 0 inset, rgba(0, 44, 97, .1) 0 3px 6px 0;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: "Space Grotesk", -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 16px; /* Reduced font size */
-    font-weight: 700;
-    line-height: 20px; /* Adjusted line height */
-    margin-right: 10px;
-    min-height: 40px; /* Reduced minimum height */
-    min-width: 100px; /* Reduced minimum width */
-    padding: 10px 15px; /* Reduced padding */
-    position: relative;
-    text-align: center;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    transition: all .2s cubic-bezier(.22, .61, .36, 1);
-}
-
-.button-66-smaller:hover {
-    background-color: #065dd8;
-    transform: translateY(-2px);
-}
-
-@media (min-width: 768px) {
-    .button-66-smaller {
-        padding: 10px 30px; /* Adjusted padding for larger screens */
-        min-width: 120px; /* Reduced minimum width for larger screens */
-    }
->>>>>>> main
 }
