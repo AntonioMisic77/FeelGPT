@@ -20,6 +20,10 @@ const Signin = () => {
   const [selectedDay, setSelectedDay] = useState(""); // Single day selection
   const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
 
+  // New state variables for profile picture
+  const [profileImage, setProfileImage] = useState(""); // To store base64 data
+  const [imageExtension, setImageExtension] = useState(""); // To store file extension
+
   // State variables for loading, error
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -53,7 +57,22 @@ const Signin = () => {
     setSelectedReminderType(e.target.value); // Update selected reminder type
   };
 
-  // Updated handleSubmit to include validation
+  // Handler for image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1]; // Remove the data URL prefix
+        setProfileImage(base64String);
+        const extension = file.type.split("/")[1]; // Extract the file extension
+        setImageExtension(extension);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Updated handleSubmit to include validation and image data
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,14 +85,16 @@ const Signin = () => {
 
       // Include all required fields in the POST request
       const response = await axiosInstance.post("/user/auth/register", {
-        username,
-        email,
-        password,
-        responseTone,
-        reminderFrequency,
-        reminderType: selectedReminderType,
-        reminderTime,
-        selectedDay, // Include if reminderFrequency is "weekly"
+        username: username,
+        email: email,
+        password: password,
+        responseTone : responseTone.toUpperCase(),
+        notificationFrequency: reminderFrequency.toUpperCase(),
+        notificationMode: selectedReminderType.toUpperCase(),
+       // notificationTime : reminderTime,
+        selectedDay : selectedDay, // Include if reminderFrequency is "weekly"
+        profileImage : profileImage, // Add base64 image data
+        imageExtension : imageExtension, // Add image file extension
       });
 
       const { token } = response.data;
@@ -149,6 +170,29 @@ const Signin = () => {
                 required
               />
             </div>
+
+            {/* Profile Picture Input Field */}
+            <div>
+              <label className="signin-label">Profile Picture</label>
+              <input
+                className="signin-input"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                required
+              />
+            </div>
+
+            {/* Conditionally Render Image Preview */}
+            {profileImage && (
+              <div className="image-preview">
+                <img
+                  src={`data:image/${imageExtension};base64,${profileImage}`}
+                  alt="Profile Preview"
+                  style={{ width: "20vh", height: "20vh", objectFit: "cover" }}
+                />
+              </div>
+            )}
 
             {/* Submit Button */}
             <div className="submit-container-signin">
@@ -275,7 +319,15 @@ const Signin = () => {
                   className="form-control"
                 >
                   <option value="">Select a day</option>
-                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                  {[
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday",
+                  ].map((day) => (
                     <option key={day} value={day}>
                       {day}
                     </option>
@@ -295,9 +347,7 @@ const Signin = () => {
       )}
 
       {/* Loading State */}
-      {loading ? (
-        <div className="loading-spinner">Loading...</div>
-      ) : null}
+      {loading ? <div className="loading-spinner">Loading...</div> : null}
     </div>
   );
 };

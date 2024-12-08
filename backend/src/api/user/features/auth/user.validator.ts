@@ -21,7 +21,9 @@ export const UpdateUserInfoValidator = {
       notificationFrequency: z.nativeEnum(NotificationFrequency).optional(),
       notificationMode: z.nativeEnum(NotificationMode).optional(),
       notificationTime: DATETIME_VALIDATOR.optional(),
-      responseTone: z.nativeEnum(ResponseTone).optional()
+      responseTone: z.nativeEnum(ResponseTone).optional(),
+      profileImage: z.string(),
+      imageExtension : z.string()
     }),
   };
 
