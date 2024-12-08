@@ -68,7 +68,13 @@ border: none;
     background-color: #0f1c2c;
 }
 
-.settings-form{
+.settings-form.dark{
+    background-color: transparent;
+}
+.form-control{
+    background-color: transparent;
+}
+.option-form{
     background-color: transparent;
 }
 
