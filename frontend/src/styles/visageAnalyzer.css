@@ -1,5 +1,5 @@
 .live-video {
-    width: 70%; 
-    height: auto;
-    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);  */
+    width: 300px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Add shadow effect */
   }
