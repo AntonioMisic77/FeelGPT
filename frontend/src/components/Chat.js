@@ -91,7 +91,7 @@ const Chat = ({
         gender,
       };
 
-      
+      document.getElementById("textarea-id").focus();
 
       /* CONNECTION TO BACKEND */
       try {
@@ -108,6 +108,8 @@ const Chat = ({
         console.error("Failed to send message: ", error);
       }
     }
+    
+    
   };
 
   //for data for switches
@@ -286,18 +288,9 @@ const Chat = ({
            }}
         />
          {!IsCameraEnabled && isRecordingVideo && (
-    <div
-      style={{
-        position: "absolute",
-        top: "30%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        color: "gray", 
-        fontSize: "20px", 
-      }}
-    >
-      Camera is currently disabled and the emotion detection is not working.
-    </div>
+    <div className="centered-text">
+    Camera is currently disabled and the emotion detection is not working.
+  </div>
   )}
         
 
@@ -437,6 +430,7 @@ const Chat = ({
 
         <div className="input-container">
           <textarea
+          id="textarea-id"
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => {

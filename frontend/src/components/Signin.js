@@ -109,7 +109,7 @@ const Signin = () => {
     <div className="body-signin">
       <div className="sign-in-container">
         <div className="sign-in-form">
-          <h1 className="form-title">Feel GPT Sign In Form</h1>
+          <h1 className="form-title">FeelGPT Sign Up Form</h1>
           <form onSubmit={handleSubmit}>
             {/* Username Input Field */}
             <div>
@@ -150,17 +150,12 @@ const Signin = () => {
               />
             </div>
 
-            {/* Submit Button */}
-            <div className="submit-container-signin">
-              <button type="submit" className="submit-btn button-66">
-                Submit
-              </button>
-            </div>
+            
           </form>
         </div>
 
         <div className="additional-info">
-          <h1 className="form-title">Additional Info</h1>
+          {/* <h1 className="form-title">Additional Info</h1> */}
           <div className="preferences">
             {/* Response Tone Slider */}
             <label>Response Tone</label>
@@ -284,6 +279,12 @@ const Signin = () => {
               </div>
             </div>
           )}
+          {/* Submit Button */}
+          <div className="submit-container-signin">
+              <button type="submit" className="submit-btn button-66-smaller">
+                Submit
+              </button>
+            </div>
         </div>
       </div>
 

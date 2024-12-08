@@ -131,7 +131,7 @@ const Login = () => {
                 required
               />
               <div className="submit-container">
-                <button type="button" className="submit-btn button-66">
+                <button type="button" className="submit-btn button-66-smaller">
                   Send Reset Link
                 </button>
               </div>
