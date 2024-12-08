@@ -64,7 +64,7 @@ export const getUser = createEndpoint({}, async (req, res) => {
     },
   });
   if (!fetchedUser) throw new Error("User Not Found");
-  const { password: notUsed, ...rest } = fetchedUser;
+  const { passwordHash: notUsed, ...rest } = fetchedUser;
   res.json({
     result: rest,
   });
