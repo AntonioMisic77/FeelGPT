@@ -85,16 +85,16 @@ const Signin = () => {
 
       // Include all required fields in the POST request
       const response = await axiosInstance.post("/user/auth/register", {
-        username,
-        email,
-        password,
-        responseTone,
-        reminderFrequency,
-        reminderType: selectedReminderType,
-        reminderTime,
-        selectedDay, // Include if reminderFrequency is "weekly"
-        profileImage, // Add base64 image data
-        imageExtension, // Add image file extension
+        username: username,
+        email: email,
+        password: password,
+        responseTone : responseTone.toUpperCase(),
+        notificationFrequency: reminderFrequency.toUpperCase(),
+        notificationMode: selectedReminderType.toUpperCase(),
+       // notificationTime : reminderTime,
+        selectedDay : selectedDay, // Include if reminderFrequency is "weekly"
+        profileImage : profileImage, // Add base64 image data
+        imageExtension : imageExtension, // Add image file extension
       });
 
       const { token } = response.data;
