@@ -64,3 +64,17 @@ export const updateUserInfo = createEndpoint(
     });
   }
 );
+
+export const getUser = createEndpoint({}, async (req, res) => {
+  const { user } = getUserInfo(req);
+  const fetchedUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+  if (!fetchedUser) throw new Error("User Not Found");
+  const { passwordHash: notUsed, ...rest } = fetchedUser;
+  res.json({
+    result: rest,
+  });
+});
