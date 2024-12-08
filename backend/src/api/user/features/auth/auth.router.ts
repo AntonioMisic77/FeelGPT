@@ -4,7 +4,6 @@ import { register, login, updateUserInfo } from "./auth.controller";
 
 const upload = multer({ storage: multer.memoryStorage() }); // For file uploads
 
-
 const authRouter = express.Router();
 
 authRouter.post("/register", upload.single("profileImage"), register);
