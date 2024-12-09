@@ -34,13 +34,7 @@ const InfoForm = ({
   const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
   };
-
-  const formatTime = (date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
-
+  
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
@@ -168,7 +162,7 @@ const InfoForm = ({
               <input
                 className={`form-control ${darkMode ? "dark" : "light"}`}
                 type="time"
-                value={formatTime(notificationTime)}
+                value={notificationTime}
                 onChange={(e) => setNotificationTime(e.target.value)}
               />
             </div>

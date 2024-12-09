@@ -342,7 +342,7 @@ const Signin = () => {
           )}
           {/* Submit Button */}
           <div className="submit-container-signin">
-            <button type="submit" className="submit-btn button-66-smaller">
+            <button type="submit" className="submit-btn button-66-smaller" onClick={handleSubmit}>
               Submit
             </button>
           </div>
