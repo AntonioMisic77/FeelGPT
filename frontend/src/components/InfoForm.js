@@ -35,6 +35,12 @@ const InfoForm = ({
     setNotificationMethod(e.target.value); // Update selected reminder type
   };
 
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
@@ -42,7 +48,7 @@ const InfoForm = ({
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            // onChange={(e) => setEmail(e.target.value)}
             required
           />
           <label>email address</label>
@@ -162,7 +168,7 @@ const InfoForm = ({
               <input
                 className={`form-control ${darkMode ? "dark" : "light"}`}
                 type="time"
-                value={notificationTime}
+                value={formatTime(notificationTime)}
                 onChange={(e) => setNotificationTime(e.target.value)}
               />
             </div>

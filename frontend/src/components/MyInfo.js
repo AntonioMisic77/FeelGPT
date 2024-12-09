@@ -16,7 +16,7 @@ const MyInfo = () => {
   const [cameraConsent, setCameraConsent] = useState(true);
   const [notifications, setNotifications] = useState("NEVER");
   const [notificationMethod, setNotificationMethod] = useState("EMAIL");
-  const [language, setLanguage] = useState("EN");
+  const [language, setLanguage] = useState("English");
   const [showOverlay, setShowOverlay] = useState(false);
 
   // Additional state variables for user info
@@ -92,6 +92,19 @@ const MyInfo = () => {
   const toggleNotificationMethod = (value) => setNotificationMethod(value);
   const toggleLanguage = () => setLanguage(language === "EN" ? "FR" : "EN");
 
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const setNotificationTimeCustom = (time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const reminderTime = new Date();
+    reminderTime.setHours(hours, minutes);
+    setNotificationTime(reminderTime);
+  }
+
   const handleSaveChanges = async () => {
     setError(null);
     setLoading(true);
@@ -112,7 +125,7 @@ const MyInfo = () => {
         language,
         responseTone,
         email,
-        notificationTime,
+        notificationTime : notificationTime,
         selectedDay, // Include selectedDay if needed
         // Include other fields if necessary
       };
@@ -168,7 +181,7 @@ const MyInfo = () => {
             <p>How: {notificationMethod}</p>
             <h3 className="section-title">Settings</h3>
             <hr className="divider" />
-            <p>Language: {language === "EN" ? "English" : "French"}</p>
+            <p>Language: {language}</p>
             <p>Response tone: {responseTone}</p>
 
             <div className="button-right">
@@ -204,7 +217,7 @@ const MyInfo = () => {
                 responseTone={responseTone}
                 setResponseTone={setResponseTone}
                 notificationTime={notificationTime}
-                setNotificationTime={setNotificationTime}
+                setNotificationTime={setNotificationTimeCustom}
               />
               <div className="update-buttons">
                 <button
