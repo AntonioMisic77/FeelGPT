@@ -15,11 +15,11 @@ export const isAuth = async (
     if (!authHeader) throw createError(401, "Not Authenticated");
     const [, token] = authHeader.split(" ");
     const decodedToken = jwt.verify(token, config.JWT_SECRET_KEY) as {
-      id?: string;
+      userId?: string;
     };
-    if (!decodedToken?.id) throw createError(401, "Not Authenticated");
+    if (!decodedToken?.userId) throw createError(401, "Not Authenticated");
     const user = await prisma.user.findUnique({
-      where: { id: decodedToken.id }
+      where: { id: decodedToken.userId }
     });
     if (!user) throw createError(401, "Not Authenticated");
     req.user = user;
