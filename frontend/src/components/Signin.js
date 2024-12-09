@@ -16,7 +16,7 @@ const Signin = () => {
   // New state variables for additional info
   const [responseTone, setResponseTone] = useState("neutral");
   const [reminderFrequency, setReminderFrequency] = useState("never");
-  const [reminderTime, setReminderTime] = useState("");
+  const [reminderTime, setReminderTime] = useState("12:00");
   const [selectedDay, setSelectedDay] = useState(""); // Single day selection
   const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
 
@@ -83,6 +83,12 @@ const Signin = () => {
       // Set loading state to true
       setLoading(true);
 
+      const [hours, minutes] = reminderTime.split(":").map(Number);
+
+      const reminderDateTime = new Date();
+
+      reminderDateTime.setHours(hours, minutes, 0, 0);
+
       // Include all required fields in the POST request
       const response = await axiosInstance.post("/user/auth/register", {
         username: username,
@@ -91,10 +97,10 @@ const Signin = () => {
         responseTone: responseTone.toUpperCase(),
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
-        // notificationTime : reminderTime,
-        selectedDay: selectedDay, // Include if reminderFrequency is "weekly"
-        profileImage: profileImage, // Add base64 image data
-        imageExtension: imageExtension, // Add image file extension
+        notificationTime : reminderDateTime,
+        selectedDay : selectedDay, // Include if reminderFrequency is "weekly"
+        profileImage : profileImage, // Add base64 image data,
+        imageExtension : imageExtension, // Add image extension
       });
 
       const { token } = response.data;
@@ -284,8 +290,8 @@ const Signin = () => {
                   <label>
                     <input
                       type="radio"
-                      value="push"
-                      checked={selectedReminderType === "push"}
+                      value="push_notification"
+                      checked={selectedReminderType === "push_notification"}
                       onChange={handleReminderTypeSelection}
                     />
                     Push Notification

@@ -7,21 +7,11 @@ import { LoginUserValidator, RegisterUserValidator, UpdateUserInfoValidator } fr
 // Register Endpoint
 
 export const register = createEndpoint(RegisterUserValidator, async (req: Request, res: Response) => {
-  const { username, email, password, notificationFrequency, profileImage, imageExtension,
+  const { username, email, password, notificationFrequency, profileImage,
     notificationMode, notificationTime, responseTone } = req.body;
 
-    console.log(req.body)
-
-    console.log("profileImage", profileImage);
-    console.log("imageExtension", imageExtension);
-
-    console.log("notificationFrequency", notificationFrequency);
-    console.log("notificationMode", notificationMode);
-    console.log("notificationTime", notificationTime);
-    console.log("responseTone", responseTone);
-
   try {
-    const result = await registerUser(email, password, username, profileImage, notificationFrequency, 
+    const result = await registerUser(email, password, username, profileImage, notificationFrequency,
       notificationMode, notificationTime, responseTone);
     res.status(201).json(result);
   } catch (error: any) {
@@ -31,8 +21,6 @@ export const register = createEndpoint(RegisterUserValidator, async (req: Reques
 
 
 // Login Endpoint
-
-
 export const login = createEndpoint(LoginUserValidator, async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
@@ -66,6 +54,7 @@ export const updateUserInfo = createEndpoint(
 );
 
 export const getUser = createEndpoint({}, async (req, res) => {
+  // const userId = req.query.id;
   const { user } = getUserInfo(req);
   const fetchedUser = await prisma.user.findUnique({
     where: {
