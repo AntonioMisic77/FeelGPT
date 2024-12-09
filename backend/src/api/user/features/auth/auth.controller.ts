@@ -2,23 +2,38 @@ import { Request, Response } from "express";
 import { registerUser, loginUser } from "./auth.service";
 import { createEndpoint, getUserInfo } from "@/utils";
 import { prisma } from "@/db";
-import { UpdateUserInfoValidator } from "./user.validator";
+import { LoginUserValidator, RegisterUserValidator, UpdateUserInfoValidator } from "./user.validator";
 
 // Register Endpoint
-export const register = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
-  const profileImage = req.file ? req.file.buffer.toString("base64") : undefined;
+
+export const register = createEndpoint(RegisterUserValidator, async (req: Request, res: Response) => {
+  const { username, email, password, notificationFrequency, profileImage, imageExtension,
+    notificationMode, notificationTime, responseTone } = req.body;
+
+    console.log(req.body)
+
+    console.log("profileImage", profileImage);
+    console.log("imageExtension", imageExtension);
+
+    console.log("notificationFrequency", notificationFrequency);
+    console.log("notificationMode", notificationMode);
+    console.log("notificationTime", notificationTime);
+    console.log("responseTone", responseTone);
 
   try {
-    const result = await registerUser(email, password, username, profileImage);
+    const result = await registerUser(email, password, username, profileImage, notificationFrequency, 
+      notificationMode, notificationTime, responseTone);
     res.status(201).json(result);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
-};
+})
+
 
 // Login Endpoint
-export const login = async (req: Request, res: Response) => {
+
+
+export const login = createEndpoint(LoginUserValidator, async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     const result = await loginUser(email, password);
@@ -26,7 +41,8 @@ export const login = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(401).json({ error: error.message });
   }
-};
+})
+
 
 export const updateUserInfo = createEndpoint(
   UpdateUserInfoValidator,
@@ -48,3 +64,17 @@ export const updateUserInfo = createEndpoint(
     });
   }
 );
+
+export const getUser = createEndpoint({}, async (req, res) => {
+  const { user } = getUserInfo(req);
+  const fetchedUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+  if (!fetchedUser) throw new Error("User Not Found");
+  const { passwordHash: notUsed, ...rest } = fetchedUser;
+  res.json({
+    result: rest,
+  });
+});
