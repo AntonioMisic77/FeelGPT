@@ -452,7 +452,7 @@ input[type="range"]::-moz-range-track {
 @media (max-width: 600px) {
   .centered-text {
     font-size: 12px;
-    top: 30%;
+    top: 15%;
     left: 15%;
     transform: translate(-10%, -10%);
     width: 130px;
