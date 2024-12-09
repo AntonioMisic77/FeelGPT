@@ -66,11 +66,11 @@ export const updateUserInfo = createEndpoint(
 );
 
 export const getUser = createEndpoint({}, async (req, res) => {
-  const userId = req.query.id;
-  // const { user } = getUserInfo(req);
+  // const userId = req.query.id;
+  const { user } = getUserInfo(req);
   const fetchedUser = await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: user.id,
     },
   });
   if (!fetchedUser) throw new Error("User Not Found");
