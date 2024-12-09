@@ -22,6 +22,7 @@
     
     width: 25%; /* TASK: fix so that it is always 25%, even when smaller*/
     padding: 20px;
+    max-height: 80vh;
 }
 
 
@@ -244,5 +245,6 @@
       width: 80%; 
       margin-top: 30px; 
       margin-left: 0px;;
+      
     }
   }
