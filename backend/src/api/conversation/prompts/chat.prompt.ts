@@ -40,7 +40,7 @@ If a user question appears offensive, harmful, violent, or otherwise inappropria
 `;
 
 export const chatUserPrompt = `Context:
-- Emotional probabilities: Happines: {happines}, Sadness: {sadness}, Anger: {anger}, Fear: {fear}, Surprise: {surprise}, Neutral: {neutral}, Disgust: {disgust}
+- Emotional occurences: Happines: {happines}, Sadness: {sadness}, Anger: {anger}, Fear: {fear}, Surprise: {surprise}, Neutral: {neutral}, Disgust: {disgust}
 - Age: {age}
 - Gender: {gender}
 
