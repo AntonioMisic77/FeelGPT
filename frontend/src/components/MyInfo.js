@@ -13,18 +13,21 @@ import "../styles/darkMode.css";
 
 const MyInfo = () => {
   // State variables
-  const [cameraConsent, setCameraConsent] = useState(true); // Assuming default as it's not in the response
+  const [cameraConsent, setCameraConsent] = useState(true);
   const [notifications, setNotifications] = useState("NEVER");
   const [notificationMethod, setNotificationMethod] = useState("EMAIL");
-  const [language, setLanguage] = useState("EN"); // Assuming default as it's not in the response
+  const [language, setLanguage] = useState("EN");
   const [showOverlay, setShowOverlay] = useState(false);
 
   // Additional state variables for user info
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState("");
-  const [notificationTime, setNotificationTime] = useState(null); // New state variable
-  const [responseTone, setResponseTone] = useState("NEUTRAL"); // New state variable
+  const [notificationTime, setNotificationTime] = useState(null);
+  const [responseTone, setResponseTone] = useState("NEUTRAL");
+
+  // New state for selectedDay
+  const [selectedDay, setSelectedDay] = useState("");
 
   // Initialize dark mode from localStorage or default to false if not set
   const [darkMode, setDarkMode] = useState(() => {
@@ -67,14 +70,15 @@ const MyInfo = () => {
         setProfileImage(`data:image/png;base64,${data.profileImage}`);
         setNotifications(data.notificationFrequency);
         setNotificationMethod(data.notificationMode);
-        setNotificationTime(data.notificationTime); // Set notificationTime
-        setResponseTone(data.responseTone); // Set responseTone
-        // If cameraConsent and language are part of the response, set them accordingly
-        // setCameraConsent(data.cameraConsent); // Uncomment if available
-        // setLanguage(data.language); // Uncomment if available
+        setNotificationTime(data.notificationTime);
+        setResponseTone(data.responseTone);
+        // Uncomment if available
+        // setCameraConsent(data.cameraConsent);
+        // setLanguage(data.language);
       } catch (err) {
         console.error("Error fetching user info:", err);
-        setError("Failed to load user information.");
+        const backendMessage = err.response?.data?.message;
+        setError(backendMessage || "Failed to load user information.");
       } finally {
         setLoading(false);
       }
@@ -92,13 +96,14 @@ const MyInfo = () => {
     setError(null);
     setLoading(true);
     try {
-      // Prepare the data to be updated
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("No auth token found");
       }
+
       const payloadBase64 = token.split('.')[1];
       const decodedPayload = JSON.parse(atob(payloadBase64));
+      const userId = decodedPayload.userId;
 
       const updatedData = {
         cameraConsent,
@@ -106,33 +111,33 @@ const MyInfo = () => {
         notificationMode: notificationMethod,
         language,
         responseTone,
+        email,
         notificationTime,
-        user: {
-          id: decodedPayload.userId
-        }
-        // Include other fields as necessary
+        selectedDay, // Include selectedDay if needed
+        // Include other fields if necessary
       };
 
+      await axiosInstance.put("/user/auth/update", updatedData, {
+        params: { id: userId },
+      });
 
-      // Send the update request
-      await axiosInstance.put("/user/auth/update", updatedData);
-
-      setShowOverlay(false); // Close overlay on success
-      // Optionally, you can fetch the updated data again or show a success message
+      setShowOverlay(false);
+      // Optionally fetch updated data or show success message
     } catch (err) {
       console.error("Error updating user info:", err);
-      setError("Failed to update settings. Please try again.");
+      const backendMessage = err.response?.data?.message;
+      setError(backendMessage || "Failed to update settings. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleOpenOverlay = () => {
-    setShowOverlay(true); // Open overlay
+    setShowOverlay(true);
   };
 
   const handleCloseOverlay = () => {
-    setShowOverlay(false); // Close overlay
+    setShowOverlay(false);
   };
 
   return (
@@ -153,7 +158,6 @@ const MyInfo = () => {
           <div className="settings-container">
             <h3 className="section-title">Conversation Reminders</h3>
             <hr className="divider" />
-            {/* Conversation Reminder Settings */}
             <p>How often: {notifications}</p>
             <p>
               When:{" "}
@@ -184,6 +188,10 @@ const MyInfo = () => {
             <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
               <h3>Update Settings</h3>
               <InfoForm
+                email={email}
+                setEmail={setEmail}
+                selectedDay={selectedDay}
+                setSelectedDay={setSelectedDay}
                 cameraConsent={cameraConsent}
                 setCameraConsent={setCameraConsent}
                 notifications={notifications}
@@ -193,10 +201,10 @@ const MyInfo = () => {
                 language={language}
                 setLanguage={setLanguage}
                 darkMode={darkMode}
-                responseTone={responseTone} // Pass responseTone if needed
-                setResponseTone={setResponseTone} // Pass setResponseTone if needed
-                notificationTime={notificationTime} // Pass notificationTime if needed
-                setNotificationTime={setNotificationTime} // Pass setNotificationTime if needed
+                responseTone={responseTone}
+                setResponseTone={setResponseTone}
+                notificationTime={notificationTime}
+                setNotificationTime={setNotificationTime}
               />
               <div className="update-buttons">
                 <button
@@ -229,14 +237,7 @@ const MyInfo = () => {
               <Graph />
               <div className="legend">
                 <ul className="list">
-                  {/* Populate legend items if available */}
-                  {/* Example:
-                  {items.map((item, index) => (
-                    <li key={index} className="list-item-legend">
-                      <span className="checkmark"></span> {item}
-                    </li>
-                  ))} 
-                  */}
+                  {/* Legend items */}
                 </ul>
               </div>
             </div>
