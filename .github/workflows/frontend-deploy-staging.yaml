@@ -40,7 +40,7 @@ jobs:
                 password: ${{ secrets.REGISTRY_PASSWORD }}
             - run: |
                 docker build -t feelgptcr.azurecr.io/feelgptstagingui:${{ github.sha }} .
-                docker push feelgptcr.azurecr.io/feelgpstagingui:${{ github.sha }}
+                docker push feelgptcr.azurecr.io/feelgptstagingui:${{ github.sha }}
     deploy:
         runs-on: ubuntu-latest
         needs: build
@@ -76,6 +76,6 @@ jobs:
                     ]'
             - uses: azure/webapps-deploy@v2
               with:
-                 app-name: 'feelgptui'
+                 app-name: 'feelgpt-ui-staging'
                  publish-profile: ${{ secrets.AZURE_WEBAPP_STAGING_UI_PUBLISH_PROFILE }}
-                 images: 'feelgptcr.azurecr.io/feelgptui:${{ github.sha }}'
+                 images: 'feelgptcr.azurecr.io/feelgptstagingui:${{ github.sha }}'
