@@ -51,7 +51,7 @@ jobs:
             - name: Set Web App Environment Variables
               uses: Azure/appservice-settings@v1
               with:
-                app-name: 'feelgptui'
+                app-name: 'feelgpt-ui-staging'
                 app-settings-json: '[
                         {
                             "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
