@@ -459,6 +459,7 @@ input[type="range"]::-moz-range-track {
   }
 
   .input-container{
+    margin-top: 10px;
     margin-bottom:20px;
     position: fixed; /* Makes the navbar stay fixed at the top */
     bottom: 0; /* Aligns it to the top */
@@ -524,6 +525,7 @@ input[type="range"]::-moz-range-track {
 
   .messages {
     max-height: 100vh;
+    margin-bottom: 15px;
   }
 
 }
