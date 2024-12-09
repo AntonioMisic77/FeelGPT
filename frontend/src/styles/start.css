@@ -8,16 +8,16 @@
   justify-content: center;
   overflow: hidden;
   /* Dark and light mode backgrounds */
-  background: linear-gradient(to bottom right, #0066ff, #66ccff); /* Default light mode */
+  background: linear-gradient(to bottom right, #455a7a, #8ebbd1); /* Default light mode */
 }
 
 .bckg.dark {
-  background: linear-gradient(to bottom right, #001f3f, #0074d9);
+  background: linear-gradient(to bottom right, #1a314d, #252242);
   color: white;
 }
 
 .bckg.light {
-  background: linear-gradient(to bottom right, #0066ff, #66ccff);
+  background: linear-gradient(to bottom right, #32496c, #95a8b1);
   color: black;
 }
 
@@ -29,7 +29,6 @@
   transition: color 0.3s ease;
 }
 
-/* Rest of your styles... */
 
 
 /* Top right buttons */
@@ -192,4 +191,21 @@
 
   .down{
     margin-top: 5px;
+  }
+
+  
+  .login-padding{
+    padding-left:10px;
+  }
+
+
+  @media (max-width: 600px) {
+.feelgpt-text {
+  font-size: 90px;
+}
+
+.center-start{
+  display:flex;
+  flex-direction: column;
+}
   }

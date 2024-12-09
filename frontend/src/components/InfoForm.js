@@ -66,10 +66,10 @@ const InfoForm = ({
             onChange={handleLanguageSelection}
             className={`form-control ${darkMode ? "dark" : "light"}`}
           >
-            <option value="">Select language</option>
-            {["English", "French", "Italian", "German"].map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
+            <option className="option-form" value="">Select language</option>
+            {["English", "French", "Italian", "German"].map((language) => (
+               <option className="option-form" key={language} value={language}>
+                {language}
               </option>
             ))}
           </select>
@@ -184,17 +184,9 @@ const InfoForm = ({
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
-                <option value="">Select a day</option>
-                {[
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                  "Sunday",
-                ].map((day) => (
-                  <option key={day} value={day}>
+                <option className="option-form" value="">Select a day</option>
+                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                  <option  className="option-form" key={day} value={day}>
                     {day}
                   </option>
                 ))}

@@ -41,7 +41,7 @@ const Graph = () => {
 
   return (
     
-    <div style={{ width: '500px', height: '300px', padding: '10px' }}>
+    <div style={{ width: '40vh', height: '30vh', padding: '10px' }}>
       <h2>Graph (done after history)</h2>
       <Line data={data} options={options} />
     </div>

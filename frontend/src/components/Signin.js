@@ -94,7 +94,7 @@ const Signin = () => {
         username: username,
         email: email,
         password: password,
-        responseTone : responseTone.toUpperCase(),
+        responseTone: responseTone.toUpperCase(),
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
         notificationTime : reminderDateTime,
@@ -117,7 +117,9 @@ const Signin = () => {
       if (err.response) {
         // Server responded with a status other than 200 range
         console.error("Response error:", err.response);
-        setError(err.response.data.message || "An error occurred. Please try again.");
+        setError(
+          err.response.data.message || "An error occurred. Please try again."
+        );
       } else if (err.request) {
         // No response was received from the server
         console.error("Request error:", err.request);
@@ -136,7 +138,7 @@ const Signin = () => {
     <div className="body-signin">
       <div className="sign-in-container">
         <div className="sign-in-form">
-          <h1 className="form-title">Feel GPT Sign In Form</h1>
+          <h1 className="form-title">FeelGPT Sign Up Form</h1>
           <form onSubmit={handleSubmit}>
             {/* Username Input Field */}
             <div>
@@ -200,17 +202,12 @@ const Signin = () => {
               </div>
             )}
 
-            {/* Submit Button */}
-            <div className="submit-container-signin">
-              <button type="submit" className="submit-btn button-66">
-                Submit
-              </button>
-            </div>
+            
           </form>
         </div>
 
         <div className="additional-info">
-          <h1 className="form-title">Additional Info</h1>
+          {/* <h1 className="form-title">Additional Info</h1> */}
           <div className="preferences">
             {/* Response Tone Slider */}
             <label>Response Tone</label>
@@ -223,8 +220,8 @@ const Signin = () => {
                 responseTone === "empathetic"
                   ? 1
                   : responseTone === "neutral"
-                    ? 2
-                    : 3
+                  ? 2
+                  : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -232,8 +229,8 @@ const Signin = () => {
                   value === 1
                     ? "empathetic"
                     : value === 2
-                      ? "neutral"
-                      : "professional"
+                    ? "neutral"
+                    : "professional"
                 );
               }}
             />
@@ -256,8 +253,8 @@ const Signin = () => {
                 reminderFrequency === "never"
                   ? 1
                   : reminderFrequency === "daily"
-                    ? 2
-                    : 3
+                  ? 2
+                  : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -274,7 +271,8 @@ const Signin = () => {
           </div>
 
           {/* Conditional Rendering Based on Reminder Frequency */}
-          {(reminderFrequency === "daily" || reminderFrequency === "weekly") && (
+          {(reminderFrequency === "daily" ||
+            reminderFrequency === "weekly") && (
             <div>
               {/* Reminder Type Radio Buttons */}
               <div className="reminder-type">
@@ -342,6 +340,12 @@ const Signin = () => {
               </div>
             </div>
           )}
+          {/* Submit Button */}
+          <div className="submit-container-signin">
+            <button type="submit" className="submit-btn button-66-smaller">
+              Submit
+            </button>
+          </div>
         </div>
       </div>
 

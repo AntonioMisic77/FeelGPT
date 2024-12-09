@@ -111,6 +111,8 @@ const Chat = ({
         gender: IsCameraEnabled ? mostCommonGender :undefined, // Most common gender detected
       };
 
+      document.getElementById("textarea-id").focus();
+
       /* CONNECTION TO BACKEND */
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
@@ -126,6 +128,8 @@ const Chat = ({
         console.error("Failed to send message: ", error);
       }
     }
+    
+    
   };
 
   //for data for switches
@@ -309,7 +313,17 @@ const Chat = ({
           className={`live-video ${isRecordingVideo ? "" : "hidden-video"}`}
           ref={videoRef}
           autoPlay
+          style={{ /* display: IsCameraEnabled ? "inherit" : "none", */
+            filter: IsCameraEnabled ? "none" : "brightness(0)"
+           }}
         />
+         {!IsCameraEnabled && isRecordingVideo && (
+    <div className="centered-text">
+    Camera is currently disabled and the emotion detection is not working.
+  </div>
+  )}
+        
+
         {isRecordingVideo && (
           <div className="sliders">
             <div>
@@ -448,6 +462,7 @@ const Chat = ({
 
         <div className="input-container">
           <textarea
+          id="textarea-id"
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => {
