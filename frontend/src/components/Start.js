@@ -43,7 +43,7 @@ const SignInLogin = () => {
           <h1 className="feelgpt-text">FeelGPT</h1>
           <div className="button-group">
             <Link to="/signin">
-              <button className="button-66">Sign In</button>
+              <button className="button-66">Sign Up</button>
             </Link>
             <Link to="/login">
               <button className="button-66">Log In</button>
