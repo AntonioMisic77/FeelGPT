@@ -9,8 +9,8 @@ const authRouter = express.Router();
 
 authRouter.post("/register", upload.single("profileImage"), register);
 authRouter.post("/login", login);
-authRouter.put("/update",isAuth, updateUserInfo);
-authRouter.get("/me",isAuth, getUser);
+authRouter.put("/update", isAuth, updateUserInfo);
+authRouter.get("/me", isAuth, getUser);
 
 
 

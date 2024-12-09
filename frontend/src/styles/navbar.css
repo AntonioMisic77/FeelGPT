@@ -15,6 +15,10 @@ body {
   color: white;
 }
 .navbar-container {
+  position: fixed;
+  z-index:100;
+    top: 0;
+    left:0;
   height: 60px;
   display: flex;
   justify-content: space-between; /* Ensures space between left and right sections */
@@ -22,6 +26,7 @@ body {
   padding: 30px 20px;
   width: 100vw;
   box-sizing: border-box;
+  background-color:inherit;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow below navbar */
 }
 
@@ -173,18 +178,17 @@ body {
   } */
 
 /* dropdown for camera */
-:root {
-  --dropdown-highlight: rgba(211, 211, 211, 0.812);
-  --dropdown-width: 160px;
-  --dropdown-background: rgba(211, 211, 211, 0.612);
-  --dropdown-color: black;
-}
-
 /* Dropdown styles */
 .dropdown {
   position: relative;
+  z-index: 2 !important;
+  --dropdown-highlight: lightgray;
+  --dropdown-width: 160px;
+  --dropdown-background: lightgray;
+  --dropdown-color: black;
 }
 
+/* Dropdown summary styles */
 .dropdown summary {
   list-style: none;
   outline: none;
@@ -204,15 +208,15 @@ body {
   background: var(--dropdown-background);
   border-radius: 6px;
   list-style: none;
-  z-index: 2;
 }
 
 .dropdown ul li a {
   display: inline-block;
   padding: 10px 0.8rem;
   width: 100%;
-  color: black;
+  color: var(--dropdown-color); /* Use local variable */
   text-decoration: none;
+  position: relative;
 }
 
 .dropdown ul li a:hover {
@@ -239,7 +243,7 @@ body {
 
 /* button */
 .button-66-smaller {
-  background-color: #0a6bff;
+  background-color: #22659f;
   border-radius: 4px;
   border: 0;
   box-shadow: rgba(1, 60, 136, 0.5) 0 -1px 3px 0 inset,
@@ -268,7 +272,7 @@ body {
 }
 
 .button-66-smaller:hover {
-  background-color: #065dd8;
+  background-color: #105087;
   transform: translateY(-2px);
 }
 
@@ -277,4 +281,18 @@ body {
     padding: 10px 30px; /* Adjusted padding for larger screens */
     min-width: 120px; /* Reduced minimum width for larger screens */
   }
+}
+
+
+@media (max-width: 600px) {
+  .navbar-container {
+    position: fixed; /* Makes the navbar stay fixed at the top */
+  top: 0; /* Aligns it to the top */
+  left: 0; /* Aligns it to the left */
+  width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Shadow below navbar */
+  }
+
+  
 }

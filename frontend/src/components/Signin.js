@@ -16,7 +16,7 @@ const Signin = () => {
   // New state variables for additional info
   const [responseTone, setResponseTone] = useState("neutral");
   const [reminderFrequency, setReminderFrequency] = useState("never");
-  const [reminderTime, setReminderTime] = useState("");
+  const [reminderTime, setReminderTime] = useState("12:00");
   const [selectedDay, setSelectedDay] = useState(""); // Single day selection
   const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or push)
 
@@ -83,18 +83,24 @@ const Signin = () => {
       // Set loading state to true
       setLoading(true);
 
+      const [hours, minutes] = reminderTime.split(":").map(Number);
+
+      const reminderDateTime = new Date();
+
+      reminderDateTime.setHours(hours, minutes, 0, 0);
+
       // Include all required fields in the POST request
       const response = await axiosInstance.post("/user/auth/register", {
         username: username,
         email: email,
         password: password,
-        responseTone : responseTone.toUpperCase(),
+        responseTone: responseTone.toUpperCase(),
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
-       // notificationTime : reminderTime,
+        notificationTime : reminderDateTime,
         selectedDay : selectedDay, // Include if reminderFrequency is "weekly"
-        profileImage : profileImage, // Add base64 image data
-        imageExtension : imageExtension, // Add image file extension
+        profileImage : profileImage, // Add base64 image data,
+        imageExtension : imageExtension, // Add image extension
       });
 
       const { token } = response.data;
@@ -111,7 +117,9 @@ const Signin = () => {
       if (err.response) {
         // Server responded with a status other than 200 range
         console.error("Response error:", err.response);
-        setError(err.response.data.message || "An error occurred. Please try again.");
+        setError(
+          err.response.data.message || "An error occurred. Please try again."
+        );
       } else if (err.request) {
         // No response was received from the server
         console.error("Request error:", err.request);
@@ -130,7 +138,7 @@ const Signin = () => {
     <div className="body-signin">
       <div className="sign-in-container">
         <div className="sign-in-form">
-          <h1 className="form-title">Feel GPT Sign In Form</h1>
+          <h1 className="form-title">FeelGPT Sign Up Form</h1>
           <form onSubmit={handleSubmit}>
             {/* Username Input Field */}
             <div>
@@ -194,17 +202,12 @@ const Signin = () => {
               </div>
             )}
 
-            {/* Submit Button */}
-            <div className="submit-container-signin">
-              <button type="submit" className="submit-btn button-66">
-                Submit
-              </button>
-            </div>
+            
           </form>
         </div>
 
         <div className="additional-info">
-          <h1 className="form-title">Additional Info</h1>
+          {/* <h1 className="form-title">Additional Info</h1> */}
           <div className="preferences">
             {/* Response Tone Slider */}
             <label>Response Tone</label>
@@ -217,8 +220,8 @@ const Signin = () => {
                 responseTone === "empathetic"
                   ? 1
                   : responseTone === "neutral"
-                    ? 2
-                    : 3
+                  ? 2
+                  : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -226,8 +229,8 @@ const Signin = () => {
                   value === 1
                     ? "empathetic"
                     : value === 2
-                      ? "neutral"
-                      : "professional"
+                    ? "neutral"
+                    : "professional"
                 );
               }}
             />
@@ -250,8 +253,8 @@ const Signin = () => {
                 reminderFrequency === "never"
                   ? 1
                   : reminderFrequency === "daily"
-                    ? 2
-                    : 3
+                  ? 2
+                  : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -268,7 +271,8 @@ const Signin = () => {
           </div>
 
           {/* Conditional Rendering Based on Reminder Frequency */}
-          {(reminderFrequency === "daily" || reminderFrequency === "weekly") && (
+          {(reminderFrequency === "daily" ||
+            reminderFrequency === "weekly") && (
             <div>
               {/* Reminder Type Radio Buttons */}
               <div className="reminder-type">
@@ -286,8 +290,8 @@ const Signin = () => {
                   <label>
                     <input
                       type="radio"
-                      value="push"
-                      checked={selectedReminderType === "push"}
+                      value="push_notification"
+                      checked={selectedReminderType === "push_notification"}
                       onChange={handleReminderTypeSelection}
                     />
                     Push Notification
@@ -336,6 +340,12 @@ const Signin = () => {
               </div>
             </div>
           )}
+          {/* Submit Button */}
+          <div className="submit-container-signin">
+            <button type="submit" className="submit-btn button-66-smaller">
+              Submit
+            </button>
+          </div>
         </div>
       </div>
 

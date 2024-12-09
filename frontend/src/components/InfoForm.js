@@ -1,36 +1,44 @@
-import React, { useState } from "react";
+// src/components/InfoForm.js
+
+import React from "react";
 import "../styles/form.css";
 
-const InfoForm = (darkMode) => {
-  const [email, setEmail] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [responseTone, setResponseTone] = useState("neutral");
-  const [reminderFrequency, setReminderFrequency] = useState("never");
-  const [reminderTime, setReminderTime] = useState("");
-  const [selectedDay, setSelectedDay] = useState(""); // Single day selection
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(""); // Language selection
-  const [selectedReminderType, setSelectedReminderType] = useState("email"); // Reminder type (email or radio)
+const InfoForm = ({
+  email,
+  setEmail,
+  selectedDay,
+  setSelectedDay,
+  cameraConsent,
+  setCameraConsent,
+  notifications,
+  setNotifications,
+  notificationMethod,
+  setNotificationMethod,
+  language,
+  setLanguage,
+  darkMode,
+  responseTone,
+  setResponseTone,
+  notificationTime,
+  setNotificationTime,
+}) => {
 
   const handleDaySelection = (e) => {
     setSelectedDay(e.target.value); // Update to a single selected day
   };
 
   const handleLanguageSelection = (e) => {
-    setSelectedLanguage(e.target.value); // Update selected language
+    setLanguage(e.target.value); // Update selected language
   };
 
   const handleReminderTypeSelection = (e) => {
-    setSelectedReminderType(e.target.value); // Update selected reminder type
+    setNotificationMethod(e.target.value); // Update selected reminder type
   };
 
-  const handleSavePassword = () => {
-    setIsChangingPassword(false);
-    setOldPassword("");
-    setNewPassword("");
-    setRepeatPassword("");
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   };
 
   return (
@@ -40,73 +48,27 @@ const InfoForm = (darkMode) => {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            // onChange={(e) => setEmail(e.target.value)}
             required
           />
           <label>email address</label>
         </div>
 
-        {!isChangingPassword && (
-          <button
-            type="button"
-            className="change-password-button"
-            onClick={() => setIsChangingPassword(true)}
-          >
-            I want to change my password
-          </button>
-        )}
-
-        {isChangingPassword && (
-          <div className="password-change">
-            <div className="input-group">
-              <input
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                required
-              />
-              <label>Old Password</label>
-            </div>
-            <div className="input-group">
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <label>New Password</label>
-            </div>
-            <div className="input-group">
-              <input
-                type="password"
-                value={repeatPassword}
-                onChange={(e) => setRepeatPassword(e.target.value)}
-                required
-              />
-              <label>Repeat New Password</label>
-            </div>
-            <button
-              type="button-update"
-              className="summary-button wider"
-              onClick={handleSavePassword}
-            >
-              Save my password
-            </button>
-          </div>
-        )}
+        {/* Password change logic can be handled similarly if needed */}
+        {/* If password change is managed here, you might need to pass additional props */}
       </div>
 
       <div className="info-two">
         <div className="languages">
           <label>Select Language:</label>
           <select
-            value={selectedLanguage}
+            value={language}
             onChange={handleLanguageSelection}
             className={`form-control ${darkMode ? "dark" : "light"}`}
           >
-            <option value="">Select language</option>
+            <option className="option-form" value="">Select language</option>
             {["English", "French", "Italian", "German"].map((language) => (
-              <option key={language} value={language}>
+               <option className="option-form" key={language} value={language}>
                 {language}
               </option>
             ))}
@@ -116,25 +78,25 @@ const InfoForm = (darkMode) => {
         <div className="preferences">
           <label>Response Tone</label>
           <input
-          className="win10-thumb"
+            className="win10-thumb"
             type="range"
             min="1"
             max="3"
             value={
-              responseTone === "empathetic"
+              responseTone === "EMPATHETIC"
                 ? 1
-                : responseTone === "neutral"
-                ? 2
-                : 3
+                : responseTone === "NEUTRAL"
+                  ? 2
+                  : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
               setResponseTone(
                 value === 1
-                  ? "empathetic"
+                  ? "EMPATHETIC"
                   : value === 2
-                  ? "neutral"
-                  : "professional"
+                    ? "NEUTRAL"
+                    : "PROFESSIONAL"
               );
             }}
           />
@@ -153,16 +115,16 @@ const InfoForm = (darkMode) => {
             min="1"
             max="3"
             value={
-              reminderFrequency === "never"
+              notifications === "NEVER"
                 ? 1
-                : reminderFrequency === "daily"
-                ? 2
-                : 3
+                : notifications === "DAILY"
+                  ? 2
+                  : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
-              setReminderFrequency(
-                value === 1 ? "never" : value === 2 ? "daily" : "weekly"
+              setNotifications(
+                value === 1 ? "NEVER" : value === 2 ? "DAILY" : "WEEKLY"
               );
             }}
           />
@@ -173,7 +135,7 @@ const InfoForm = (darkMode) => {
           </div>
         </div>
 
-        {reminderFrequency === "daily" || reminderFrequency === "weekly" ? (
+        {(notifications === "DAILY" || notifications === "WEEKLY") && (
           <div>
             {/* Reminder Type Radio Buttons */}
             <div className="reminder-type">
@@ -182,8 +144,8 @@ const InfoForm = (darkMode) => {
                 <label>
                   <input
                     type="radio"
-                    value="email"
-                    checked={selectedReminderType === "email"}
+                    value="EMAIL"
+                    checked={notificationMethod === "EMAIL"}
                     onChange={handleReminderTypeSelection}
                   />
                   Email
@@ -191,8 +153,8 @@ const InfoForm = (darkMode) => {
                 <label>
                   <input
                     type="radio"
-                    value="push"
-                    checked={selectedReminderType === "push"}
+                    value="PUSH_NOTIFICATION"
+                    checked={notificationMethod === "PUSH_NOTIFICATION"}
                     onChange={handleReminderTypeSelection}
                   />
                   Push Notification
@@ -205,28 +167,26 @@ const InfoForm = (darkMode) => {
               <label>Pick a Time:</label>
               <input
                 className={`form-control ${darkMode ? "dark" : "light"}`}
-
                 type="time"
-                value={reminderTime}
-                onChange={(e) => setReminderTime(e.target.value)}
+                value={formatTime(notificationTime)}
+                onChange={(e) => setNotificationTime(e.target.value)}
               />
             </div>
           </div>
-        ) : null}
+        )}
 
-        {reminderFrequency === "weekly" && (
+        {notifications === "WEEKLY" && (
           <div className="week">
             <label>Select Day:</label>
             <div className="week-picker">
               <select
-              
                 value={selectedDay}
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
-                <option value="">Select a day</option>
+                <option className="option-form" value="">Select a day</option>
                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                  <option key={day} value={day}>
+                  <option  className="option-form" key={day} value={day}>
                     {day}
                   </option>
                 ))}
