@@ -21,9 +21,10 @@ agenda.define("send email reminder", async (job: Job) => {
   console.log(`Sending email to ${email}`);
 
   // Read the HTML template
+  console.log("trying to read a template");
   const templatePath = path.join(__dirname, "emailTemplate.html");
+  console.log("templatePath", templatePath);
   const source = fs.readFileSync(templatePath, "utf8");
-
   console.log("reading template", source);
 
   // Compile the template using Handlebars
