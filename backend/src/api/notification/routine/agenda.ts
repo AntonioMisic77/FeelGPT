@@ -34,10 +34,10 @@ agenda.define("send email reminder", async (job: Job) => {
   }
 
 
-  console.log("reading template", source);
+  console.log("reading template", conversationTemplate);
 
   // Compile the template using Handlebars
-  const template = handlebars.compile(source);
+  const template = handlebars.compile(conversationTemplate);
 
   console.log("template", template);
 
@@ -51,5 +51,86 @@ agenda.define("send email reminder", async (job: Job) => {
   await sendMail(email, "Your Conversation Reminder", html);
   console.log("email sent");
 });
+
+const conversationTemplate = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Conversation Reminder</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100%;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .content {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+      }
+      .header {
+        text-align: center;
+        padding: 20px 0;
+      }
+      h1 {
+        color: #333333;
+      }
+      .summary {
+        background-color: #f9f9f9;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+      }
+      .button {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .button a {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 15px 25px;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+      .footer {
+        text-align: center;
+        color: #777777;
+        font-size: 12px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <!-- Header Section -->
+        <div class="header">
+          <h1>Hello, {{username}}!</h1>
+          <p>How do you feel today?</p>
+        </div>
+
+        <!-- Summary Section -->
+        <h2>Summary of our Last Session:</h2>
+        <div class="summary">
+          <p>{{conversationSummary}}</p>
+        </div>
+
+        <!-- Call-to-Action Button -->
+        <div class="button">
+          <a href="http://localhost:3001/chat">Start Your Conversation</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
 
 export default agenda;
