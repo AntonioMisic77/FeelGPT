@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import { config as dotEnvConfig } from "dotenv";
 
 dotEnvConfig();
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,

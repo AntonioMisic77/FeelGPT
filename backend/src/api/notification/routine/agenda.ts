@@ -24,13 +24,22 @@ agenda.define("send email reminder", async (job: Job) => {
   const templatePath = path.join(__dirname, "emailTemplate.html");
   const source = fs.readFileSync(templatePath, "utf8");
 
+  console.log("reading template", source);
+
   // Compile the template using Handlebars
   const template = handlebars.compile(source);
 
+  console.log("template", template);
+
   const conversationSummary = await generateSessionSummary(email);
 
+  console.log("conversationSummary", conversationSummary);
+
   const html = template({ username, conversationSummary });
+
+  console.log("trying to send a mail");
   await sendMail(email, "Your Conversation Reminder", html);
+  console.log("email sent");
 });
 
 export default agenda;
