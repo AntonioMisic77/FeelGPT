@@ -24,7 +24,16 @@ agenda.define("send email reminder", async (job: Job) => {
   console.log("trying to read a template");
   const templatePath = path.join(__dirname, "emailTemplate.html");
   console.log("templatePath", templatePath);
-  const source = fs.readFileSync(templatePath, "utf8");
+
+   var source = "";
+  if (!fs.existsSync(templatePath)) {
+    console.error("Template file does not exist at:", templatePath);
+  } else {
+    source = fs.readFileSync(templatePath, "utf8");
+    console.log("Template content:", source);
+  }
+
+
   console.log("reading template", source);
 
   // Compile the template using Handlebars
