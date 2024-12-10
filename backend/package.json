@@ -7,7 +7,7 @@
     "start": "ts-node src/api/user/features/auth/auth.service.ts",
     "start:prod": "node dist/src/index.js",
     "dev": "nodemon -L",
-    "build": "tsc && tsc-alias",
+    "build": "tsc && tsc-alias && npm run cp-js",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "db:migrate": "npx prisma migrate deploy",
@@ -18,7 +18,8 @@
     "prisma:generate": "npx prisma generate",
     "test": "jest --config jest.config.js",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "cp-js": "cpy src/**/*.html dist/src"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -39,6 +40,7 @@
     "agenda": "^5.0.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "cpy-cli": "^5.0.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "handlebars": "^4.7.8",
