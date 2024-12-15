@@ -18,6 +18,11 @@ interface UserDTO {
 
 const scheduleUserNotification = async (user: UserDTO) => {
   const notificationTime = new Date(user.notificationTime);
+  if (user.notificationFrequency === "NEVER") {
+    console.log(`No notifications scheduled for user: ${user.email}`);
+    return; // Do nothing for users with "NEVER" frequency
+  }
+
   const cronTime = `${notificationTime.getMinutes()} ${notificationTime.getHours()} * * ${
     user.notificationFrequency === "DAILY" ? "*" : "0"
   }`; // Daily or Weekly (Sunday)
@@ -42,6 +47,15 @@ const initializeUserJobs = async () => {
       await scheduleUserNotification(user);
     }
   }
+};
+
+const cancelNotification = async (user: UserDTO) => {
+
+  // Cancel existing job for the user
+  await agenda.cancel({
+    name: "send email reminder",
+    "data.email": user.email,
+  });
 };
 
 const scheduleTestNotification = async (user: {
@@ -74,4 +88,5 @@ export {
   scheduleUserNotification,
   initializeUserJobs,
   scheduleTestNotification,
+  cancelNotification
 };
