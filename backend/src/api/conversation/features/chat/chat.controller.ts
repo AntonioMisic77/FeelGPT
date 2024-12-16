@@ -3,6 +3,8 @@ import { generateLLMResponseLangchain } from "./chat.service";
 import { PrismaClient } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 import { getUserIdFromToken } from "@/api/user/features/auth/auth.service";
+import { createEndpoint, getUserInfo } from "@/utils";
+import { getEmotionsValidator } from "./chat.validator";
 
 /**
  * Interface defining the structure of the request body.
@@ -185,3 +187,50 @@ export const sendMessage = async (
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getEmotions = createEndpoint(
+  getEmotionsValidator,
+  async (req, res) => {
+
+      // Extract the userId and date from the request
+      const { date } = req.query;
+      const { user } = getUserInfo(req);
+
+  
+
+      // Parse the date from the request and calculate the start and end of the day
+      const selectedDate = new Date(date as string);
+  
+      if (isNaN(selectedDate.getTime())) {
+        throw new Error("Invalid date format. Use YYYY-MM-DD")
+      }
+  
+      const startOfDay = new Date(selectedDate);
+      startOfDay.setHours(0, 0, 0, 0);
+  
+      const endOfDay = new Date(selectedDate);
+      endOfDay.setHours(23, 59, 59, 999);
+  
+      // Query messages for the specific user and date
+      const messages = await prisma.chatMessage.findMany({
+        where: {
+          userId: user.id,
+          timestamp: {
+            gte: startOfDay, // Greater than or equal to start of the day
+            lte: endOfDay,   // Less than or equal to end of the day
+          },
+        },
+        select: {
+          id: true, // Include the message ID for reference
+          timestamp: true, // Include the timestamp for context
+          emotionsProbabilities: true, // Include only the emotional probabilities
+        },
+      });
+  
+      // Respond with the data
+       res.json({
+        result: messages,
+      });
+   
+  }
+);

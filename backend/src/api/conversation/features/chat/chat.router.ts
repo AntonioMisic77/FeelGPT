@@ -1,9 +1,12 @@
 import express from "express";
 
-import { sendMessage } from "./chat.controller";
+import { getEmotions, sendMessage } from "./chat.controller";
+import { isAuth } from "@/middlewares";
 
 const chatRouter = express.Router();
 
 chatRouter.post("/send", sendMessage);
+chatRouter.get("/emotions", isAuth, getEmotions);
+
 
 export default chatRouter;
