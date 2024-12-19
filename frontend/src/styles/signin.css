@@ -1,4 +1,5 @@
 .body-signin {
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,11 +18,8 @@
 
 .sign-in-container {
   display: flex;
-
-  width: 85%;
-  /* Adjust width as necessary */
+  width: auto;
   height: auto;
-  /* Adjust height as necessary */
   border: 1px solid #ccc;
   /* Optional border */
   border-radius: 8px;
@@ -38,13 +36,17 @@
 
 .sign-in-form {
   background-color: white;
-  padding: 20px;
+  padding: 40px;
+  
   flex: 2;
 }
 
 .additional-info {
-  background-color: lightgray;
+
+
+  background-color: white;
   padding: 40px;
+  padding-top: 105px;
   flex: 1;
 }
 
@@ -58,6 +60,12 @@
   margin-bottom: 15px;
 }
 
+.image-preview {
+  margin: 10px;
+  margin-top: 20px;
+}
+
+
 .signin-label {
   display: block;
   margin-bottom: 5px;
@@ -70,8 +78,9 @@
 
 
 .signin-input {
-  width: 80%;
+  width: 100%;
   padding: 8px;
+  padding-left: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -225,24 +234,11 @@ input::placeholder {
 }
 
 
-.consent-container {
-  /* display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px; */
-}
 
 .submit-container-signin {
   display: flex;
-  /* Use flexbox for layout */
   justify-content: flex-end;
-  /* Align items to the right */
-  width: 90%;
-  /* Adjust width as necessary */
-  /* Ensure container takes up the full width */
-  padding-top: 50px;
-  /* Add some space above the button */
+  padding-top: 30px;
 }
 
 
@@ -251,7 +247,6 @@ input::placeholder {
   display: flex;
   /* Use flexbox for layout */
   justify-content: flex-start;
-  /* Align items to the left */
   padding-top: 10px;
 }
 
@@ -283,7 +278,7 @@ input::placeholder {
   border: 1px solid #b0bec5;
   border-radius: 9999px;
   box-sizing: border-box;
-  color: blue;
+  color: rgb(42, 98, 127);
   cursor: pointer;
   font-family: inherit;
   font-feature-settings: inherit;
@@ -333,7 +328,7 @@ input::placeholder {
 .radio-wrapper-5 label.forCircle span {
   border: 0 solid #eee;
   box-sizing: border-box;
-  color: blue;
+  color: rgb(42, 98, 127);
   left: 50%;
   opacity: 0;
   pointer-events: none;
@@ -361,4 +356,53 @@ input::placeholder {
   font-weight: 300;
   margin-top: 1px;
   user-select: none;
+}
+
+.preferences{
+  width: 300px;
+}
+
+.radio-buttons{
+  margin-top: 5px;
+}
+
+
+/* ------------------------------------------------------------------- */
+/* mobile view */
+
+
+@media (max-width: 600px) {
+  .sign-in-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .additional-info {
+    padding: 40px;
+    padding-top: 20px;
+  }
+
+  .signin-input {
+    width: 85%;
+    margin-left: 15px;
+  }
+
+  .signin-label{
+    margin-left: 20px;
+  }
+
+  .sign-in-form{
+    padding-bottom: 20px;;
+  }
+
+  .body-signin {
+    background-color: #f0f0f0;
+    
+  }
+  
+  .sign-in-container {
+
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.0);
+  }
+
 }

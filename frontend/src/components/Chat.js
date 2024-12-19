@@ -55,7 +55,7 @@ const Chat = ({
   // Function to send a message
   const sendMessage = async () => {
     if (inputValue.trim()) {
-      // for time and date below messages
+      // For time and date below messages
       const timestamp = new Date().toLocaleTimeString();
 
       setMessages([
@@ -76,22 +76,42 @@ const Chat = ({
         textareaRef.current.blur();
       }
 
-      // extract emotion detection values
-      const emotionsArray = Array.from(
-        tmpAnalysisDataRef.current?.get(0)?.getEmotionProbabilities() || []
+
+      const processedEmotionsCleaned = processedEmotions.slice(1);
+      const processedEmotionsSending = processedEmotionsCleaned.map(
+          ({ dominant_emotion }) => ({
+            dominant_emotion, // Wrap it in an object
+          })
+        );
+
+      // Remove first value (0,0,0,...)
+      const emotionWhileTypingCleaned = emotionWhileTyping.slice(1);
+      // Extract data from emotionWhileTyping
+      const emotionsArray = emotionWhileTypingCleaned.map(
+        ({ age, gender, ...emotions }) => emotions
       );
 
-      const age = tmpAnalysisDataRef.current?.get(0)?.getAge();
-      const gender = tmpAnalysisDataRef.current?.get(0)?.getGender();
+      const averageAge =
+        emotionWhileTypingCleaned.reduce(
+          (sum, { age }) => sum + (age || 0),
+          0
+        ) /
+          emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
+        null;
+
+      // most common gender
+      const genderSum = emotionsArray.reduce((sum, value) => sum + value, 0);
+      const threshold = emotionsArray.length / 2;
+      const mostCommonGender = genderSum[0] < threshold ? 0 : 1;
 
       const chatData = {
         message: inputValue,
-        emotion: IsCameraEnabled ? emotionsArray :[],
-        age,
-        gender,
+        emotion:  IsCameraEnabled ? processedEmotionsSending :[],// Array of emotion arrays while typing 
+        age: IsCameraEnabled ? averageAge : undefined, // Average age detected
+        gender: IsCameraEnabled ? mostCommonGender :undefined, // Most common gender detected
       };
 
-      
+      document.getElementById("textarea-id").focus();
 
       /* CONNECTION TO BACKEND */
       try {
@@ -108,6 +128,8 @@ const Chat = ({
         console.error("Failed to send message: ", error);
       }
     }
+    
+    
   };
 
   //for data for switches
@@ -183,7 +205,6 @@ const Chat = ({
         setVisageData({
           imageCaptured: null,
           setImageCaptured: () => {},
-          // You can pass more relevant data here
         });
       };
 
@@ -204,6 +225,7 @@ const Chat = ({
     gender: null,
   });
 
+
   // in this is stored all emotions while typing
   const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
 
@@ -213,14 +235,12 @@ const Chat = ({
       // Clear history at the start of a new typing session
       setEmotionWhileTyping([]);
     } else {
-      if (emotionWhileTyping.length > 0) {
-        console.log(
-          "Typing stopped. Final emotion history for session:",
-          emotionWhileTyping
-        );
+      if (emotionValues) {
+        setEmotionWhileTyping((prev) => [...prev, emotionValues]);
       }
+      //console.log("Typing stopped. Final emotion history for session:", emotionWhileTyping);
 
-      // Reset emotionValues only after recording has ended and history has been stored
+      // Reset emotionValues after capturing
       setEmotionValues({
         anger: 0,
         disgust: 0,
@@ -244,36 +264,48 @@ const Chat = ({
 
   //for emotion lable -> now gets max from last detection
   const [dominantEmotion, setDominantEmotion] = useState(null);
+  const [processedEmotions, setProcessedEmotions] = useState(null);
   useEffect(() => {
     if (emotionWhileTyping.length > 0) {
-      const lastEmotionValues =
-        emotionWhileTyping[emotionWhileTyping.length - 1];
-
-      // Exclude age and gender from the calculation
-      const { age, gender, ...emotions } = lastEmotionValues;
-
-      // Determine the dominant emotion
-      let maxEmotion = null;
-      let maxEmotionValue = -Infinity;
-      for (const [emotion, value] of Object.entries(emotions)) {
-        if (value > maxEmotionValue) {
-          maxEmotionValue = value;
-          maxEmotion = emotion;
+      // Process the emotionWhileTyping array
+      const processedEmotions = emotionWhileTyping.map((emotionValues) => {
+        // Extract age, gender, and emotions
+        const { age, gender, ...emotions } = emotionValues;
+  
+        // Determine the dominant emotion
+        let maxEmotion = null;
+        let maxEmotionValue = -Infinity;
+        for (const [emotion, value] of Object.entries(emotions)) {
+          if (value > maxEmotionValue) {
+            maxEmotionValue = value;
+            maxEmotion = emotion;
+          }
         }
-      }
-
-      setDominantEmotion(maxEmotion);
+  
+        // Return the desired object format
+        return {
+          dominant_emotion: maxEmotion,
+          age,
+          gender,
+        };
+      });
+  
+      // Set the processed list (optional, if you need to store it somewhere)
+      setProcessedEmotions(processedEmotions);
+  
+      // Set the last dominant emotion
+      const lastEmotion = processedEmotions[processedEmotions.length - 1];
+      setDominantEmotion(lastEmotion.dominant_emotion);
     } else {
-      setDominantEmotion(null); // Reset if no data
+      setProcessedEmotions([]); // Reset the list if no data
+      setDominantEmotion(null); // Reset the dominant emotion if no data
     }
   }, [emotionWhileTyping]);
-
-
+  
 
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
       <div
-      style={{ position: "relative" }}
         className={`video-container ${isRecordingVideo ? "video-enabled" : ""}`}
       >
         {/* didnt work when video was rerendering  each time camera was enabled/disabled */}
@@ -286,18 +318,9 @@ const Chat = ({
            }}
         />
          {!IsCameraEnabled && isRecordingVideo && (
-    <div
-      style={{
-        position: "absolute",
-        top: "30%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        color: "gray", 
-        fontSize: "20px", 
-      }}
-    >
-      Camera is currently disabled and the emotion detection is not working.
-    </div>
+    <div className="centered-text">
+    Camera is currently disabled and the emotion detection is not working.
+  </div>
   )}
         
 
@@ -393,6 +416,7 @@ const Chat = ({
             </div>
           </div>
         )}
+     
       </div>
 
       <div
@@ -425,6 +449,7 @@ const Chat = ({
                     <div
                       className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
                     >
+                   
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>
                   )}
@@ -437,6 +462,7 @@ const Chat = ({
 
         <div className="input-container">
           <textarea
+          id="textarea-id"
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => {
@@ -490,13 +516,8 @@ const Chat = ({
           />
         )}
       </div>
-      {/* Popup Notification */}
-      
     </div>
-    
   );
 };
 
 export default Chat;
-
-

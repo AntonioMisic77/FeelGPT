@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
+RUN apk add --no-cache openssl
+
 RUN npm install
 
 # Prod Layer: Build the app and copy only the necessary files
@@ -30,7 +32,6 @@ COPY --from=prod-build  /app/node_modules/.prisma/client ./node_modules/.prisma/
 
 # Copy the .env file if it exists, for production testing
 COPY .env /app/.env
-
 
 RUN npm install --omit=dev --ignore-scripts
 RUN npm uninstall bcrypt

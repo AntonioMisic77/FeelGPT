@@ -140,3 +140,16 @@
     color: gray;
   }
 
+
+  @media (max-width: 600px) {
+    .settings-form{
+      display:flex;
+      flex-direction: column;
+      width: 85%;
+    }
+
+    .info-one{
+      margin-bottom: 35px;
+    }
+
+  }

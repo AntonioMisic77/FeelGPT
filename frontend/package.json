@@ -19,6 +19,7 @@
     "chart.js": "^4.4.5",
     "clockpicker": "^0.0.7",
     "dotenv": "^16.4.5",
+    "gsap": "^3.12.5",
     "jquery": "^3.7.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",

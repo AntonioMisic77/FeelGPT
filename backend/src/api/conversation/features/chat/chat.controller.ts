@@ -3,13 +3,20 @@ import { generateLLMResponseLangchain } from "./chat.service";
 import { PrismaClient } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 import { getUserIdFromToken } from "@/api/user/features/auth/auth.service";
+import { createEndpoint, getUserInfo } from "@/utils";
+import { getEmotionsValidator } from "./chat.validator";
 
 /**
  * Interface defining the structure of the request body.
  */
+
+type Emotion = {
+  dominant_emotion: string;
+};
+
 interface ChatRequestBody {
   message: string;
-  emotion: string[];
+  emotion: Emotion[];
   age: number;
   gender: number; // 1 = male, 0 = female
 }
@@ -69,17 +76,25 @@ export const sendMessage = async (
     "neutral",
   ];
 
-  // Map the received emotions to an array of objects with name and probability
-  const emotions = emotion.map((e, i) => ({
-    name: emotionsName[i],
-    probability: +e || 0,
+  // // Map the received emotions to an array of objects with name and probability
+  // const emotions = emotion.map((e, i) => ({
+  //   name: emotionsName[i],
+  //   probability: +e || 0,
+  // }));
+
+  // Map each emotion to a count
+  const emotions = emotionsName.map(name => ({
+    name,
+    probability: emotion.filter(e => e.dominant_emotion === name).length,
   }));
+
+  console.log("Preprocessed emotion:", emotions);
 
   //Get the emotion with the highest probability
 
   let highest_probability_emotion = {
     name: "neutral",
-    probability: 1
+    probability: 0
   }
 
   if(emotions.length > 0) {
@@ -172,3 +187,50 @@ export const sendMessage = async (
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getEmotions = createEndpoint(
+  getEmotionsValidator,
+  async (req, res) => {
+
+      // Extract the userId and date from the request
+      const { date } = req.query;
+      const { user } = getUserInfo(req);
+
+  
+
+      // Parse the date from the request and calculate the start and end of the day
+      const selectedDate = new Date(date as string);
+  
+      if (isNaN(selectedDate.getTime())) {
+        throw new Error("Invalid date format. Use YYYY-MM-DD")
+      }
+  
+      const startOfDay = new Date(selectedDate);
+      startOfDay.setHours(0, 0, 0, 0);
+  
+      const endOfDay = new Date(selectedDate);
+      endOfDay.setHours(23, 59, 59, 999);
+  
+      // Query messages for the specific user and date
+      const messages = await prisma.chatMessage.findMany({
+        where: {
+          userId: user.id,
+          timestamp: {
+            gte: startOfDay, // Greater than or equal to start of the day
+            lte: endOfDay,   // Less than or equal to end of the day
+          },
+        },
+        select: {
+          id: true, // Include the message ID for reference
+          timestamp: true, // Include the timestamp for context
+          emotionsProbabilities: true, // Include only the emotional probabilities
+        },
+      });
+  
+      // Respond with the data
+       res.json({
+        result: messages,
+      });
+   
+  }
+);
