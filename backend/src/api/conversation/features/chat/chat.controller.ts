@@ -191,46 +191,92 @@ export const sendMessage = async (
 export const getEmotions = createEndpoint(
   getEmotionsValidator,
   async (req, res) => {
+    // Extract the userId and date from the request
+    const { date } = req.query;
+    const { user } = getUserInfo(req);
 
-      // Extract the userId and date from the request
-      const { date } = req.query;
-      const { user } = getUserInfo(req);
+    // Parse the date from the request and calculate the start of the week
+    const selectedDate = new Date(date as string);
 
-  
+    if (isNaN(selectedDate.getTime())) {
+      throw new Error("Invalid date format. Use YYYY-MM-DD");
+    }
 
-      // Parse the date from the request and calculate the start and end of the day
-      const selectedDate = new Date(date as string);
-  
-      if (isNaN(selectedDate.getTime())) {
-        throw new Error("Invalid date format. Use YYYY-MM-DD")
-      }
-  
-      const startOfDay = new Date(selectedDate);
-      startOfDay.setHours(0, 0, 0, 0);
-  
-      const endOfDay = new Date(selectedDate);
-      endOfDay.setHours(23, 59, 59, 999);
-  
-      // Query messages for the specific user and date
-      const messages = await prisma.chatMessage.findMany({
-        where: {
-          userId: user.id,
-          timestamp: {
-            gte: startOfDay, // Greater than or equal to start of the day
-            lte: endOfDay,   // Less than or equal to end of the day
-          },
+    // Determine the start and end of the current week
+    const dayOfWeek = selectedDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const startOfWeek = new Date(selectedDate);
+    startOfWeek.setDate(selectedDate.getDate() - dayOfWeek); // Go back to the previous Sunday
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Go forward to the following Saturday
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    // Query messages for the specific user and the week
+    const messages = await prisma.chatMessage.findMany({
+      where: {
+        userId: user.id,
+        timestamp: {
+          gte: startOfWeek, // Greater than or equal to the start of the week
+          lte: endOfWeek,   // Less than or equal to the end of the week
         },
-        select: {
-          id: true, // Include the message ID for reference
-          timestamp: true, // Include the timestamp for context
-          emotionsProbabilities: true, // Include only the emotional probabilities
-        },
-      });
-  
-      // Respond with the data
-       res.json({
-        result: messages,
-      });
-   
+      },
+      select: {
+        id: true, // Include the message ID for reference
+        timestamp: true, // Include the timestamp for context
+        emotionsProbabilities: true, // Include only the emotional probabilities
+      },
+    });
+
+    // Respond with the data
+    res.json({
+      result: messages,
+    });
   }
 );
+
+
+export const getEmotionsYear = createEndpoint(
+  getEmotionsValidator,
+  async (req, res) => {
+    // Extract the userId and date from the request
+    const { date } = req.query;
+    const { user } = getUserInfo(req);
+
+    // Parse the date from the request and calculate the start of the year
+    const selectedDate = new Date(date as string);
+
+    if (isNaN(selectedDate.getTime())) {
+      throw new Error("Invalid date format. Use YYYY-MM-DD");
+    }
+
+    // Determine the start and end of the current year
+    const startOfYear = new Date(selectedDate.getFullYear(), 0, 1); // January 1st
+    startOfYear.setHours(0, 0, 0, 0);
+
+    const endOfYear = new Date(selectedDate.getFullYear(), 11, 31); // December 31st
+    endOfYear.setHours(23, 59, 59, 999);
+
+    // Query messages for the specific user and the year
+    const messages = await prisma.chatMessage.findMany({
+      where: {
+        userId: user.id,
+        timestamp: {
+          gte: startOfYear, // Greater than or equal to the start of the year
+          lte: endOfYear,   // Less than or equal to the end of the year
+        },
+      },
+      select: {
+        id: true, // Include the message ID for reference
+        timestamp: true, // Include the timestamp for context
+        emotionsProbabilities: true, // Include only the emotional probabilities
+      },
+    });
+
+    // Respond with the data
+    res.json({
+      result: messages,
+    });
+  }
+);
+

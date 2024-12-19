@@ -1,0 +1,245 @@
+.calendar-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: auto;
+}
+
+.month-container {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.monthly-view .calendar-grid {
+  margin: 0px 20px 20px 20px;
+}
+
+.monthly-view h3 {
+  margin: 20px;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-body {
+  display: flex;
+  flex-direction: column; /* Align weeks vertically */
+  gap: 0.5rem; /* Add spacing between weeks */
+}
+
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(
+    7,
+    1fr
+  ); /* Ensure all days in a week align correctly */
+  gap: 0.5rem; /* Add spacing between days */
+}
+
+.calendar-day {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.calendar-day.active:hover .day-number {
+  display: block;
+}
+
+.day-number {
+  display: none;
+  position: absolute;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* HOVER BAR ELEMENT */
+
+.calendar-day {
+  position: relative;
+  cursor: pointer;
+}
+
+.hover-element {
+  position: absolute;
+  top: -7vh;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 4vh;
+  width: 30vh;
+  display: flex;
+  border-radius: 10px; /* Increased to make it rounder */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+  padding: 8px; /* Adds padding inside the element */
+  border: 2px solid white; /* White border around the element */
+  background-color: white; /* Optional: Adds a background color */
+}
+
+.yearly-view .hover-element {
+  position: absolute;
+  top: -5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2vh;
+  width: 15vh;
+  display: flex;
+  border-radius: 10px; /* Increased to make it rounder */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+  padding: 5px; /* Adds padding inside the element */
+  border: 2px solid white; /* White border around the element */
+  background-color: white; /* Optional: Adds a background color */
+}
+
+.calendar-day:hover .hover-element {
+  opacity: 1;
+}
+
+.hover-element-segment {
+  height: 100%;
+  transition: background-color 0.5s ease-in-out;
+}
+
+/* mood tracker */
+.tracker-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.calendar-navigation {
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  margin-bottom: 20px;
+}
+
+.nav-button {
+  font-size: 24px;
+  padding: 10px;
+  color: gray;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+  background-color: white;
+}
+
+.no-data-message {
+  text-align: center;
+  font-size: 18px;
+  color: #7f8c8d;
+  margin-top: 20px;
+  width: 360px;
+  height: 400px;
+}
+
+.mood-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 70vw;
+  height: auto;
+}
+
+.month-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.year-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.yearly-month {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.yearly-view .month-container {
+  width: 100%; /* Ensure proper sizing within the grid */
+}
+
+.yearly-view .calendar-grid {
+  font-size: 0.5rem;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+.yearly-view .calendar-header div {
+  font-size: 0.5rem; /* Smaller headers */
+}
+
+.yearly-view .calendar-day {
+  font-size: 0.5rem; /* Adjust the size of the day numbers */
+  height: 15px;
+  width: 15px;
+}
+
+.yearly-view h3 {
+  margin: 0px 10px 0px 10px;
+}
+
+.calendar-wrapper {
+  margin-top: 10vh;
+}
+
+.yearly-view .calendar-body {
+  display: flex;
+  flex-direction: column; /* Align weeks vertically */
+  gap: 0.3rem; /* Add spacing between weeks */
+}
+
+.calendar-button {
+  margin: 10px;
+  margin-left: 30px;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  padding: 5px; /* Padding inside the button */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Rounded corners for buttons */
+  background-color: #7896ab; /* Button background color */
+  color: white; /* Button text color */
+  cursor: pointer; /* Pointer on hover */
+  width: 100px;
+}
+
+.calendar-navigation-month {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.calendar-button-month {
+  height: 20px;
+  margin: 10px;
+  border: 0px;
+  background-color: transparent !important;
+  color: gray
+}

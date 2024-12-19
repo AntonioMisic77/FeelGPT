@@ -6,6 +6,8 @@ import "../styles/form.css";
 const InfoForm = ({
   email,
   setEmail,
+  username,
+  setUsername,
   selectedDay,
   setSelectedDay,
   cameraConsent,
@@ -22,7 +24,6 @@ const InfoForm = ({
   notificationTime,
   setNotificationTime,
 }) => {
-
   const handleDaySelection = (e) => {
     setSelectedDay(e.target.value); // Update to a single selected day
   };
@@ -34,22 +35,30 @@ const InfoForm = ({
   const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
   };
-  
+
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
         <div className="input-group">
-          <input
-            type="email"
-            value={email}
-            // onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <label>email address</label>
+          <div>
+            <input
+              type="email"
+              value={email}
+              // onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <label>email address</label>
+          </div>
+          <div>
+            <input
+              type="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <label>username</label>
+          </div>
         </div>
-
-        {/* Password change logic can be handled similarly if needed */}
-        {/* If password change is managed here, you might need to pass additional props */}
       </div>
 
       <div className="info-two">
@@ -60,9 +69,11 @@ const InfoForm = ({
             onChange={handleLanguageSelection}
             className={`form-control ${darkMode ? "dark" : "light"}`}
           >
-            <option className="option-form" value="">Select language</option>
+            <option className="option-form" value="">
+              Select language
+            </option>
             {["English", "French", "Italian", "German"].map((language) => (
-               <option className="option-form" key={language} value={language}>
+              <option className="option-form" key={language} value={language}>
                 {language}
               </option>
             ))}
@@ -80,8 +91,8 @@ const InfoForm = ({
               responseTone === "EMPATHETIC"
                 ? 1
                 : responseTone === "NEUTRAL"
-                  ? 2
-                  : 3
+                ? 2
+                : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
@@ -89,8 +100,8 @@ const InfoForm = ({
                 value === 1
                   ? "EMPATHETIC"
                   : value === 2
-                    ? "NEUTRAL"
-                    : "PROFESSIONAL"
+                  ? "NEUTRAL"
+                  : "PROFESSIONAL"
               );
             }}
           />
@@ -109,11 +120,7 @@ const InfoForm = ({
             min="1"
             max="3"
             value={
-              notifications === "NEVER"
-                ? 1
-                : notifications === "DAILY"
-                  ? 2
-                  : 3
+              notifications === "NEVER" ? 1 : notifications === "DAILY" ? 2 : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
@@ -178,9 +185,19 @@ const InfoForm = ({
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
-                <option className="option-form" value="">Select a day</option>
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                  <option  className="option-form" key={day} value={day}>
+                <option className="option-form" value="">
+                  Select a day
+                </option>
+                {[
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ].map((day) => (
+                  <option className="option-form" key={day} value={day}>
                     {day}
                   </option>
                 ))}

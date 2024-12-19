@@ -1,70 +1,60 @@
-// src/pages/MyInfo.js
-
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 import Navbar from "../components/Navbar";
 import History from "../components/History";
 import Graph from "../components/Graph";
+import MoodTracker from "../components/MoodTracker";
 import InfoForm from "../components/InfoForm";
-
 import "../styles/chat.css";
 import "../styles/myinfo.css";
 import "../styles/darkMode.css";
 
 const MyInfo = () => {
-  // State variables
   const [cameraConsent, setCameraConsent] = useState(true);
   const [notifications, setNotifications] = useState("NEVER");
   const [notificationMethod, setNotificationMethod] = useState("EMAIL");
   const [language, setLanguage] = useState("English");
   const [showOverlay, setShowOverlay] = useState(false);
 
-  // Additional state variables for user info
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("username");
+  const [email, setEmail] = useState("email");
   const [profileImage, setProfileImage] = useState("");
   const [notificationTime, setNotificationTime] = useState(null);
   const [responseTone, setResponseTone] = useState("NEUTRAL");
-
-  // New state for selectedDay
   const [selectedDay, setSelectedDay] = useState("");
 
-  // Initialize dark mode from localStorage or default to false if not set
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
 
-  // State variables for loading and error
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Update localStorage whenever darkMode changes
-  useEffect(() => {
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
+  const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
 
-  // Fetch user info on component mount
+  const components = [
+    { name: "Graph", component: <Graph /> },
+    { name: "History", component: <History darkMode={darkMode} /> },
+    { name: "Mood Tracker", component: <MoodTracker /> },
+  ];
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("No auth token found");
-        }
-        const payloadBase64 = token.split('.')[1];
+        if (!token) throw new Error("No auth token found");
+
+        const payloadBase64 = token.split(".")[1];
         const decodedPayload = JSON.parse(atob(payloadBase64));
 
         const response = await axiosInstance.get("/user/auth/me", {
-          params: {
-            id: decodedPayload.userId
-          }
+          params: { id: decodedPayload.userId },
         });
 
         const data = response.data.result;
 
-        // Update state variables with response data
         setUsername(data.username);
         setEmail(data.email);
         setProfileImage(`data:image/png;base64,${data.profileImage}`);
@@ -72,9 +62,6 @@ const MyInfo = () => {
         setNotificationMethod(data.notificationMode);
         setNotificationTime(data.notificationTime);
         setResponseTone(data.responseTone);
-        // Uncomment if available
-        // setCameraConsent(data.cameraConsent);
-        // setLanguage(data.language);
       } catch (err) {
         console.error("Error fetching user info:", err);
         const backendMessage = err.response?.data?.message;
@@ -87,47 +74,31 @@ const MyInfo = () => {
     fetchUserInfo();
   }, []);
 
-  const toggleCameraConsent = () => setCameraConsent(!cameraConsent);
-  const toggleNotifications = (value) => setNotifications(value);
-  const toggleNotificationMethod = (value) => setNotificationMethod(value);
-  const toggleLanguage = () => setLanguage(language === "EN" ? "FR" : "EN");
-
-  const formatTime = (date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+  const handleComponentChange = (index) => {
+    setCurrentComponentIndex(index);
   };
-
-  const setNotificationTimeCustom = (time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    const reminderTime = new Date();
-    reminderTime.setHours(hours, minutes);
-    setNotificationTime(reminderTime);
-  }
 
   const handleSaveChanges = async () => {
     setError(null);
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("No auth token found");
-      }
+      if (!token) throw new Error("No auth token found");
 
-      const payloadBase64 = token.split('.')[1];
+      const payloadBase64 = token.split(".")[1];
       const decodedPayload = JSON.parse(atob(payloadBase64));
       const userId = decodedPayload.userId;
 
       const updatedData = {
+        username,
         cameraConsent,
         notificationFrequency: notifications,
         notificationMode: notificationMethod,
         language,
         responseTone,
         email,
-        notificationTime : notificationTime,
-        selectedDay, // Include selectedDay if needed
-        // Include other fields if necessary
+        notificationTime,
+        selectedDay,
       };
 
       await axiosInstance.put("/user/auth/update", updatedData, {
@@ -135,7 +106,6 @@ const MyInfo = () => {
       });
 
       setShowOverlay(false);
-      // Optionally fetch updated data or show success message
     } catch (err) {
       console.error("Error updating user info:", err);
       const backendMessage = err.response?.data?.message;
@@ -143,14 +113,6 @@ const MyInfo = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleOpenOverlay = () => {
-    setShowOverlay(true);
-  };
-
-  const handleCloseOverlay = () => {
-    setShowOverlay(false);
   };
 
   return (
@@ -166,8 +128,8 @@ const MyInfo = () => {
             alt="User"
             className="user-picture-profile"
           />
-          <p className="username">{email || username}</p>
-
+          <p className="username">{username}</p>
+          <p className="email">{email}</p>
           <div className="settings-container">
             <h3 className="section-title">Conversation Reminders</h3>
             <hr className="divider" />
@@ -186,8 +148,8 @@ const MyInfo = () => {
 
             <div className="button-right">
               <button
-                className="button-66-smaller manage"
-                onClick={handleOpenOverlay}
+                className="summary-button"
+                onClick={() => setShowOverlay(true)}
               >
                 Update Settings
               </button>
@@ -195,8 +157,39 @@ const MyInfo = () => {
           </div>
         </div>
 
-        {/* Overlay Form */}
-        {showOverlay && (
+        
+
+        {/* Top Navigation for Carousel */}
+        <div className="carousel-container">
+        <div className="carousel-navigation">
+          {components.map((item, index) => (
+            <button
+              key={index}
+              className={`carousel-tab ${
+                currentComponentIndex === index ? "active" : ""
+              }`}
+              onClick={() => handleComponentChange(index)}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Display the selected component */}
+        <div className="carousel-content">
+          {components[currentComponentIndex].component}
+        </div>
+        </div>
+      </div>
+
+      {loading && !showOverlay && <div className="loading-spinner">Loading...</div>}
+      {error && !showOverlay && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
+
+{showOverlay && (
           <div className="overlay">
             <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
               <h3>Update Settings</h3>
@@ -204,6 +197,8 @@ const MyInfo = () => {
                 email={email}
                 setEmail={setEmail}
                 selectedDay={selectedDay}
+                username={username}
+                setUsername={setUsername}
                 setSelectedDay={setSelectedDay}
                 cameraConsent={cameraConsent}
                 setCameraConsent={setCameraConsent}
@@ -217,7 +212,9 @@ const MyInfo = () => {
                 responseTone={responseTone}
                 setResponseTone={setResponseTone}
                 notificationTime={notificationTime}
-                setNotificationTime={setNotificationTimeCustom}
+                setNotificationTime={(time) =>
+                  setNotificationTime(new Date(time))
+                }
               />
               <div className="update-buttons">
                 <button
@@ -229,7 +226,7 @@ const MyInfo = () => {
                 </button>
                 <button
                   className="summary-button"
-                  onClick={handleCloseOverlay}
+                  onClick={() => setShowOverlay(false)}
                   disabled={loading}
                 >
                   Close
@@ -243,34 +240,9 @@ const MyInfo = () => {
             </div>
           </div>
         )}
-
-        <div className="second-container">
-          <div className="legend-container">
-            <div className="graph-legend-container">
-              <Graph />
-              <div className="legend">
-                <ul className="list">
-                  {/* Legend items */}
-                </ul>
-              </div>
-            </div>
-            <History darkMode={darkMode} />
-          </div>
-        </div>
-      </div>
-
-      {/* Error Handling Display */}
-      {error && !showOverlay && (
-        <div className="error-message">
-          <p>{error}</p>
-        </div>
-      )}
-
-      {/* Loading State */}
-      {loading && !showOverlay && (
-        <div className="loading-spinner">Loading...</div>
-      )}
     </div>
+
+    
   );
 };
 
