@@ -98,10 +98,11 @@ const Signin = () => {
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
         notificationTime : reminderDateTime,
-        selectedDay : selectedDay, // Include if reminderFrequency is "weekly"
+        notificationDayOfWeek : selectedDay, // Include if reminderFrequency is "weekly"
         profileImage : profileImage, // Add base64 image data,
         imageExtension : imageExtension, // Add image extension
       });
+
 
       const { token } = response.data;
 
@@ -323,15 +324,7 @@ const Signin = () => {
                   className="form-control"
                 >
                   <option value="">Select a day</option>
-                  {[
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
-                  ].map((day) => (
+                  {["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"].map((day) => (
                     <option key={day} value={day}>
                       {day}
                     </option>

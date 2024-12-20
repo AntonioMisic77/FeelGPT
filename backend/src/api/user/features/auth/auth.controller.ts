@@ -9,12 +9,13 @@ import { cancelNotification, scheduleUserNotification } from "@/api/notification
 // Register Endpoint
 
 export const register = createEndpoint(RegisterUserValidator, async (req: Request, res: Response) => {
+  console.log(req);
   const { username, email, password, notificationFrequency, profileImage,
-    notificationMode, notificationTime, responseTone } = req.body;
+    notificationMode, notificationTime, responseTone, notificationDayOfWeek } = req.body;
 
   try {
     const result = await registerUser(email, password, username, profileImage, notificationFrequency,
-      notificationMode, notificationTime, responseTone);
+      notificationMode, notificationTime, responseTone, notificationDayOfWeek);
       
     res.status(201).json(result);
   } catch (error: any) {
@@ -67,8 +68,11 @@ export const updateUserInfo = createEndpoint(
     const hasNotificationTimeChanged =
       updatedUser.notificationTime.getTime() !== currentUser.notificationTime.getTime();
 
+      const hasNotificationDayChanged =
+      updatedUser.notificationDayOfWeek !== currentUser.notificationDayOfWeek;
+
     // Handle rescheduling logic only if relevant fields are updated
-    if (hasNotificationPreferencesChanged || hasNotificationTimeChanged) {
+    if (hasNotificationPreferencesChanged || hasNotificationTimeChanged || hasNotificationDayChanged) {
       if (
         updatedUser.notificationFrequency === "NEVER" ||
         !updatedUser.notificationTime

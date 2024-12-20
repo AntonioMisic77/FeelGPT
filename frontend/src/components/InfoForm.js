@@ -9,7 +9,7 @@ const InfoForm = ({
   username,
   setUsername,
   selectedDay,
-  setSelectedDay,
+  setNotificationDayCustom,
   cameraConsent,
   setCameraConsent,
   notifications,
@@ -25,7 +25,7 @@ const InfoForm = ({
   setNotificationTime,
 }) => {
   const handleDaySelection = (e) => {
-    setSelectedDay(e.target.value); // Update to a single selected day
+    setNotificationDayCustom(e.target.value); // Update to a single selected day
   };
 
   const handleLanguageSelection = (e) => {

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {NotificationFrequency, NotificationMode, ResponseTone} from "@prisma/client";
+import {NotificationFrequency, NotificationMode, ResponseTone, DayOfWeek} from "@prisma/client";
 import { prisma } from "@/db";
 import { scheduleUserNotification } from "@/api/notification/routine/scheduler";
 
@@ -26,7 +26,8 @@ export const registerUser = async (
     notificationFrequency?: NotificationFrequency , 
     notificationMode?: NotificationMode, 
     notificationTime?: Date, 
-    responseTone?: ResponseTone
+    responseTone?: ResponseTone,
+    notificationDayOfWeek? : DayOfWeek
 ) => {
     // Check if the email is already in use
 
@@ -51,6 +52,7 @@ export const registerUser = async (
             notificationFrequency,
             notificationMode,
             notificationTime,
+            notificationDayOfWeek,
             responseTone
         },
     });

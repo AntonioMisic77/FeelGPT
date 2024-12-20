@@ -104,6 +104,11 @@ const MyInfo = () => {
     setNotificationTime(reminderTime);
   };
 
+  const setNotificationDayCustom = (day) => {
+    if (notifications !== "WEEKLY") setSelectedDay(null);
+    else setSelectedDay(day);
+  }
+
   const handleSaveChanges = async () => {
     setError(null);
     setLoading(true);
@@ -307,7 +312,6 @@ const MyInfo = () => {
             </div>
           </div>
         </div>
-
         {/* Top Navigation for Carousel */}
         <div className="carousel-container">
           <div className="carousel-navigation">
