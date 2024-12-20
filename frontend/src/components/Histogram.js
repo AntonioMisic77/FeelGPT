@@ -91,9 +91,44 @@ const Histogram = ({ data }) => {
       </div>
 
       {/* Bar chart */}
-      <div style={{   margin: "auto" }}>
+      {/* Bar chart */}
+      <div style={{ margin: "auto" }}>
         {chartData.datasets && (
-          <Bar data={chartData} options={{ responsive: true }}  style={{width: "40vw", height: "auto"}}/>
+          <Bar
+            data={chartData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true,
+                },
+              },
+              scales: {
+                y: {
+                  title: {
+                    display: true,
+                    text: "Count of Emotions ", // Y-axis label
+                    font: {
+                      size: 14,
+                    },
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+                x: {
+                  title: {
+                    display: true,
+                    text: "Emotions", // X-axis label
+                    font: {
+                      size: 14,
+                    },
+                  },
+                },
+              },
+            }}
+            style={{ width: "40vw", height: "auto" }}
+          />
         )}
       </div>
     </div>

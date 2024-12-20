@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 import MoodCalendar from "./MoodCalendar"; // Import MoodCalendar
+import "../styles/moodCalendar.css";
 const MoodTracker = () => {
   // State variables for loading, error, and data
   const [loading, setLoading] = useState(false);
@@ -121,26 +122,21 @@ const MoodTracker = () => {
       </div>
       {/* Legend Section */}
       <div>
-      <div style={{ margin: "20px" }}>
-        <h3>Emotion Legend:</h3>
-        <ul style={{ listStyle: "none", padding: 0, display: "flex", flexWrap: "wrap" , width: "10vw" }}>
+      <div className="legend-container" style={{ margin: "20px" }}>
+        <h3 className="emotion-legend">Emotion Legend:</h3>
+        <ul  style={{ listStyle: "none", padding: 0, display: "flex", flexWrap: "wrap" , width: "10vw" }}>
           {emotions.map((emotion, index) => (
             <li
+            className="li-legend"
               key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                margin: "5px 10px",
-              }}
+
             >
               <span
+              className="legend-block"
                 style={{
-                  display: "inline-block",
-                  width: "20px",
-                  height: "20px",
+              
                   backgroundColor: emotion.color,
-                  marginRight: "10px",
-                  borderRadius: "4px",
+                  
                 }}
               ></span>
               {emotion.name}

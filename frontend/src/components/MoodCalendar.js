@@ -88,18 +88,18 @@ const MoodCalendar = ({ data }) => {
 
     return (
       <div className="month-container" key={`${year}-${month}`}>
-        <h3>{`${new Date(year, month - 1).toLocaleString("default", {
+        <h3 className="month-title">{`${new Date(year, month - 1).toLocaleString("default", {
           month: "long",
         })} ${year}`}</h3>
         <div className="calendar-grid">
           <div className="calendar-header">
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-            <div>Sun</div>
+            <div className="month-name-month">Mon</div>
+            <div className="month-name-month">Tue</div>
+            <div className="month-name-month">Wed</div>
+            <div className="month-name-month">Thu</div>
+            <div className="month-name-month">Fri</div>
+            <div className="month-name-month">Sat</div>
+            <div className="month-name-month">Sun</div>
           </div>
           <div className="calendar-body">
             {weeks.map((week, weekIndex) => (

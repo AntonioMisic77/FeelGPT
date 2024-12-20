@@ -332,7 +332,7 @@ textarea {
   bottom: -40px;
   animation-duration: 1.5s;
   animation-timing-function: ease-in-out;
-  animation-iteration-count: 3;
+  animation-iteration-count: 5;
   color: gray; /* Start color */
 }
 

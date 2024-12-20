@@ -14,8 +14,8 @@ const InfoForm = ({
   setCameraConsent,
   notifications,
   setNotifications,
-  notificationMethod,
-  setNotificationMethod,
+  //notificationMethod,
+  //setNotificationMethod,
   language,
   setLanguage,
   darkMode,
@@ -32,10 +32,13 @@ const InfoForm = ({
     setLanguage(e.target.value); // Update selected language
   };
 
-  const handleReminderTypeSelection = (e) => {
+  /* const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
-  };
+  }; */
 
+
+
+  console.log('notificationtIME:',notificationTime )
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
@@ -139,7 +142,7 @@ const InfoForm = ({
         {(notifications === "DAILY" || notifications === "WEEKLY") && (
           <div>
             {/* Reminder Type Radio Buttons */}
-            <div className="reminder-type">
+            {/* <div className="reminder-type">
               <label>Select Reminder Type:</label>
               <div className="radio-buttons">
                 <label>
@@ -161,7 +164,7 @@ const InfoForm = ({
                   Push Notification
                 </label>
               </div>
-            </div>
+            </div> */}
 
             {/* Pick Time for Daily/Weekly Reminders */}
             <div className="time-picker">

@@ -243,3 +243,152 @@
   background-color: transparent !important;
   color: gray
 }
+
+.legend-block{
+  display: inline-block;
+                  width: 20px;
+                  height: 20px;
+                  margin-right: 10px;
+                  border-radius: 4px;
+}
+
+.li-legend{
+  display: flex;
+                align-items: center;
+                margin: 5px 10px;
+}
+
+
+@media (max-width: 600px) {
+  .mood-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .calendar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: auto;
+    margin-top: 4vh;
+  }
+  
+  .month-container {
+    border: 1px solid white;
+    border-radius: 5px;
+  }
+  
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .monthly-view .calendar-grid {
+    margin: 0px 10px 10px 10px;
+  }
+  
+  .monthly-view h3 {
+    margin: 10px;
+  }
+  
+  .calendar-week {
+    gap: 0.3rem; 
+  }
+  
+  .calendar-day {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    border-radius: 2.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .calendar-navigation{
+    flex-direction: row;
+    margin-bottom: 0vh;
+  }
+
+  .year-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+
+  .yearly-month {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .yearly-view .month-container {
+    width: 100%; 
+  }
+  
+  .yearly-view .calendar-grid {
+    font-size: 0.5rem;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+  }
+  
+  .yearly-view .calendar-header div {
+    font-size: 0.3rem; /* Smaller headers */
+  }
+  
+  .yearly-view .calendar-day {
+    font-size: 0.5rem; 
+    height: 5px;
+    width: 5px;
+  }
+
+  .month-title{
+    font-size:0.5rem;
+  }
+
+  .month-name-month{
+    font-size: 0.8rem;
+  }
+
+  .legend-text{
+    font-size: 2rem;
+    width: 15px;
+    height: 15px;
+  }
+  .emotion-legend{
+    display:flex;
+    margin-bottom: 0vh;
+
+  }
+
+
+  .legend-container {
+    margin: 1px; /* Reduce outer margin */
+  }
+
+  .legend-list {
+    width: 80vw; 
+  }
+
+  .li-legend {
+    margin: 0px; 
+  }
+
+  .legend-block {
+    width: 15px; 
+    height: 15px;
+    margin-right: 15px;
+    
+  }
+
+  .chat-button{
+    margin-left: 10px;
+  }
+  
+}
+
+
+
+
