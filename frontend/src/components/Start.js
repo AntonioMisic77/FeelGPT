@@ -67,13 +67,13 @@ const SignInLogin = () => {
             </label>
           </div>
 
-          <button onClick={toggleLanguage} className="language-btn">
+          {/* <button onClick={toggleLanguage} className="language-btn">
             <img
               src="/images/union_jack.png" // Language icon changes with language setting
               alt="Language Icon"
               className="language-icon"
             />
-          </button>
+          </button> */}
         </div>
 
         {/* Center buttons */}
