@@ -105,6 +105,11 @@ const MyInfo = () => {
     setNotificationTime(reminderTime);
   }
 
+  const setNotificationDayCustom = (day) => {
+    if (notifications !== "WEEKLY") setSelectedDay(null);
+    else setSelectedDay(day);
+  }
+
   const handleSaveChanges = async () => {
     setError(null);
     setLoading(true);
@@ -204,7 +209,7 @@ const MyInfo = () => {
                 email={email}
                 setEmail={setEmail}
                 selectedDay={selectedDay}
-                setSelectedDay={setSelectedDay}
+                setSelectedDay={setNotificationDayCustom}
                 cameraConsent={cameraConsent}
                 setCameraConsent={setCameraConsent}
                 notifications={notifications}

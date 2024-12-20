@@ -7,7 +7,7 @@ const InfoForm = ({
   email,
   setEmail,
   selectedDay,
-  setSelectedDay,
+  setNotificationDayCustom,
   cameraConsent,
   setCameraConsent,
   notifications,
@@ -24,7 +24,7 @@ const InfoForm = ({
 }) => {
 
   const handleDaySelection = (e) => {
-    setSelectedDay(e.target.value); // Update to a single selected day
+    setNotificationDayCustom(e.target.value); // Update to a single selected day
   };
 
   const handleLanguageSelection = (e) => {
@@ -179,7 +179,7 @@ const InfoForm = ({
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
                 <option className="option-form" value="">Select a day</option>
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                {["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"].map((day) => (
                   <option  className="option-form" key={day} value={day}>
                     {day}
                   </option>
