@@ -442,11 +442,12 @@ input[type="range"]::-moz-range-track {
 
 .centered-text {
   position: absolute;
-  top: 30%;
-  left: 50%;
+  top: 35%;
+  left: 30%;
   transform: translate(-50%, -50%);
   color: gray;
   font-size: 20px;
+  width: 20vw;
 }
 
 @media (max-width: 600px) {
