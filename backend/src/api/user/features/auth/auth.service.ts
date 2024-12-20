@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {NotificationFrequency, NotificationMode, ResponseTone} from "@prisma/client";
 import { prisma } from "@/db";
+import { scheduleUserNotification } from "@/api/notification/routine/scheduler";
 
 const SECRET_KEY = "your_secret_key"; // Replace with a strong secret key
 const RESET_TOKEN_EXPIRY = "15m";
@@ -53,6 +54,9 @@ export const registerUser = async (
             responseTone
         },
     });
+    if (notificationTime && notificationFrequency){
+        scheduleUserNotification(newUser);
+      }
 
     // Generate JWT
     const token = generateToken(newUser.id);
