@@ -1,6 +1,5 @@
 .summary-list {
-    /* TASK: remove hardcoded value from max-height */
-    max-height: 500px; /* Set a max height for scrolling */
+    max-height: 70vh; 
     overflow-y: auto;  /* Enable vertical scrolling */
     /* padding: 10px; */ /* Padding around the list */
     
@@ -66,6 +65,9 @@
     width: 100px;
   }
   
+ 
+
+
   .view{
     background-color: #607889;; /* Button background color */
   }
@@ -84,3 +86,15 @@
     background-color: #0a6bff;
     transform: translateY(-2px);
   }
+
+
+  @media (max-width: 600px) {
+  .summary-list {
+    max-height: 80vh; 
+    margin-top: 5vh;
+  }
+
+  .history{
+    display:none;
+  }
+}
