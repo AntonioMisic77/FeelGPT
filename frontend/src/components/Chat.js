@@ -79,10 +79,10 @@ const Chat = ({
 
       const processedEmotionsCleaned = processedEmotions.slice(1);
       const processedEmotionsSending = processedEmotionsCleaned.map(
-          ({ dominant_emotion }) => ({
-            dominant_emotion, // Wrap it in an object
-          })
-        );
+        ({ dominant_emotion }) => ({
+          dominant_emotion, // Wrap it in an object
+        })
+      );
 
       // Remove first value (0,0,0,...)
       const emotionWhileTypingCleaned = emotionWhileTyping.slice(1);
@@ -96,7 +96,7 @@ const Chat = ({
           (sum, { age }) => sum + (age || 0),
           0
         ) /
-          emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
+        emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
         null;
 
       // most common gender
@@ -106,9 +106,9 @@ const Chat = ({
 
       const chatData = {
         message: inputValue,
-        emotion:  IsCameraEnabled ? processedEmotionsSending :[],// Array of emotion arrays while typing 
+        emotion: IsCameraEnabled ? processedEmotionsSending : [],// Array of emotion arrays while typing 
         age: IsCameraEnabled ? averageAge : undefined, // Average age detected
-        gender: IsCameraEnabled ? mostCommonGender :undefined, // Most common gender detected
+        gender: IsCameraEnabled ? mostCommonGender : undefined, // Most common gender detected
       };
 
       document.getElementById("textarea-id").focus();
@@ -128,8 +128,8 @@ const Chat = ({
         console.error("Failed to send message: ", error);
       }
     }
-    
-    
+
+
   };
 
   //for data for switches
@@ -204,7 +204,7 @@ const Chat = ({
       const startVisageAnalyzer = () => {
         setVisageData({
           imageCaptured: null,
-          setImageCaptured: () => {},
+          setImageCaptured: () => { },
         });
       };
 
@@ -271,7 +271,7 @@ const Chat = ({
       const processedEmotions = emotionWhileTyping.map((emotionValues) => {
         // Extract age, gender, and emotions
         const { age, gender, ...emotions } = emotionValues;
-  
+
         // Determine the dominant emotion
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
@@ -281,7 +281,7 @@ const Chat = ({
             maxEmotion = emotion;
           }
         }
-  
+
         // Return the desired object format
         return {
           dominant_emotion: maxEmotion,
@@ -289,10 +289,10 @@ const Chat = ({
           gender,
         };
       });
-  
+
       // Set the processed list (optional, if you need to store it somewhere)
       setProcessedEmotions(processedEmotions);
-  
+
       // Set the last dominant emotion
       const lastEmotion = processedEmotions[processedEmotions.length - 1];
       setDominantEmotion(lastEmotion.dominant_emotion);
@@ -301,7 +301,7 @@ const Chat = ({
       setDominantEmotion(null); // Reset the dominant emotion if no data
     }
   }, [emotionWhileTyping]);
-  
+
 
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
@@ -315,14 +315,14 @@ const Chat = ({
           autoPlay
           style={{ /* display: IsCameraEnabled ? "inherit" : "none", */
             filter: IsCameraEnabled ? "none" : "brightness(0)"
-           }}
+          }}
         />
-         {!IsCameraEnabled && isRecordingVideo && (
-    <div className="centered-text">
-    Camera is currently disabled and the emotion detection is not working.
-  </div>
-  )}
-        
+        {!IsCameraEnabled && isRecordingVideo && (
+          <div className="centered-text">
+            Camera is currently disabled and the emotion detection is not working.
+          </div>
+        )}
+
 
         {isRecordingVideo && (
           <div className="sliders">
@@ -416,13 +416,12 @@ const Chat = ({
             </div>
           </div>
         )}
-     
+
       </div>
 
       <div
-        className={`chat-container ${darkMode ? "dark" : "light"} ${
-          isRecordingVideo ? "video-enabled-chat" : ""
-        }`}
+        className={`chat-container ${darkMode ? "dark" : "light"} ${isRecordingVideo ? "video-enabled-chat" : ""
+          }`}
       >
         <div className={`messages ${darkMode ? "dark" : "light"}`}>
           <div className={`date-bar ${darkMode ? "dark" : "light"}`}>Today</div>{" "}
@@ -449,7 +448,7 @@ const Chat = ({
                     <div
                       className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
                     >
-                   
+
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>
                   )}
@@ -462,7 +461,7 @@ const Chat = ({
 
         <div className="input-container">
           <textarea
-          id="textarea-id"
+            id="textarea-id"
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => {

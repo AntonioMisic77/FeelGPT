@@ -34,7 +34,7 @@ const InfoForm = ({
   const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
   };
-  
+
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
@@ -62,7 +62,7 @@ const InfoForm = ({
           >
             <option className="option-form" value="">Select language</option>
             {["English", "French", "Italian", "German"].map((language) => (
-               <option className="option-form" key={language} value={language}>
+              <option className="option-form" key={language} value={language}>
                 {language}
               </option>
             ))}
@@ -180,7 +180,7 @@ const InfoForm = ({
               >
                 <option className="option-form" value="">Select a day</option>
                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                  <option  className="option-form" key={day} value={day}>
+                  <option className="option-form" key={day} value={day}>
                     {day}
                   </option>
                 ))}

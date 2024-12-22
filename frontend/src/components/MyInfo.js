@@ -18,6 +18,8 @@ const MyInfo = () => {
   const [notificationMethod, setNotificationMethod] = useState("EMAIL");
   const [language, setLanguage] = useState("English");
   const [showOverlay, setShowOverlay] = useState(false);
+  const [success, setSuccess] = useState(null);
+
 
   // Additional state variables for user info
   const [username, setUsername] = useState("");
@@ -125,7 +127,7 @@ const MyInfo = () => {
         language,
         responseTone,
         email,
-        notificationTime : notificationTime,
+        notificationTime: notificationTime,
         selectedDay, // Include selectedDay if needed
         // Include other fields if necessary
       };
@@ -135,6 +137,7 @@ const MyInfo = () => {
       });
 
       setShowOverlay(false);
+      setSuccess("Settings updated successfully.");
       // Optionally fetch updated data or show success message
     } catch (err) {
       console.error("Error updating user info:", err);
@@ -265,6 +268,7 @@ const MyInfo = () => {
           <p>{error}</p>
         </div>
       )}
+      {success && <div className="success-message">{success}</div>}
 
       {/* Loading State */}
       {loading && !showOverlay && (
