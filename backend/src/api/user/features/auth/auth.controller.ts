@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerUser, loginUser } from "./auth.service";
+import { registerUser, loginUser, verifyToken } from "./auth.service";
 import { createEndpoint, getUserInfo } from "@/utils";
 import { prisma } from "@/db";
 import { LoginUserValidator, RegisterUserValidator, UpdateUserInfoValidator } from "./user.validator";
@@ -108,4 +108,30 @@ export const getUser = createEndpoint({}, async (req, res) => {
   res.json({
     result: rest,
   });
+});
+
+export const verify = createEndpoint({}, async (req, res) => {
+  const authHeader = req.headers.authorization; // Bearer TOKEN
+  const result = { message: 'Token is required' };
+
+  if (!authHeader) {
+    res.status(401).json({result});
+    return;
+  }
+
+  const token = authHeader.split(' ')[1]; // Extract token after "Bearer"
+  
+  if (!token) {
+    res.status(401).json({ result: 'Malformed authorization header' });
+    return;
+  }
+
+  try {
+    const user = await verifyToken(token);
+    res.status(200).json({ result: user });
+    return;
+  } catch (error: any) {
+    res.status(401).json({ result: error.message });
+    return;
+  }
 });
