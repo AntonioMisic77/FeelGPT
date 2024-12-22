@@ -6,14 +6,16 @@ import "../styles/form.css";
 const InfoForm = ({
   email,
   setEmail,
+  username,
+  setUsername,
   selectedDay,
-  setSelectedDay,
+  setNotificationDayCustom,
   cameraConsent,
   setCameraConsent,
   notifications,
   setNotifications,
-  notificationMethod,
-  setNotificationMethod,
+  //notificationMethod,
+  //setNotificationMethod,
   language,
   setLanguage,
   darkMode,
@@ -22,34 +24,46 @@ const InfoForm = ({
   notificationTime,
   setNotificationTime,
 }) => {
-
   const handleDaySelection = (e) => {
-    setSelectedDay(e.target.value); // Update to a single selected day
+    setNotificationDayCustom(e.target.value); // Update to a single selected day
   };
 
   const handleLanguageSelection = (e) => {
     setLanguage(e.target.value); // Update selected language
   };
 
-  const handleReminderTypeSelection = (e) => {
+  /* const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
-  };
+
+  }; */
+
+
+
+  console.log('notificationtIME:',notificationTime )
 
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
         <div className="input-group">
-          <input
-            type="email"
-            value={email}
-            // onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <label>email address</label>
+          <div>
+            <input
+              type="email"
+              value={email}
+              // onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <label>email address</label>
+          </div>
+          <div>
+            <input
+              type="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <label>username</label>
+          </div>
         </div>
-
-        {/* Password change logic can be handled similarly if needed */}
-        {/* If password change is managed here, you might need to pass additional props */}
       </div>
 
       <div className="info-two">
@@ -60,7 +74,9 @@ const InfoForm = ({
             onChange={handleLanguageSelection}
             className={`form-control ${darkMode ? "dark" : "light"}`}
           >
-            <option className="option-form" value="">Select language</option>
+            <option className="option-form" value="">
+              Select language
+            </option>
             {["English", "French", "Italian", "German"].map((language) => (
               <option className="option-form" key={language} value={language}>
                 {language}
@@ -80,8 +96,8 @@ const InfoForm = ({
               responseTone === "EMPATHETIC"
                 ? 1
                 : responseTone === "NEUTRAL"
-                  ? 2
-                  : 3
+                ? 2
+                : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
@@ -89,8 +105,8 @@ const InfoForm = ({
                 value === 1
                   ? "EMPATHETIC"
                   : value === 2
-                    ? "NEUTRAL"
-                    : "PROFESSIONAL"
+                  ? "NEUTRAL"
+                  : "PROFESSIONAL"
               );
             }}
           />
@@ -109,11 +125,7 @@ const InfoForm = ({
             min="1"
             max="3"
             value={
-              notifications === "NEVER"
-                ? 1
-                : notifications === "DAILY"
-                  ? 2
-                  : 3
+              notifications === "NEVER" ? 1 : notifications === "DAILY" ? 2 : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
@@ -132,7 +144,7 @@ const InfoForm = ({
         {(notifications === "DAILY" || notifications === "WEEKLY") && (
           <div>
             {/* Reminder Type Radio Buttons */}
-            <div className="reminder-type">
+            {/* <div className="reminder-type">
               <label>Select Reminder Type:</label>
               <div className="radio-buttons">
                 <label>
@@ -154,7 +166,7 @@ const InfoForm = ({
                   Push Notification
                 </label>
               </div>
-            </div>
+            </div> */}
 
             {/* Pick Time for Daily/Weekly Reminders */}
             <div className="time-picker">
@@ -178,8 +190,20 @@ const InfoForm = ({
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
-                <option className="option-form" value="">Select a day</option>
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+
+                <option className="option-form" value="">
+                  Select a day
+                </option>
+                {[
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ].map((day) => (
+
                   <option className="option-form" key={day} value={day}>
                     {day}
                   </option>

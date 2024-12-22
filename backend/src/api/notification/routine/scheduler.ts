@@ -13,14 +13,38 @@ interface UserDTO {
   lastLogin: Date | null;
   profileImage: string | null;
   notificationMode: $Enums.NotificationMode;
+  notificationDayOfWeek: $Enums.DayOfWeek | null;
   responseTone: $Enums.ResponseTone;
 }
 
 const scheduleUserNotification = async (user: UserDTO) => {
   const notificationTime = new Date(user.notificationTime);
-  const cronTime = `${notificationTime.getMinutes()} ${notificationTime.getHours()} * * ${
-    user.notificationFrequency === "DAILY" ? "*" : "0"
-  }`; // Daily or Weekly (Sunday)
+
+  if (user.notificationFrequency === "NEVER") {
+    console.log(`No notifications scheduled for user: ${user.email}`);
+    return; // Do nothing for users with "NEVER" frequency
+  }
+
+  let cronTime;
+  if (user.notificationFrequency === "DAILY") {
+    cronTime = `${notificationTime.getMinutes()} ${notificationTime.getHours()} * * *`;
+  } else if (user.notificationFrequency === "WEEKLY" && user.notificationDayOfWeek) {
+    const dayOfWeekMapping: { [key in $Enums.DayOfWeek]: number } = {
+      SUNDAY: 0,
+      MONDAY: 1,
+      TUESDAY: 2,
+      WEDNESDAY: 3,
+      THURSDAY: 4,
+      FRIDAY: 5,
+      SATURDAY: 6,
+    };
+
+    const dayOfWeek = dayOfWeekMapping[user.notificationDayOfWeek];
+    cronTime = `${notificationTime.getMinutes()} ${notificationTime.getHours()} * * ${dayOfWeek}`;
+  } else {
+    console.log(`Invalid weekly notification setup for user: ${user.email}`);
+    return;
+  }
 
   // Cancel existing job for the user
   await agenda.cancel({
@@ -35,6 +59,7 @@ const scheduleUserNotification = async (user: UserDTO) => {
   });
 };
 
+
 const initializeUserJobs = async () => {
   const users = await prisma.user.findMany(); // Fetch all users
   for (const user of users) {
@@ -42,6 +67,15 @@ const initializeUserJobs = async () => {
       await scheduleUserNotification(user);
     }
   }
+};
+
+const cancelNotification = async (user: UserDTO) => {
+
+  // Cancel existing job for the user
+  await agenda.cancel({
+    name: "send email reminder",
+    "data.email": user.email,
+  });
 };
 
 const scheduleTestNotification = async (user: {
@@ -74,4 +108,5 @@ export {
   scheduleUserNotification,
   initializeUserJobs,
   scheduleTestNotification,
+  cancelNotification
 };

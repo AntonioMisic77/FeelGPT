@@ -1,82 +1,88 @@
-// src/pages/MyInfo.js
-
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 import Navbar from "../components/Navbar";
 import History from "../components/History";
 import Graph from "../components/Graph";
+import MoodTracker from "../components/MoodTracker";
 import InfoForm from "../components/InfoForm";
-
 import "../styles/chat.css";
 import "../styles/myinfo.css";
 import "../styles/darkMode.css";
 
 const MyInfo = () => {
-  // State variables
   const [cameraConsent, setCameraConsent] = useState(true);
-  const [notifications, setNotifications] = useState("NEVER");
-  const [notificationMethod, setNotificationMethod] = useState("EMAIL");
+  const [notifications, setNotifications] = useState("WEEKLY");
+  //const [notificationMethod, setNotificationMethod] = useState("EMAIL");
   const [language, setLanguage] = useState("English");
   const [showOverlay, setShowOverlay] = useState(false);
   const [success, setSuccess] = useState(null);
 
 
-  // Additional state variables for user info
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("username");
+  const [email, setEmail] = useState("email");
   const [profileImage, setProfileImage] = useState("");
   const [notificationTime, setNotificationTime] = useState(null);
   const [responseTone, setResponseTone] = useState("NEUTRAL");
-
-  // New state for selectedDay
   const [selectedDay, setSelectedDay] = useState("");
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 600);
+  const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
 
-  // Initialize dark mode from localStorage or default to false if not set
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
 
-  // State variables for loading and error
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Update localStorage whenever darkMode changes
-  useEffect(() => {
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
+  const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
 
-  // Fetch user info on component mount
+  const components = [
+    { name: "Graph", component: <Graph /> },
+    { name: "History", component: <History darkMode={darkMode} /> },
+    { name: "Mood Tracker", component: <MoodTracker /> },
+  ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 600);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("No auth token found");
-        }
-        const payloadBase64 = token.split('.')[1];
+        if (!token) throw new Error("No auth token found");
+
+        const payloadBase64 = token.split(".")[1];
         const decodedPayload = JSON.parse(atob(payloadBase64));
 
         const response = await axiosInstance.get("/user/auth/me", {
-          params: {
-            id: decodedPayload.userId
-          }
+          params: { id: decodedPayload.userId },
         });
 
         const data = response.data.result;
 
-        // Update state variables with response data
         setUsername(data.username);
         setEmail(data.email);
-        setProfileImage(`data:image/png;base64,${data.profileImage}`);
+        setProfileImage(
+          data.profileImage
+            ? `data:image/png;base64,${data.profileImage}`
+            : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+        );
         setNotifications(data.notificationFrequency);
-        setNotificationMethod(data.notificationMode);
+        /* setNotificationMethod(data.notificationMode); */
         setNotificationTime(data.notificationTime);
         setResponseTone(data.responseTone);
-        // Uncomment if available
-        // setCameraConsent(data.cameraConsent);
-        // setLanguage(data.language);
       } catch (err) {
         console.error("Error fetching user info:", err);
         const backendMessage = err.response?.data?.message;
@@ -89,15 +95,8 @@ const MyInfo = () => {
     fetchUserInfo();
   }, []);
 
-  const toggleCameraConsent = () => setCameraConsent(!cameraConsent);
-  const toggleNotifications = (value) => setNotifications(value);
-  const toggleNotificationMethod = (value) => setNotificationMethod(value);
-  const toggleLanguage = () => setLanguage(language === "EN" ? "FR" : "EN");
-
-  const formatTime = (date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+  const handleComponentChange = (index) => {
+    setCurrentComponentIndex(index);
   };
 
   const setNotificationTimeCustom = (time) => {
@@ -105,6 +104,11 @@ const MyInfo = () => {
     const reminderTime = new Date();
     reminderTime.setHours(hours, minutes);
     setNotificationTime(reminderTime);
+  };
+
+  const setNotificationDayCustom = (day) => {
+    if (notifications !== "WEEKLY") setSelectedDay(null);
+    else setSelectedDay(day);
   }
 
   const handleSaveChanges = async () => {
@@ -112,24 +116,24 @@ const MyInfo = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("No auth token found");
-      }
+      if (!token) throw new Error("No auth token found");
 
-      const payloadBase64 = token.split('.')[1];
+      const payloadBase64 = token.split(".")[1];
       const decodedPayload = JSON.parse(atob(payloadBase64));
       const userId = decodedPayload.userId;
 
       const updatedData = {
+        username,
         cameraConsent,
         notificationFrequency: notifications,
-        notificationMode: notificationMethod,
+        //notificationMode: notificationMethod,
         language,
         responseTone,
         email,
         notificationTime: notificationTime,
-        selectedDay, // Include selectedDay if needed
-        // Include other fields if necessary
+
+        selectedDay,
+
       };
 
       await axiosInstance.put("/user/auth/update", updatedData, {
@@ -137,30 +141,45 @@ const MyInfo = () => {
       });
 
       setShowOverlay(false);
+
       setSuccess("Settings updated successfully.");
-      // Optionally fetch updated data or show success message
+
     } catch (err) {
       console.error("Error updating user info:", err);
       const backendMessage = err.response?.data?.message;
-      setError(backendMessage || "Failed to update settings. Please try again.");
+      setError(
+        backendMessage || "Failed to update settings. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenOverlay = () => {
-    setShowOverlay(true);
-  };
-
-  const handleCloseOverlay = () => {
-    setShowOverlay(false);
-  };
-
+  
   return (
     <div className="app-container">
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className={`info-page-container ${darkMode ? "dark" : "light"}`}>
-        <div className={`info-container ${darkMode ? "dark" : "light"}`}>
+        {/* my-info button */}
+        {isSmallScreen && (
+          <div className="my-info-button">
+            <button
+              onClick={() => setShowOverlay(!showOverlay)}
+              className="summary-button"
+            >
+              My Info
+            </button>
+          </div>
+        )}
+        {showOverlay && isSmallScreen && (
+          <div className="overlay" onClick={() => setShowOverlay(false)}></div>
+        )}
+        <div
+          className={`info-container ${darkMode ? "dark" : "light"} ${
+            isSmallScreen && showOverlay ? "show-overlay" : ""
+          }`}
+        >
+          <div className="picture-profile">
           <img
             src={
               profileImage ||
@@ -168,101 +187,164 @@ const MyInfo = () => {
             }
             alt="User"
             className="user-picture-profile"
-          />
-          <p className="username">{email || username}</p>
-
+          /></div>
+          <p className="username">{username}</p>
+          <p className="email">{email}</p>
           <div className="settings-container">
-            <h3 className="section-title">Conversation Reminders</h3>
-            <hr className="divider" />
-            <p>How often: {notifications}</p>
-            <p>
-              When:{" "}
-              {notificationTime
-                ? new Date(notificationTime).toLocaleString()
-                : "N/A"}
-            </p>
-            <p>How: {notificationMethod}</p>
-            <h3 className="section-title">Settings</h3>
-            <hr className="divider" />
-            <p>Language: {language}</p>
-            <p>Response tone: {responseTone}</p>
+            <div className="reminder-frequency">
+              <label>Conversation Reminders</label>
+              <input
+                type="range"
+                className="win10-thumb myinfo"
+                min="1"
+                max="3"
+                value={
+                  notifications === "NEVER"
+                    ? 1
+                    : notifications === "DAILY"
+                    ? 2
+                    : 3
+                }
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  setNotifications(
+                    value === 1 ? "NEVER" : value === 2 ? "DAILY" : "WEEKLY"
+                  );
+                }}
+                disabled
+              />
+              <div className="reminder-labels">
+                <span>Never</span>
+                <span>Daily</span>
+                <span>Weekly</span>
+              </div>
+            </div>
+            {(notifications === "DAILY" || notifications === "WEEKLY") && (
+              <div>
+                <div className="email-choice">
+                  <img
+                    src={"images/email.png"}
+                    alt="email"
+                    className="email-icon"
+                  />
+                  <div style={{ color: "gray" }}>email</div>
+                </div>
+                <div className="email-choice">
+                  <img
+                    src={"images/clock.webp"}
+                    alt="clock"
+                    className="clock-icon"
+                  />
+                  <div style={{ color: "gray" }}>
+                    {" "}
+                    {notificationTime
+                      ? new Date(notificationTime).toLocaleString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "N/A"}
+                  </div>
+                </div>
+              </div>
+            )}
+            {notifications === "WEEKLY" && (
+              <div>
+                <div className="email-choice">
+                  <img
+                    src={"images/calendar.png"}
+                    alt="calendar"
+                    className="clock-icon"
+                  />
+                  <div style={{ color: "gray" }}>
+                    {" "}
+                    {notificationTime
+                      ? new Date(notificationTime).toLocaleDateString([], {
+                          weekday: "long",
+                        })
+                      : "N/A"}
+                  </div>
+                </div>
+              </div>
+            )}
 
-            <div className="button-right">
+            {/* <h3 className="section-title">Settings</h3>
+            <hr className="divider" />
+            <p>Language: {language}</p> */}
+            <div className="reminder-frequency">
+              <label>Response Tone</label>
+              <input
+                type="range"
+                className="win10-thumb myinfo"
+                min="1"
+                max="3"
+                value={
+                  notifications === "EMPATHETIC"
+                    ? 1
+                    : notifications === "NEUTRAL"
+                    ? 2
+                    : 3
+                }
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  setResponseTone(
+                    value === 1
+                      ? "EMPATHETIC"
+                      : value === 2
+                      ? "NEUTRAL"
+                      : "PROFESSIONAL"
+                  );
+                }}
+                disabled
+              />
+              <div className="reminder-labels">
+                <span>Empathetic</span>
+                <span>Neutral</span>
+                <span>Professional</span>
+              </div>
+            </div>
+
+            <div className="button-down">
               <button
-                className="button-66-smaller manage"
-                onClick={handleOpenOverlay}
+                className="summary-button update"
+                onClick={() => setShowSettingsOverlay(true)}
               >
                 Update Settings
               </button>
+              <button
+      className="summary-button update"
+      onClick={() => setShowOverlay(false)}
+    >
+      Close
+    </button>
             </div>
           </div>
         </div>
-
-        {/* Overlay Form */}
-        {showOverlay && (
-          <div className="overlay">
-            <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
-              <h3>Update Settings</h3>
-              <InfoForm
-                email={email}
-                setEmail={setEmail}
-                selectedDay={selectedDay}
-                setSelectedDay={setSelectedDay}
-                cameraConsent={cameraConsent}
-                setCameraConsent={setCameraConsent}
-                notifications={notifications}
-                setNotifications={setNotifications}
-                notificationMethod={notificationMethod}
-                setNotificationMethod={setNotificationMethod}
-                language={language}
-                setLanguage={setLanguage}
-                darkMode={darkMode}
-                responseTone={responseTone}
-                setResponseTone={setResponseTone}
-                notificationTime={notificationTime}
-                setNotificationTime={setNotificationTimeCustom}
-              />
-              <div className="update-buttons">
-                <button
-                  onClick={handleSaveChanges}
-                  className="summary-button"
-                  disabled={loading}
-                >
-                  {loading ? "Saving..." : "Save Changes"}
-                </button>
-                <button
-                  className="summary-button"
-                  onClick={handleCloseOverlay}
-                  disabled={loading}
-                >
-                  Close
-                </button>
-              </div>
-              {error && (
-                <div className="error-message">
-                  <p>{error}</p>
-                </div>
-              )}
-            </div>
+        {/* Top Navigation for Carousel */}
+        <div className="carousel-container">
+          <div className="carousel-navigation">
+            {components.map((item, index) => (
+              <button
+                key={index}
+                className={`carousel-tab ${
+                  currentComponentIndex === index ? "active" : ""
+                }`}
+                onClick={() => handleComponentChange(index)}
+              >
+                {item.name}
+              </button>
+            ))}
           </div>
-        )}
 
-        <div className="second-container">
-          <div className="legend-container">
-            <div className="graph-legend-container">
-              <Graph />
-              <div className="legend">
-                <ul className="list">
-                  {/* Legend items */}
-                </ul>
-              </div>
-            </div>
-            <History darkMode={darkMode} />
+          {/* Display the selected component */}
+          <div className="carousel-content">
+            {components[currentComponentIndex].component}
           </div>
         </div>
       </div>
 
-      {/* Error Handling Display */}
+      {loading && !showOverlay && (
+        <div className="loading-spinner">Loading...</div>
+      )}
       {error && !showOverlay && (
         <div className="error-message">
           <p>{error}</p>
@@ -270,9 +352,54 @@ const MyInfo = () => {
       )}
       {success && <div className="success-message">{success}</div>}
 
-      {/* Loading State */}
-      {loading && !showOverlay && (
-        <div className="loading-spinner">Loading...</div>
+      {showSettingsOverlay  && (
+        <div className="overlay">
+          <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
+            <h3>Update Settings</h3>
+            <InfoForm
+              email={email}
+              setEmail={setEmail}
+              selectedDay={selectedDay}
+              username={username}
+              setUsername={setUsername}
+              setSelectedDay={setSelectedDay}
+              cameraConsent={cameraConsent}
+              setCameraConsent={setCameraConsent}
+              notifications={notifications}
+              setNotifications={setNotifications}
+              //notificationMethod={notificationMethod}
+              //setNotificationMethod={setNotificationMethod}
+              language={language}
+              setLanguage={setLanguage}
+              darkMode={darkMode}
+              responseTone={responseTone}
+              setResponseTone={setResponseTone}
+              notificationTime={notificationTime}
+              setNotificationTime={setNotificationTimeCustom}
+            />
+            <div className="update-buttons">
+              <button
+                onClick={handleSaveChanges}
+                className="summary-button"
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+              <button
+                className="summary-button"
+                onClick={() => setShowSettingsOverlay(false)}
+                disabled={loading}
+              >
+                Close
+              </button>
+            </div>
+            {error && (
+              <div className="error-message">
+                <p>{error}</p>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

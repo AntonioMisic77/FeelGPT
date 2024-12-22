@@ -184,7 +184,7 @@ body {
   z-index: 2 !important;
   --dropdown-highlight: lightgray;
   --dropdown-width: 160px;
-  --dropdown-background: lightgray;
+  --dropdown-background: rgba(211, 211, 211, 0.644);
   --dropdown-color: black;
 }
 
