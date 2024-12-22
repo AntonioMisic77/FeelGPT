@@ -12,7 +12,7 @@ RUN npm install
 
 # Copy the test files into the container
 COPY ./tests /app
-RUN chmod -R 777 /app/testimages/1kb.png
+#RUN chmod -R 777 /app/testimages/1kb.png
 
 # Set the default command to run the tests
 CMD ["npm", "test"]
