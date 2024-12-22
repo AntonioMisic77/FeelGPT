@@ -5,7 +5,7 @@ import { prisma } from "@/db";
 import { scheduleUserNotification } from "@/api/notification/routine/scheduler";
 
 const SECRET_KEY = "your_secret_key"; // Replace with a strong secret key
-const RESET_TOKEN_EXPIRY = "15m";
+//const RESET_TOKEN_EXPIRY = "15m";
 
 // Helper to generate JWT
 const generateToken = (userId: string): string => {
@@ -95,4 +95,26 @@ export const loginUser = async (email: string, password: string) => {
         profileImage: updatedUser.profileImage,
         lastLogin: updatedUser.lastLogin,
       }, };
+};
+
+
+// Token verification function
+export const verifyToken = async (token: string) => {
+    try {
+        const userId = getUserIdFromToken(token)
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            profileImage: user.profileImage,
+        };
+    } catch (error) {
+        throw new Error('Invalid or expired token');
+    }
 };
