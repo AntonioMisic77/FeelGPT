@@ -7,8 +7,7 @@ import axiosInstance from "../api/axiosInstance";
 
 const Signin = () => {
   // State variables
-  const [consent, setConsent] = useState(false);
-  const [notifications, setNotifications] = useState("daily");
+  //const [notifications, setNotifications] = useState("daily");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -28,14 +27,7 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handlers for form fields
-  const handleConsentChange = () => {
-    setConsent(!consent);
-  };
 
-  const handleNotificationsChange = (e) => {
-    setNotifications(e.target.value);
-  };
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
