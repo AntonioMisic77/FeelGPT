@@ -296,3 +296,12 @@
   justify-content: space-between;
   align-items: center;
 }
+
+
+
+@media (max-width: 1000px) {
+  .info-container{
+    max-width: 30vw;
+    min-width: 30vw;
+  }
+}

@@ -25,10 +25,16 @@ const MyInfo = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 600);
   const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
 
+
+  // Initialize dark mode based on local storage or default to false
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
+    // Update local storage whenever darkMode changes
+    useEffect(() => {
+      localStorage.setItem("darkMode", JSON.stringify(darkMode));
+    }, [darkMode]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -107,7 +113,7 @@ const MyInfo = () => {
   const setNotificationDayCustom = (day) => {
     if (notifications !== "WEEKLY") setSelectedDay(null);
     else setSelectedDay(day);
-  }
+  };
 
   const handleSaveChanges = async () => {
     setError(null);
@@ -148,10 +154,12 @@ const MyInfo = () => {
     }
   };
 
-  
   return (
     <div className="app-container">
-      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={() => setDarkMode((prev) => !prev)}
+      />
       <div className={`info-page-container ${darkMode ? "dark" : "light"}`}>
         {/* my-info button */}
         {isSmallScreen && (
@@ -173,14 +181,15 @@ const MyInfo = () => {
           }`}
         >
           <div className="picture-profile">
-          <img
-            src={
-              profileImage ||
-              "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-            }
-            alt="User"
-            className="user-picture-profile"
-          /></div>
+            <img
+              src={
+                profileImage ||
+                "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+              }
+              alt="User"
+              className="user-picture-profile"
+            />
+          </div>
           <p className="username">{username}</p>
           <p className="email">{email}</p>
           <div className="settings-container">
@@ -304,11 +313,11 @@ const MyInfo = () => {
                 Update Settings
               </button>
               <button
-      className="summary-button update"
-      onClick={() => setShowOverlay(false)}
-    >
-      Close
-    </button>
+                className="summary-button update"
+                onClick={() => setShowOverlay(false)}
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
@@ -344,7 +353,7 @@ const MyInfo = () => {
         </div>
       )}
 
-      {showSettingsOverlay  && (
+      {showSettingsOverlay && (
         <div className="overlay">
           <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
             <h3>Update Settings</h3>
@@ -361,8 +370,8 @@ const MyInfo = () => {
               setNotifications={setNotifications}
               //notificationMethod={notificationMethod}
               //setNotificationMethod={setNotificationMethod}
-              language={language}
-              setLanguage={setLanguage}
+              //language={language}
+              //setLanguage={setLanguage}
               darkMode={darkMode}
               responseTone={responseTone}
               setResponseTone={setResponseTone}
