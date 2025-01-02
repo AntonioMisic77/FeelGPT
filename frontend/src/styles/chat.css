@@ -62,6 +62,10 @@ body {
  */
 }
 
+
+
+
+
 .big-container {
   margin-top: 20px;
   display: flex;
@@ -84,6 +88,10 @@ body {
 /* when video is enabled */
 .big-container.video-enabled {
   flex-direction: row;
+}
+
+.overlay-camera {
+  filter: blur(10px);
 }
 
 .hidden-video {
@@ -479,7 +487,6 @@ input[type="range"]::-moz-range-track {
   .chat-container {
     width:auto;
     height:100%;
-    margin-bottom: 20px;
 
   }
 
@@ -509,6 +516,7 @@ input[type="range"]::-moz-range-track {
   .live-video{
     width: 50%;
     height: auto;
+    z-index: 10;
   }
 
   .sliders{
@@ -526,7 +534,10 @@ input[type="range"]::-moz-range-track {
 
   .messages {
     max-height: 100vh;
-    margin-bottom: 15px;
   }
 
 }
+
+
+
+

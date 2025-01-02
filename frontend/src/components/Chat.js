@@ -76,13 +76,12 @@ const Chat = ({
         textareaRef.current.blur();
       }
 
-
       const processedEmotionsCleaned = processedEmotions.slice(1);
       const processedEmotionsSending = processedEmotionsCleaned.map(
-          ({ dominant_emotion }) => ({
-            dominant_emotion, // Wrap it in an object
-          })
-        );
+        ({ dominant_emotion }) => ({
+          dominant_emotion, // Wrap it in an object
+        })
+      );
 
       // Remove first value (0,0,0,...)
       const emotionWhileTypingCleaned = emotionWhileTyping.slice(1);
@@ -106,9 +105,9 @@ const Chat = ({
 
       const chatData = {
         message: inputValue,
-        emotion:  IsCameraEnabled ? processedEmotionsSending :[],// Array of emotion arrays while typing 
+        emotion: IsCameraEnabled ? processedEmotionsSending : [], // Array of emotion arrays while typing
         age: IsCameraEnabled ? averageAge : undefined, // Average age detected
-        gender: IsCameraEnabled ? mostCommonGender :undefined, // Most common gender detected
+        gender: IsCameraEnabled ? mostCommonGender : undefined, // Most common gender detected
       };
 
       document.getElementById("textarea-id").focus();
@@ -128,8 +127,6 @@ const Chat = ({
         console.error("Failed to send message: ", error);
       }
     }
-    
-    
   };
 
   //for data for switches
@@ -189,6 +186,8 @@ const Chat = ({
       clearInterval(captureInterval);
     }
 
+    //
+
     return () => {
       // Clean up the interval when the component is unmounted or when typing stops
       if (captureInterval) {
@@ -225,7 +224,6 @@ const Chat = ({
     gender: null,
   });
 
-
   // in this is stored all emotions while typing
   const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
 
@@ -234,6 +232,9 @@ const Chat = ({
     if (isTyping) {
       // Clear history at the start of a new typing session
       setEmotionWhileTyping([]);
+      setStartTime(Date.now());
+      
+  
     } else {
       if (emotionValues) {
         setEmotionWhileTyping((prev) => [...prev, emotionValues]);
@@ -265,23 +266,35 @@ const Chat = ({
   //for emotion lable -> now gets max from last detection
   const [dominantEmotion, setDominantEmotion] = useState(null);
   const [processedEmotions, setProcessedEmotions] = useState(null);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(null);
+
   useEffect(() => {
     if (emotionWhileTyping.length > 0) {
+
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
       // Process the emotionWhileTyping array
       const processedEmotions = emotionWhileTyping.map((emotionValues) => {
         // Extract age, gender, and emotions
         const { age, gender, ...emotions } = emotionValues;
-  
+
         // Determine the dominant emotion
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
-        for (const [emotion, value] of Object.entries(emotions)) {
-          if (value > maxEmotionValue) {
-            maxEmotionValue = value;
-            maxEmotion = emotion;
+
+
+          for (const [emotion, value] of Object.entries(emotions)) {
+            if (value > maxEmotionValue) {
+              maxEmotionValue = value;
+              maxEmotion = emotion;
+            }
           }
-        }
-  
+ 
+        
+
         // Return the desired object format
         return {
           dominant_emotion: maxEmotion,
@@ -289,22 +302,71 @@ const Chat = ({
           gender,
         };
       });
+
+
+      // Set the processed list 
+      setProcessedEmotions(
+        processedEmotions
+      );
+
+      // remove the first emotion
+      // get time counter: if more seconds have passed than there are 
+      // detected emotions, than face is not in the camera
+      const currentTime = Date.now();
+      const elapsedSecondss = Math.floor((currentTime - startTime) / 1000);
+      setElapsedSeconds(elapsedSecondss); 
+      
   
-      // Set the processed list (optional, if you need to store it somewhere)
-      setProcessedEmotions(processedEmotions);
-  
-      // Set the last dominant emotion
       const lastEmotion = processedEmotions[processedEmotions.length - 1];
       setDominantEmotion(lastEmotion.dominant_emotion);
-    } else {
+      
+    } 
+
+    else {
+      
       setProcessedEmotions([]); // Reset the list if no data
       setDominantEmotion(null); // Reset the dominant emotion if no data
+      
     }
   }, [emotionWhileTyping]);
   
+const lastChangeRef = useRef(null); 
+
+  useEffect(() => {
+    const timeoutThreshold = 3000; 
+
+    if (isTyping) {
+      if (processedEmotions) {
+        lastChangeRef.current = Date.now(); 
+        console.log("false showOverlay")
+        setShowOverlay(false); 
+      }
+
+      // Check every second if there is no change for 3 seconds
+      const interval = setInterval(() => {
+        if (lastChangeRef.current) {
+          const elapsedTime = Date.now() - lastChangeRef.current;
+          if (elapsedTime > timeoutThreshold) {
+            setShowOverlay(true); 
+            console.log("true showOverlay")
+          }
+        }
+      }, 1000); 
+
+      return () => {
+        clearInterval(interval); 
+      };
+    } else {
+      setShowOverlay(false);
+      lastChangeRef.current = null;
+    }
+  }, [processedEmotions, isTyping]);  
+
+
+
 
   return (
-    <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
+    <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}>
       <div
         className={`video-container ${isRecordingVideo ? "video-enabled" : ""}`}
       >
@@ -313,19 +375,21 @@ const Chat = ({
           className={`live-video ${isRecordingVideo ? "" : "hidden-video"}`}
           ref={videoRef}
           autoPlay
-          style={{ /* display: IsCameraEnabled ? "inherit" : "none", */
-            filter: IsCameraEnabled ? "none" : "brightness(0)"
-           }}
+          style={{
+            /* display: IsCameraEnabled ? "inherit" : "none", */
+            filter: IsCameraEnabled ? "none" : "brightness(0)",
+          }}
         />
-         {!IsCameraEnabled && isRecordingVideo && (
-    <div className="centered-text">
-    Camera is currently disabled and the emotion detection is not working.
-  </div>
-  )}
-        
+        {!IsCameraEnabled && isRecordingVideo && (
+          <div className="centered-text">
+            Camera is currently disabled and the emotion detection is not
+            working.
+          </div>
+        )}
 
         {isRecordingVideo && (
-          <div className="sliders">
+          <div className={`sliders
+            ${showOverlay ? "overlay-camera" : ""}`}>
             <div>
               <input
                 type="range"
@@ -416,13 +480,13 @@ const Chat = ({
             </div>
           </div>
         )}
-     
       </div>
 
       <div
         className={`chat-container ${darkMode ? "dark" : "light"} ${
-          isRecordingVideo ? "video-enabled-chat" : ""
-        }`}
+          isRecordingVideo ? "video-enabled-chat" : ""}
+          ${showOverlay ? "overlay-camera" : ""}`}
+        
       >
         <div className={`messages ${darkMode ? "dark" : "light"}`}>
           <div className={`date-bar ${darkMode ? "dark" : "light"}`}>Today</div>{" "}
@@ -449,7 +513,6 @@ const Chat = ({
                     <div
                       className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
                     >
-                   
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>
                   )}
@@ -462,7 +525,7 @@ const Chat = ({
 
         <div className="input-container">
           <textarea
-          id="textarea-id"
+            id="textarea-id"
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => {
@@ -516,6 +579,8 @@ const Chat = ({
           />
         )}
       </div>
+
+      
     </div>
   );
 };
