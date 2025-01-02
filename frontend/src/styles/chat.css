@@ -94,6 +94,10 @@ body {
   filter: blur(10px);
 }
 
+.warning{
+  left:-20vw;
+}
+
 .hidden-video {
   display: none;
   visibility: hidden;
@@ -105,7 +109,6 @@ body {
 .video-enabled-chat {
   width: 40vw;
 }
-
 
 
 

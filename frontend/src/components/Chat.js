@@ -340,6 +340,7 @@ const lastChangeRef = useRef(null);
         lastChangeRef.current = Date.now(); 
         console.log("false showOverlay")
         setShowOverlay(false); 
+        setRecordingVideo(false); 
       }
 
       // Check every second if there is no change for 3 seconds
@@ -348,6 +349,7 @@ const lastChangeRef = useRef(null);
           const elapsedTime = Date.now() - lastChangeRef.current;
           if (elapsedTime > timeoutThreshold) {
             setShowOverlay(true); 
+            setRecordingVideo(true); 
             console.log("true showOverlay")
           }
         }
@@ -368,11 +370,11 @@ const lastChangeRef = useRef(null);
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}>
       <div
-        className={`video-container ${isRecordingVideo ? "video-enabled" : ""}`}
+        className={`video-container ${isRecordingVideo ? "video-enabled" : ""} `}
       >
         {/* didnt work when video was rerendering  each time camera was enabled/disabled */}
         <video
-          className={`live-video ${isRecordingVideo ? "" : "hidden-video"}`}
+          className={`live-video ${isRecordingVideo ? "" : "hidden-video"} `}
           ref={videoRef}
           autoPlay
           style={{
@@ -380,6 +382,15 @@ const lastChangeRef = useRef(null);
             filter: IsCameraEnabled ? "none" : "brightness(0)",
           }}
         />
+        {showOverlay && isRecordingVideo && (
+          <div className="warning">
+            For optimal performance, ensure your face is fully visible in the camera.
+            </div>
+        )
+        }
+        
+        
+
         {!IsCameraEnabled && isRecordingVideo && (
           <div className="centered-text">
             Camera is currently disabled and the emotion detection is not
