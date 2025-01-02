@@ -4,6 +4,8 @@ import "../styles/darkMode.css";
 import ImageCapture from "./ImageCapture"; // Import ImageCapture directly
 import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
+import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
+
 
 const Chat = ({
   darkMode,
@@ -365,7 +367,46 @@ const lastChangeRef = useRef(null);
   }, [processedEmotions, isTyping]);  
 
 
+// getting user image
+  const [profileImage, setProfileImage] = useState("");
+  const [isProfileImage, setIsProfileImage] = useState(false);
 
+useEffect(() => {
+  const fetchUserInfo = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) throw new Error("No auth token found");
+
+      const payloadBase64 = token.split(".")[1];
+      const decodedPayload = JSON.parse(atob(payloadBase64));
+
+      const response = await axiosInstance.get("/user/auth/me", {
+        params: { id: decodedPayload.userId },
+      });
+
+      const data = response.data.result;
+
+      setProfileImage(
+        data.profileImage
+          ? `data:image/png;base64,${data.profileImage}`
+          : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+      );
+
+      if (profileImage === null){
+        setIsProfileImage(false); 
+      }
+      else{
+        setIsProfileImage(true); 
+      }
+
+    } catch (err) {
+      const backendMessage = err.response?.data?.message;
+    } 
+    console.log('profile image:', profileImage)
+  };
+
+  fetchUserInfo();
+}, []);
 
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}>
@@ -517,12 +558,20 @@ const lastChangeRef = useRef(null);
                 >
                   {message.text}
                 </div>
+                {message.sender === "me" &&  isProfileImage && (
+                  <img
+                    src={profileImage}
+                    alt="User"
+                    className="user-picture chat picture-me"
+                  />
+                )}
+                
 
                 <div className="message-meta">
-                  <div className="timestamp">{message.timestamp}</div>
+                  <div className={`timestamp ${isProfileImage ? "left" : ""}`} >{message.timestamp}</div>
                   {message.sender === "me" && message.emotionLabel && (
                     <div
-                      className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
+                      className={`emotion-label ${message.emotionLabel.toUpperCase()} ${isProfileImage ? "left" : ""} `}
                     >
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>

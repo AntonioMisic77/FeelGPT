@@ -346,6 +346,12 @@ textarea {
   animation-iteration-count: 5;
   color: gray; /* Start color */
 }
+.timestamp.left {
+  right: 70px;
+}
+.emotion-label.left {
+  right: 70px;
+}
 
 /* Specific animation classes for different emotions */
 .HAPPINESS {
