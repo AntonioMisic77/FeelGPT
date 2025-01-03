@@ -144,31 +144,27 @@ const Chat = ({
     }
   };
   const simulateTypingEffect = (fullText) => {
-  let currentText = "";
-  const typingSpeed = 5; 
+    let currentText = "";
+    const typingSpeed = 5;
 
-  const typingInterval = setInterval(() => {
-    if (currentText.length < fullText.length) {
-      currentText += fullText[currentText.length]; // Append the next character
+    const typingInterval = setInterval(() => {
+      if (currentText.length < fullText.length) {
+        currentText += fullText[currentText.length]; // Append the next character
 
-      setMessages((prevMessages) => {
-        // Update only the last message with the new currentText
-        const updatedMessages = [...prevMessages];
-        updatedMessages[updatedMessages.length - 1] = {
-          ...updatedMessages[updatedMessages.length - 1],
-          text: currentText, // Update the text progressively
-          isLoading: false,
-        };
+        setMessages((prevMessages) => {
+          // Update only the last message with the new currentText
+          const updatedMessages = [...prevMessages];
+          updatedMessages[updatedMessages.length - 1] = {
+            ...updatedMessages[updatedMessages.length - 1],
+            text: currentText, // Update the text progressively
+            isLoading: false,
+          };
 
-        return updatedMessages;
+          return updatedMessages;
+        });
       }
-      );
-      ;
-
-    } 
-  }, typingSpeed);
-};
-
+    }, typingSpeed);
+  };
 
   //for data for switches
 
@@ -322,11 +318,16 @@ const Chat = ({
         // Determine the dominant emotion
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
-
-        for (const [emotion, value] of Object.entries(emotions)) {
-          if (value > maxEmotionValue) {
-            maxEmotionValue = value;
-            maxEmotion = emotion;
+        const allZero = Object.values(emotions).every((value) => value === 0);
+        if (allZero) {
+          maxEmotion = "not detected";
+          console.log("we have all yero");
+        } else {
+          for (const [emotion, value] of Object.entries(emotions)) {
+            if (value > maxEmotionValue) {
+              maxEmotionValue = value;
+              maxEmotion = emotion;
+            }
           }
         }
 
@@ -587,12 +588,12 @@ const Chat = ({
                 >
                   {message.isLoading ? (
                     <div class="dots-bounce-container">
-                    <div class="dots-bounce">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
+                      <div class="dots-bounce">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                      </div>
                     </div>
-                  </div>
                   ) : (
                     <p>{message.text}</p>
                   )}
@@ -607,7 +608,7 @@ const Chat = ({
 
                 <div className="message-meta">
                   <div className={`timestamp ${isProfileImage ? "left" : ""}`}>
-                  {!message.isLoading && message.timestamp}
+                    {!message.isLoading && message.timestamp}
                   </div>
                   {message.sender === "me" && message.emotionLabel && (
                     <div
