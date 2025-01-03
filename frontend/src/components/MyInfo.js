@@ -290,7 +290,7 @@ const MyInfo = () => {
                 disabled
               />
 
-              <div className="reminder-labels">
+              <div className="reminder-labels smaller-labels">
                 <span>Empathetic</span>
                 <span>Neutral</span>
                 <span>Professional</span>
@@ -304,12 +304,7 @@ const MyInfo = () => {
               >
                 Update Settings
               </button>
-              <button
-                className="summary-button update"
-                onClick={() => setShowOverlay(false)}
-              >
-                Close
-              </button>
+              
             </div>
           </div>
         </div>
