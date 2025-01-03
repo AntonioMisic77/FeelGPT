@@ -357,8 +357,8 @@ const Chat = ({
     }
   }, [emotionWhileTyping]);
 
+  // for overlay -> when face in not in the camera
   const lastChangeRef = useRef(null);
-
   useEffect(() => {
     const timeoutThreshold = 3000;
 
@@ -436,7 +436,7 @@ const Chat = ({
         } `}
       >
         <video
-          className={`live-video ${isRecordingVideo ? "" : "hidden-video"} `}
+          className={`live-video ${isRecordingVideo ? "" : "hidden-video"} ${!showOverlay ? "" : "overlay-video"} `}
           ref={videoRef}
           autoPlay
           style={{
@@ -444,7 +444,7 @@ const Chat = ({
             filter: IsCameraEnabled ? "none" : "brightness(0)",
           }}
         />
-        {showOverlay && isRecordingVideo && (
+        {showOverlay && (
           <div className="warning">
             For optimal performance, ensure your face is fully visible in the
             camera.
