@@ -321,7 +321,6 @@ const Chat = ({
         const allZero = Object.values(emotions).every((value) => value === 0);
         if (allZero) {
           maxEmotion = "not detected";
-          console.log("we have all yero");
         } else {
           for (const [emotion, value] of Object.entries(emotions)) {
             if (value > maxEmotionValue) {
@@ -350,7 +349,27 @@ const Chat = ({
       setElapsedSeconds(elapsedSecondss);
 
       const lastEmotion = processedEmotions[processedEmotions.length - 1];
-      setDominantEmotion(lastEmotion.dominant_emotion);
+
+      // change so that it isnt the last emotion, but most common emotion
+      function getMostCommonNonNeutralWord(words, neutralWords) {
+        const filteredWords = words.filter(word => !neutralWords.includes(word));
+      
+        const wordCounts = filteredWords.reduce((counts, word) => {
+          counts[word] = (counts[word] || 0) + 1;
+          return counts;
+        }, {});
+        const mostCommonWord = Object.keys(wordCounts).reduce((a, b) => 
+          wordCounts[a] > wordCounts[b] ? a : b
+        );
+      
+        return mostCommonWord;
+      }
+      const dominantEmotions = processedEmotions.map(item => item.dominant_emotion);
+      const mostCommonEmotion = getMostCommonNonNeutralWord(dominantEmotions, ['neutral']);
+
+      setDominantEmotion(mostCommonEmotion);
+
+
     } else {
       setProcessedEmotions([]); // Reset the list if no data
       setDominantEmotion(null); // Reset the dominant emotion if no data
