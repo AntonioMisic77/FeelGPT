@@ -340,9 +340,7 @@ const lastChangeRef = useRef(null);
     if (isTyping) {
       if (processedEmotions) {
         lastChangeRef.current = Date.now(); 
-        console.log("false showOverlay")
         setShowOverlay(false); 
-        setRecordingVideo(false); 
       }
 
       // Check every second if there is no change for 3 seconds
@@ -351,8 +349,6 @@ const lastChangeRef = useRef(null);
           const elapsedTime = Date.now() - lastChangeRef.current;
           if (elapsedTime > timeoutThreshold) {
             setShowOverlay(true); 
-            setRecordingVideo(true); 
-            console.log("true showOverlay")
           }
         }
       }, 1000); 
@@ -408,12 +404,12 @@ useEffect(() => {
   fetchUserInfo();
 }, []);
 
+
   return (
     <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}>
       <div
         className={`video-container ${isRecordingVideo ? "video-enabled" : ""} `}
       >
-        {/* didnt work when video was rerendering  each time camera was enabled/disabled */}
         <video
           className={`live-video ${isRecordingVideo ? "" : "hidden-video"} `}
           ref={videoRef}
@@ -428,7 +424,7 @@ useEffect(() => {
             For optimal performance, ensure your face is fully visible in the camera.
             </div>
         )
-        }
+        } 
         
         
 
@@ -447,6 +443,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.anger * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -459,6 +456,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.disgust * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -471,6 +469,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.fear * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -483,6 +482,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.happiness * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -497,6 +497,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.sadness * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -509,6 +510,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.surprise * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -521,6 +523,7 @@ useEffect(() => {
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.neutral * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
