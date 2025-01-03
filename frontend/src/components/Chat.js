@@ -6,7 +6,6 @@ import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 
-
 const Chat = ({
   darkMode,
   isRecordingVideo,
@@ -68,7 +67,7 @@ const Chat = ({
           timestamp,
           emotionLabel: IsCameraEnabled ? dominantEmotion : "",
         },
-        { text: "...", sender: "them", timestamp },
+        { text: "...", sender: "them", timestamp, isLoading: true },
       ]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
@@ -117,19 +116,59 @@ const Chat = ({
       /* CONNECTION TO BACKEND */
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
-        console.log("Backend response: ", response);
+
+        /* setMessages((prevMessages) =>
+          prevMessages.map((message, index) =>
+            index === prevMessages.length - 1
+              ? { ...message, text: response.reply, isLoading: false }
+              : message
+          )
+        ); */
+
+        // for typing letter by letter
+        //console.log(response.reply);
+        //console.log('messages: ' + messages.length);
+        simulateTypingEffect(response.reply);
+
+        // type out the message letter by letter
+      } catch (error) {
+        console.error("Failed to send message: ", error);
         setMessages((prevMessages) =>
           prevMessages.map((message, index) =>
-            index == prevMessages.length - 1
-              ? { ...message, text: response.reply }
+            index === prevMessages.length - 1
+              ? { ...message, text: "Failed to load reply", isLoading: false }
               : message
           )
         );
-      } catch (error) {
-        console.error("Failed to send message: ", error);
       }
     }
   };
+  const simulateTypingEffect = (fullText) => {
+  let currentText = "";
+  const typingSpeed = 5; 
+
+  const typingInterval = setInterval(() => {
+    if (currentText.length < fullText.length) {
+      currentText += fullText[currentText.length]; // Append the next character
+
+      setMessages((prevMessages) => {
+        // Update only the last message with the new currentText
+        const updatedMessages = [...prevMessages];
+        updatedMessages[updatedMessages.length - 1] = {
+          ...updatedMessages[updatedMessages.length - 1],
+          text: currentText, // Update the text progressively
+          isLoading: false,
+        };
+
+        return updatedMessages;
+      }
+      );
+      ;
+
+    } 
+  }, typingSpeed);
+};
+
 
   //for data for switches
 
@@ -235,8 +274,6 @@ const Chat = ({
       // Clear history at the start of a new typing session
       setEmotionWhileTyping([]);
       setStartTime(Date.now());
-      
-  
     } else {
       if (emotionValues) {
         setEmotionWhileTyping((prev) => [...prev, emotionValues]);
@@ -274,7 +311,6 @@ const Chat = ({
 
   useEffect(() => {
     if (emotionWhileTyping.length > 0) {
-
       if (!startTime) {
         setStartTime(Date.now());
       }
@@ -287,15 +323,12 @@ const Chat = ({
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
 
-
-          for (const [emotion, value] of Object.entries(emotions)) {
-            if (value > maxEmotionValue) {
-              maxEmotionValue = value;
-              maxEmotion = emotion;
-            }
+        for (const [emotion, value] of Object.entries(emotions)) {
+          if (value > maxEmotionValue) {
+            maxEmotionValue = value;
+            maxEmotion = emotion;
           }
- 
-        
+        }
 
         // Return the desired object format
         return {
@@ -305,42 +338,33 @@ const Chat = ({
         };
       });
 
-
-      // Set the processed list 
-      setProcessedEmotions(
-        processedEmotions
-      );
+      // Set the processed list
+      setProcessedEmotions(processedEmotions);
 
       // remove the first emotion
-      // get time counter: if more seconds have passed than there are 
+      // get time counter: if more seconds have passed than there are
       // detected emotions, than face is not in the camera
       const currentTime = Date.now();
       const elapsedSecondss = Math.floor((currentTime - startTime) / 1000);
-      setElapsedSeconds(elapsedSecondss); 
-      
-  
+      setElapsedSeconds(elapsedSecondss);
+
       const lastEmotion = processedEmotions[processedEmotions.length - 1];
       setDominantEmotion(lastEmotion.dominant_emotion);
-      
-    } 
-
-    else {
-      
+    } else {
       setProcessedEmotions([]); // Reset the list if no data
       setDominantEmotion(null); // Reset the dominant emotion if no data
-      
     }
   }, [emotionWhileTyping]);
-  
-const lastChangeRef = useRef(null); 
+
+  const lastChangeRef = useRef(null);
 
   useEffect(() => {
-    const timeoutThreshold = 3000; 
+    const timeoutThreshold = 3000;
 
     if (isTyping) {
       if (processedEmotions) {
-        lastChangeRef.current = Date.now(); 
-        setShowOverlay(false); 
+        lastChangeRef.current = Date.now();
+        setShowOverlay(false);
       }
 
       // Check every second if there is no change for 3 seconds
@@ -348,67 +372,67 @@ const lastChangeRef = useRef(null);
         if (lastChangeRef.current) {
           const elapsedTime = Date.now() - lastChangeRef.current;
           if (elapsedTime > timeoutThreshold) {
-            setShowOverlay(true); 
+            setShowOverlay(true);
           }
         }
-      }, 1000); 
+      }, 1000);
 
       return () => {
-        clearInterval(interval); 
+        clearInterval(interval);
       };
     } else {
       setShowOverlay(false);
       lastChangeRef.current = null;
     }
-  }, [processedEmotions, isTyping]);  
+  }, [processedEmotions, isTyping]);
 
-
-// getting user image
+  // getting user image
   const [profileImage, setProfileImage] = useState("");
   const [isProfileImage, setIsProfileImage] = useState(false);
 
-useEffect(() => {
-  const fetchUserInfo = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("No auth token found");
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) throw new Error("No auth token found");
 
-      const payloadBase64 = token.split(".")[1];
-      const decodedPayload = JSON.parse(atob(payloadBase64));
+        const payloadBase64 = token.split(".")[1];
+        const decodedPayload = JSON.parse(atob(payloadBase64));
 
-      const response = await axiosInstance.get("/user/auth/me", {
-        params: { id: decodedPayload.userId },
-      });
+        const response = await axiosInstance.get("/user/auth/me", {
+          params: { id: decodedPayload.userId },
+        });
 
-      const data = response.data.result;
+        const data = response.data.result;
 
-      setProfileImage(
-        data.profileImage
-          ? `data:image/png;base64,${data.profileImage}`
-          : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-      );
+        setProfileImage(
+          data.profileImage
+            ? `data:image/png;base64,${data.profileImage}`
+            : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+        );
 
-      if (profileImage === null){
-        setIsProfileImage(false); 
+        if (profileImage === null) {
+          setIsProfileImage(false);
+        } else {
+          setIsProfileImage(true);
+        }
+      } catch (err) {
+        const backendMessage = err.response?.data?.message;
       }
-      else{
-        setIsProfileImage(true); 
-      }
+      console.log("profile image:", profileImage);
+    };
 
-    } catch (err) {
-      const backendMessage = err.response?.data?.message;
-    } 
-    console.log('profile image:', profileImage)
-  };
-
-  fetchUserInfo();
-}, []);
-
+    fetchUserInfo();
+  }, []);
 
   return (
-    <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}>
+    <div
+      className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}
+    >
       <div
-        className={`video-container ${isRecordingVideo ? "video-enabled" : ""} `}
+        className={`video-container ${
+          isRecordingVideo ? "video-enabled" : ""
+        } `}
       >
         <video
           className={`live-video ${isRecordingVideo ? "" : "hidden-video"} `}
@@ -421,12 +445,10 @@ useEffect(() => {
         />
         {showOverlay && isRecordingVideo && (
           <div className="warning">
-            For optimal performance, ensure your face is fully visible in the camera.
-            </div>
-        )
-        } 
-        
-        
+            For optimal performance, ensure your face is fully visible in the
+            camera.
+          </div>
+        )}
 
         {!IsCameraEnabled && isRecordingVideo && (
           <div className="centered-text">
@@ -436,8 +458,10 @@ useEffect(() => {
         )}
 
         {isRecordingVideo && (
-          <div className={`sliders
-            ${showOverlay ? "overlay-camera" : ""}`}>
+          <div
+            className={`sliders
+            ${showOverlay ? "overlay-camera" : ""}`}
+          >
             <div>
               <input
                 type="range"
@@ -539,9 +563,9 @@ useEffect(() => {
 
       <div
         className={`chat-container ${darkMode ? "dark" : "light"} ${
-          isRecordingVideo ? "video-enabled-chat" : ""}
+          isRecordingVideo ? "video-enabled-chat" : ""
+        }
           ${showOverlay ? "overlay-camera" : ""}`}
-        
       >
         <div className={`messages ${darkMode ? "dark" : "light"}`}>
           <div className={`date-bar ${darkMode ? "dark" : "light"}`}>Today</div>{" "}
@@ -557,24 +581,39 @@ useEffect(() => {
                   />
                 )}
                 <div
-                  className={`message-border ${darkMode ? "dark" : "light"}`}
+                  className={`message-border ${darkMode ? "dark" : "light"} ${
+                    message.isLoading ? "transparent-background" : ""
+                  }`}
                 >
-                  {message.text}
+                  {message.isLoading ? (
+                    <div class="dots-bounce-container">
+                    <div class="dots-bounce">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    </div>
+                  </div>
+                  ) : (
+                    <p>{message.text}</p>
+                  )}
                 </div>
-                {message.sender === "me" &&  isProfileImage && (
+                {message.sender === "me" && isProfileImage && (
                   <img
                     src={profileImage}
                     alt="User"
                     className="user-picture chat picture-me"
                   />
                 )}
-                
 
                 <div className="message-meta">
-                  <div className={`timestamp ${isProfileImage ? "left" : ""}`} >{message.timestamp}</div>
+                  <div className={`timestamp ${isProfileImage ? "left" : ""}`}>
+                  {!message.isLoading && message.timestamp}
+                  </div>
                   {message.sender === "me" && message.emotionLabel && (
                     <div
-                      className={`emotion-label ${message.emotionLabel.toUpperCase()} ${isProfileImage ? "left" : ""} `}
+                      className={`emotion-label ${message.emotionLabel.toUpperCase()} ${
+                        isProfileImage ? "left" : ""
+                      } `}
                     >
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>
@@ -642,8 +681,6 @@ useEffect(() => {
           />
         )}
       </div>
-
-      
     </div>
   );
 };
