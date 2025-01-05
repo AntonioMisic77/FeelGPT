@@ -10,10 +10,8 @@ import "../styles/myinfo.css";
 import "../styles/darkMode.css";
 
 const MyInfo = () => {
-  const [cameraConsent, setCameraConsent] = useState(true);
   const [notifications, setNotifications] = useState("WEEKLY");
   //const [notificationMethod, setNotificationMethod] = useState("EMAIL");
-  const [language, setLanguage] = useState("English");
   const [showOverlay, setShowOverlay] = useState(false);
 
   const [username, setUsername] = useState("username");
@@ -25,16 +23,15 @@ const MyInfo = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 600);
   const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
 
-
   // Initialize dark mode based on local storage or default to false
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
-    // Update local storage whenever darkMode changes
-    useEffect(() => {
-      localStorage.setItem("darkMode", JSON.stringify(darkMode));
-    }, [darkMode]);
+  // Update local storage whenever darkMode changes
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -75,6 +72,7 @@ const MyInfo = () => {
         });
 
         const data = response.data.result;
+        console.log('data:', data);
 
         setUsername(data.username);
         setEmail(data.email);
@@ -87,6 +85,7 @@ const MyInfo = () => {
         /* setNotificationMethod(data.notificationMode); */
         setNotificationTime(data.notificationTime);
         setResponseTone(data.responseTone);
+        setSelectedDay(data.notificationDayOfWeek);
       } catch (err) {
         console.error("Error fetching user info:", err);
         const backendMessage = err.response?.data?.message;
@@ -103,12 +102,6 @@ const MyInfo = () => {
     setCurrentComponentIndex(index);
   };
 
-  const setNotificationTimeCustom = (time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    const reminderTime = new Date();
-    reminderTime.setHours(hours, minutes);
-    setNotificationTime(reminderTime);
-  };
 
   const setNotificationDayCustom = (day) => {
     if (notifications !== "WEEKLY") setSelectedDay(null);
@@ -118,6 +111,7 @@ const MyInfo = () => {
   const handleSaveChanges = async () => {
     setError(null);
     setLoading(true);
+    
     try {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("No auth token found");
@@ -127,22 +121,34 @@ const MyInfo = () => {
       const userId = decodedPayload.userId;
 
       const updatedData = {
-        username,
-        cameraConsent,
-        notificationFrequency: notifications,
+        username: localUsername,
+        notificationFrequency: localNotifications,
         //notificationMode: notificationMethod,
-        language,
-        responseTone,
-        email,
-        notificationTime: notificationTime,
-        selectedDay,
+        responseTime: localResponseTone,
+        notificationTime: localNotificationTime,
       };
+      // if reminderFrequency is weekly, add notificationDayOfWeek
+      if (localNotifications === "WEEKLY" && localSelectedDay) {
+        updatedData.notificationDayOfWeek = localSelectedDay;
+      }
+
+      console.log('updatedData:', updatedData);
+      
 
       await axiosInstance.put("/user/auth/update", updatedData, {
         params: { id: userId },
       });
 
-      setShowOverlay(false);
+      setShowSettingsOverlay(false);
+
+      //
+      // setUsername(localUsername);
+    setNotifications(localNotifications);
+    setResponseTone(localResponseTone);
+    setNotificationDayCustom(localSelectedDay);
+    setNotificationTime(localNotificationTime);
+
+      console.log('overlay ugasen')
     } catch (err) {
       console.error("Error updating user info:", err);
       const backendMessage = err.response?.data?.message;
@@ -153,6 +159,39 @@ const MyInfo = () => {
       setLoading(false);
     }
   };
+
+  /* const handleSave = () => {
+    // Update parent state with the new values
+    setUsername(localUsername);
+    setNotifications(localNotifications);
+    setResponseTone(localResponseTone);
+    setNotificationDayCustom(localSelectedDay);
+    setNotificationTime(localNotificationTime);
+  }; */
+
+  const [localUsername, setLocalUsername] = useState(username);
+  const [localNotifications, setLocalNotifications] = useState(notifications);
+  const [localResponseTone, setLocalResponseTone] = useState(responseTone);
+  const [localSelectedDay, setLocalSelectedDay] = useState(selectedDay);
+  const [localNotificationTime, setLocalNotificationTime] =
+    useState(notificationTime);
+
+  useEffect(() => {
+    setLocalUsername(username);
+  }, [username]);
+  useEffect(() => {
+    setLocalNotifications(notifications);
+  }, [notifications]);
+  useEffect(() => {
+    setLocalResponseTone(responseTone);
+  }, [responseTone]);
+  useEffect(() => {
+    setLocalSelectedDay(selectedDay);
+  }, [selectedDay]);
+  useEffect(() => {
+    setLocalNotificationTime(notificationTime);
+    console.log(typeof notificationTime);
+  }, [notificationTime]);
 
   return (
     <div className="app-container">
@@ -259,11 +298,7 @@ const MyInfo = () => {
                   />
                   <div style={{ color: "gray" }}>
                     {" "}
-                    {notificationTime
-                      ? new Date(notificationTime).toLocaleDateString([], {
-                          weekday: "long",
-                        })
-                      : "N/A"}
+                    {selectedDay}
                   </div>
                 </div>
               </div>
@@ -280,9 +315,9 @@ const MyInfo = () => {
                 min="1"
                 max="3"
                 value={
-                  notifications === "EMPATHETIC"
+                  responseTone === "EMPATHETIC"
                     ? 1
-                    : notifications === "NEUTRAL"
+                    : responseTone === "NEUTRAL"
                     ? 2
                     : 3
                 }
@@ -312,12 +347,12 @@ const MyInfo = () => {
               >
                 Update Settings
               </button>
-              <button
+              {/* <button
                 className="summary-button update"
                 onClick={() => setShowOverlay(false)}
               >
                 Close
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -359,24 +394,21 @@ const MyInfo = () => {
             <h3>Update Settings</h3>
             <InfoForm
               email={email}
-              setEmail={setEmail}
-              selectedDay={selectedDay}
-              username={username}
-              setUsername={setUsername}
-              setSelectedDay={setSelectedDay}
-              cameraConsent={cameraConsent}
-              setCameraConsent={setCameraConsent}
-              notifications={notifications}
-              setNotifications={setNotifications}
+              localUsername={localUsername}
+              setLocalUsername={setLocalUsername}
+              localSelectedDay={localSelectedDay}
+              setLocalSelectedDay={setLocalSelectedDay}
+              localNotifications={localNotifications}
+              setLocalNotifications={setLocalNotifications}
               //notificationMethod={notificationMethod}
               //setNotificationMethod={setNotificationMethod}
               //language={language}
               //setLanguage={setLanguage}
               darkMode={darkMode}
-              responseTone={responseTone}
-              setResponseTone={setResponseTone}
-              notificationTime={notificationTime}
-              setNotificationTime={setNotificationTimeCustom}
+              localResponseTone={localResponseTone}
+              setLocalResponseTone={setLocalResponseTone}
+              localNotificationTime={localNotificationTime}
+              setLocalNotificationTime={setLocalNotificationTime}
             />
             <div className="update-buttons">
               <button

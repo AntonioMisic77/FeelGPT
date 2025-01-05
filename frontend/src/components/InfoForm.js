@@ -4,18 +4,18 @@ import "../styles/form.css";
 
 const InfoForm = ({
   email,
-  username,
-  setUsername,
-  selectedDay,
-  setNotificationDayCustom,
-  notifications,
-  setNotifications,
+  localUsername,
+  setLocalUsername,
+  localSelectedDay,
+  setLocalSelectedDay,
+  localNotifications,
+  setLocalNotifications,
   // REMOVED NOTIFICATION METHOD AND LANGUAGE
   darkMode,
-  responseTone,
-  setResponseTone,
-  notificationTime,
-  setNotificationTime
+  localResponseTone,
+  setLocalResponseTone,
+  localNotificationTime,
+  setLocalNotificationTime,
 }) => {
   //ADDED FOR CHANGE PASSWORD
   // checking if the old from db (storedPassword) matches oldPAssword from input (done)
@@ -26,16 +26,15 @@ const InfoForm = ({
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  
+
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
   // in "storedPassword" should be value of users password from db
   let storedPassword = "mypassword";
 
-
+  console.log('updating time to:',localNotificationTime  )
   const handleSavePassword = () => {
-
     setPasswordError("");
     setPasswordSuccess("");
 
@@ -61,16 +60,20 @@ const InfoForm = ({
     setRepeatPassword("");
   };
 
-
   const handleDaySelection = (e) => {
-    setNotificationDayCustom(e.target.value); // Update to a single selected day
+    setLocalSelectedDay(e.target.value);
+    //setNotificationDayCustom(e.target.value); // Update to a single selected day
   };
 
-  /* const handleReminderTypeSelection = (e) => {
-    setNotificationMethod(e.target.value); // Update selected reminder type
-  }; */
-
-
+  const isoToTimeFormat = (isoString) => {
+    console.log('before: ',isoString);
+    const date = new Date(isoString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    console.log('after: ',`${hours}:${minutes}`);
+    return `${hours}:${minutes}`;
+  };
+  
 
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
@@ -83,15 +86,14 @@ const InfoForm = ({
               required
               readOnly
               className="readonly-email"
-
             />
             <label>Email Address</label>
           </div>
           <div>
             <input
               type="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={localUsername}
+              onChange={(e) => setLocalUsername(e.target.value)}
               required
             />
             <label>Username</label>
@@ -137,7 +139,9 @@ const InfoForm = ({
               <label>Repeat New Password</label>
             </div>
             {passwordError && <p className="error-message">{passwordError}</p>}
-            {passwordSuccess && <p className="success-message">{passwordSuccess}</p>}
+            {passwordSuccess && (
+              <p className="success-message">{passwordSuccess}</p>
+            )}
             <button
               type="button"
               className="summary-button wider"
@@ -147,7 +151,9 @@ const InfoForm = ({
             </button>
           </div>
         )}
-        {!isChangingPassword && passwordSuccess && <p className="success-message">{passwordSuccess}</p>}
+        {!isChangingPassword && passwordSuccess && (
+          <p className="success-message">{passwordSuccess}</p>
+        )}
       </div>
 
       <div className="info-two">
@@ -177,15 +183,15 @@ const InfoForm = ({
             min="1"
             max="3"
             value={
-              responseTone === "EMPATHETIC"
+              localResponseTone === "EMPATHETIC"
                 ? 1
-                : responseTone === "NEUTRAL"
+                : localResponseTone === "NEUTRAL"
                 ? 2
                 : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
-              setResponseTone(
+              setLocalResponseTone(
                 value === 1
                   ? "EMPATHETIC"
                   : value === 2
@@ -209,11 +215,15 @@ const InfoForm = ({
             min="1"
             max="3"
             value={
-              notifications === "NEVER" ? 1 : notifications === "DAILY" ? 2 : 3
+              localNotifications === "NEVER"
+                ? 1
+                : localNotifications === "DAILY"
+                ? 2
+                : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
-              setNotifications(
+              setLocalNotifications(
                 value === 1 ? "NEVER" : value === 2 ? "DAILY" : "WEEKLY"
               );
             }}
@@ -225,7 +235,8 @@ const InfoForm = ({
           </div>
         </div>
 
-        {(notifications === "DAILY" || notifications === "WEEKLY") && (
+        {(localNotifications === "DAILY" ||
+          localNotifications === "WEEKLY") && (
           <div>
             {/* Reminder Type Radio Buttons */}
             {/* <div className="reminder-type">
@@ -256,21 +267,32 @@ const InfoForm = ({
             <div className="time-picker">
               <label>Pick a Time:</label>
               <input
-                className={`form-control ${darkMode ? "dark" : "light"}`}
-                type="time"
-                value={notificationTime}
-                onChange={(e) => setNotificationTime(e.target.value)}
-              />
+  className={`form-control ${darkMode ? "dark" : "light"}`}
+  type="time"
+  value={localNotificationTime ? isoToTimeFormat(localNotificationTime) : ""}
+  onChange={(e) => {
+    const timeString = e.target.value; // "HH:mm"
+    if (!timeString) return; // Prevent invalid changes
+
+    const [hours, minutes] = timeString.split(":").map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return; // Guard against invalid numbers
+
+    const date = new Date(localNotificationTime || Date.now());
+    date.setHours(hours, minutes, 0, 0);
+    setLocalNotificationTime(date.toISOString());
+  }}
+/>
+
             </div>
           </div>
         )}
 
-        {notifications === "WEEKLY" && (
+        {localNotifications === "WEEKLY" && (
           <div className="week">
             <label>Select Day:</label>
             <div className="week-picker">
               <select
-                value={selectedDay}
+                value={localSelectedDay}
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
@@ -278,13 +300,13 @@ const InfoForm = ({
                   Select a day
                 </option>
                 {[
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                  "Sunday",
+                  "MONDAY",
+                  "TUESDAY",
+                  "WEDNESDAY",
+                  "THURSDAY",
+                  "FRIDAY",
+                  "SATURDAY",
+                  "SUNDAY",
                 ].map((day) => (
                   <option className="option-form" key={day} value={day}>
                     {day}

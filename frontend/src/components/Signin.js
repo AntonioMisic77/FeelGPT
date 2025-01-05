@@ -81,21 +81,25 @@ const Signin = () => {
 
       reminderDateTime.setHours(hours, minutes, 0, 0);
 
-      // Include all required fields in the POST request
-      const response = await axiosInstance.post("/user/auth/register", {
+      const data = {
         username: username,
         email: email,
         password: password,
         responseTone: responseTone.toUpperCase(),
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
-        notificationTime : reminderDateTime,
-        notificationDayOfWeek : selectedDay, // Include if reminderFrequency is "weekly"
-        profileImage : profileImage, // Add base64 image data,
-        imageExtension : imageExtension, // Add image extension
-      });
-
-
+        notificationTime: reminderDateTime,
+        profileImage: profileImage, 
+        imageExtension: imageExtension, 
+      };
+  
+      // if reminderFrequency is weekly, add notificationDayOfWeek
+      if (reminderFrequency === "weekly" && selectedDay) {
+        data.notificationDayOfWeek = selectedDay;
+      }
+  
+      const response = await axiosInstance.post("/user/auth/register", data);
+  
       const { token } = response.data;
 
       // Store the auth token and redirect the user
@@ -268,7 +272,7 @@ const Signin = () => {
             reminderFrequency === "weekly") && (
             <div>
               {/* Reminder Type Radio Buttons */}
-              <div className="reminder-type">
+              {/* <div className="reminder-type">
                 <label>Select Reminder Type:</label>
                 <div className="radio-buttons">
                   <label>
@@ -290,7 +294,7 @@ const Signin = () => {
                     Push Notification
                   </label>
                 </div>
-              </div>
+              </div> */}
 
               {/* Pick Time for Daily/Weekly Reminders */}
               <div className="time-picker">
