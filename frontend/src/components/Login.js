@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/login.css";
 import axiosInstance from "../api/axiosInstance"; // Import the axios instance
+import Cookies from "js-cookie"; // Import js-cookie
 
 const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -30,8 +31,14 @@ const Login = () => {
         throw new Error('No authentication token received.');
       }
 
-      // Store the token in localStorage
-      localStorage.setItem("authToken", token);
+      // Updated line using js-cookie
+      Cookies.set("authToken", token, {
+        expires: 1, // Cookie expires in 7 days
+        secure: true, // Ensures the cookie is sent over HTTPS
+        sameSite: "strict", // Protects against CSRF
+        path: "/", // Accessible on all pages
+      });
+
 
       // Redirect to the dashboard or home page
       window.location.replace("/chat"); // Prevent going back to the login page

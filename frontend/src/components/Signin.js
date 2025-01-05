@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/signin.css";
 import axiosInstance from "../api/axiosInstance";
+import Cookies from "js-cookie"; // [ADDED] Import js-cookie
 
 const Signin = () => {
   // State variables
@@ -97,17 +98,21 @@ const Signin = () => {
         responseTone: responseTone.toUpperCase(),
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
-        notificationTime : reminderDateTime,
-        notificationDayOfWeek : selectedDay, // Include if reminderFrequency is "weekly"
-        profileImage : profileImage, // Add base64 image data,
-        imageExtension : imageExtension, // Add image extension
+        notificationTime: reminderDateTime,
+        notificationDayOfWeek: selectedDay, // Include if reminderFrequency is "weekly"
+        profileImage: profileImage, // Add base64 image data,
+        imageExtension: imageExtension, // Add image extension
       });
 
 
       const { token } = response.data;
 
-      // Store the auth token and redirect the user
-      localStorage.setItem("authToken", token);
+      Cookies.set("authToken", token, {
+        expires: 1, // Cookie expires in 7 days
+        secure: true, // Ensures the cookie is sent over HTTPS
+        sameSite: "strict", // Protects against CSRF
+        path: "/", // Accessible on all pages
+      });
 
       // Redirect after successful registration
       window.location.replace("/chat");
@@ -203,7 +208,7 @@ const Signin = () => {
               </div>
             )}
 
-            
+
           </form>
         </div>
 
@@ -221,8 +226,8 @@ const Signin = () => {
                 responseTone === "empathetic"
                   ? 1
                   : responseTone === "neutral"
-                  ? 2
-                  : 3
+                    ? 2
+                    : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -230,8 +235,8 @@ const Signin = () => {
                   value === 1
                     ? "empathetic"
                     : value === 2
-                    ? "neutral"
-                    : "professional"
+                      ? "neutral"
+                      : "professional"
                 );
               }}
             />
@@ -254,8 +259,8 @@ const Signin = () => {
                 reminderFrequency === "never"
                   ? 1
                   : reminderFrequency === "daily"
-                  ? 2
-                  : 3
+                    ? 2
+                    : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -274,44 +279,44 @@ const Signin = () => {
           {/* Conditional Rendering Based on Reminder Frequency */}
           {(reminderFrequency === "daily" ||
             reminderFrequency === "weekly") && (
-            <div>
-              {/* Reminder Type Radio Buttons */}
-              <div className="reminder-type">
-                <label>Select Reminder Type:</label>
-                <div className="radio-buttons">
-                  <label>
-                    <input
-                      type="radio"
-                      value="email"
-                      checked={selectedReminderType === "email"}
-                      onChange={handleReminderTypeSelection}
-                    />
-                    Email
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      value="push_notification"
-                      checked={selectedReminderType === "push_notification"}
-                      onChange={handleReminderTypeSelection}
-                    />
-                    Push Notification
-                  </label>
+              <div>
+                {/* Reminder Type Radio Buttons */}
+                <div className="reminder-type">
+                  <label>Select Reminder Type:</label>
+                  <div className="radio-buttons">
+                    <label>
+                      <input
+                        type="radio"
+                        value="email"
+                        checked={selectedReminderType === "email"}
+                        onChange={handleReminderTypeSelection}
+                      />
+                      Email
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="push_notification"
+                        checked={selectedReminderType === "push_notification"}
+                        onChange={handleReminderTypeSelection}
+                      />
+                      Push Notification
+                    </label>
+                  </div>
+                </div>
+
+                {/* Pick Time for Daily/Weekly Reminders */}
+                <div className="time-picker">
+                  <label>Pick a Time:</label>
+                  <input
+                    className="form-control"
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                  />
                 </div>
               </div>
-
-              {/* Pick Time for Daily/Weekly Reminders */}
-              <div className="time-picker">
-                <label>Pick a Time:</label>
-                <input
-                  className="form-control"
-                  type="time"
-                  value={reminderTime}
-                  onChange={(e) => setReminderTime(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
+            )}
 
           {/* Conditional Rendering for Weekly Reminders */}
           {reminderFrequency === "weekly" && (
