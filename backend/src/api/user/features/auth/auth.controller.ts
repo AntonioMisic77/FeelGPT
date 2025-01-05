@@ -10,7 +10,6 @@ import { cancelNotification, scheduleUserNotification } from "@/api/notification
 
 export const register = createEndpoint(RegisterUserValidator, async (req: Request, res: Response) => {
   console.log(req);
-console.log('ProfileImamge size:', req.body.profileImage.size / 1024)
   const { username, email, password, notificationFrequency, profileImage,
     notificationMode, notificationTime, responseTone, notificationDayOfWeek } = req.body;
 
