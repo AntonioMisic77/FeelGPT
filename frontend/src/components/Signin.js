@@ -189,7 +189,7 @@ const Signin = () => {
             </div>
 
             {/* Conditionally Render Image Preview */}
-            {profileImage && (
+            {/* {profileImage && (
               <div className="image-preview">
                 <img
                   src={`data:image/${imageExtension};base64,${profileImage}`}
@@ -197,7 +197,7 @@ const Signin = () => {
                   style={{ width: "20vh", height: "20vh", objectFit: "cover" }}
                 />
               </div>
-            )}
+            )} */}
 
             
           </form>

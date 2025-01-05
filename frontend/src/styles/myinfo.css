@@ -62,10 +62,10 @@
   font-weight: bold;
 }
 
-/* Show the overlay and update text on hover */
+/* Show the overlay and update text on hover 
 .picture-profile:hover .image-overlay {
   display: flex;
-}
+} */
 
 .username {
   font: 16px;
