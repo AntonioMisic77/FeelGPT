@@ -116,7 +116,7 @@ const Chat = ({
       /* CONNECTION TO BACKEND */
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
-        console.log("Backend response: ", response);
+        //.log("Backend response: ", response);
         setMessages((prevMessages) =>
           prevMessages.map((message, index) =>
             index == prevMessages.length - 1

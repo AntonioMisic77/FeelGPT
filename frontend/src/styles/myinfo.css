@@ -25,6 +25,11 @@
   margin-right: 20px;
 }
 
+.picture-profile {
+  position: relative;
+  display: inline-block;
+}
+
 .user-picture-profile {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100px;
@@ -33,6 +38,33 @@
   border-radius: 50%;
   margin-bottom: 10px;
   margin-top: 5vh;
+}
+
+/* Overlay style */
+.image-overlay {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 5vh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Slightly darker background */
+  display: none; /* Initially hidden */
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.update-icon {
+  color: white;
+  font-size: 16px; /* Adjust size */
+  font-weight: bold;
+}
+
+/* Show the overlay and update text on hover */
+.picture-profile:hover .image-overlay {
+  display: flex;
 }
 
 .username {

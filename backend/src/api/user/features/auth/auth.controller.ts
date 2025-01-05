@@ -41,6 +41,7 @@ export const login = createEndpoint(LoginUserValidator, async (req: Request, res
 export const updateUserInfo = createEndpoint(
   UpdateUserInfoValidator,
   async (req, res) => {
+    console.log('i am updateing');
     const { user } = getUserInfo(req);
 
     const { ...updateUserInfo } = req.body;
