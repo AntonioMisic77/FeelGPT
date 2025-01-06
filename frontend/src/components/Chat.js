@@ -314,7 +314,9 @@ const Chat = ({
       const processedEmotions = emotionWhileTyping.map((emotionValues) => {
         // Extract age, gender, and emotions
         const { age, gender, ...emotions } = emotionValues;
-
+        
+        emotionValues.neutral = emotionValues.neutral * 0.5;
+        
         // Determine the dominant emotion
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
@@ -566,8 +568,7 @@ const Chat = ({
               <input
                 type="range"
                 className="win10-thumb"
-                value={emotionValues.neutral * 100}
-                disabled
+                value={emotionValues.neutral * 100 * 0.5}
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
