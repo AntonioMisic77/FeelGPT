@@ -1,7 +1,7 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
 import { expect } from 'chai';
 
-const BASE_URL = 'http://frontend-dev';
+const BASE_URL = process.env.REACT_APP_FRONTEND_URL || "http://frontend-dev";
 
 function generateGUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
