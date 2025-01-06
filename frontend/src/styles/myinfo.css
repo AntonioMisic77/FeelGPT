@@ -39,6 +39,26 @@
   margin-bottom: 10px;
   margin-top: 5vh;
 }
+.picture-profile:hover .user-picture-profile {
+  filter: brightness(50%); 
+  opacity: 0.7; 
+}
+/* Styling for the text overlay */
+.overlay-text {
+  position: absolute;
+  top: 60%;
+  left: 50%; 
+  color: white;
+  font-weight: bold;
+  transform: translate(-50%, -50%); 
+  display: none;
+  cursor: pointer;
+}
+
+.picture-profile:hover .overlay-text {
+  display: block;
+}
+
 
 /* Overlay style */
 .image-overlay {
@@ -62,10 +82,7 @@
   font-weight: bold;
 }
 
-/* Show the overlay and update text on hover 
-.picture-profile:hover .image-overlay {
-  display: flex;
-} */
+
 
 .username {
   font: 16px;
