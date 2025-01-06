@@ -75,9 +75,9 @@ const InfoForm = ({
   };
   
 
-  const handleLanguageSelection = (e) => {
+  /* const handleLanguageSelection = (e) => {
     setLanguage(e.target.value); // Update selected language
-  };
+  }; */
 
   /* const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
@@ -86,7 +86,7 @@ const InfoForm = ({
 
 
 
-  console.log('notificationtIME:',notificationTime )
+  //console.log('notificationtIME:',notificationTime )
 
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
