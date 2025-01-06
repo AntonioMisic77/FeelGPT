@@ -79,6 +79,17 @@ const Histogram = ({ data }) => {
   
   }, [timeframe, data]);
 
+    const [darkMode, setDarkMode] = useState(() => {
+      const savedMode = localStorage.getItem("darkMode");
+      return savedMode ? JSON.parse(savedMode) : false;
+    });
+    
+    // Update local storage whenever darkMode changes
+    useEffect(() => {
+      localStorage.setItem("darkMode", JSON.stringify(darkMode));
+    }, [darkMode]);
+    
+
   return (
     <div>
       <h2>Emotion Histogram</h2>
@@ -95,18 +106,20 @@ const Histogram = ({ data }) => {
       <div style={{ margin: "auto" }}>
         {chartData.datasets && (
           <Bar
+          className={`graph-container ${darkMode ? "dark" : "light"}`}
             data={chartData}
             options={{
               responsive: true,
               plugins: {
                 legend: {
-                  display: false,
+                  display: true,
                 },
               },
               scales: {
                 y: {
                   title: {
                     display: true,
+                    color: "#c8ccd9",
                     text: "Count of Emotions ", // Y-axis label
                     font: {
                       size: 14,
@@ -118,6 +131,7 @@ const Histogram = ({ data }) => {
                 },
                 x: {
                   title: {
+                    color: "#c8ccd9",
                     display: true,
                     text: "Emotions", // X-axis label
                     font: {

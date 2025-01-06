@@ -116,14 +116,14 @@ const Chat = ({
       /* CONNECTION TO BACKEND */
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
-
-        /* setMessages((prevMessages) =>
+        //.log("Backend response: ", response);
+        setMessages((prevMessages) =>
           prevMessages.map((message, index) =>
             index === prevMessages.length - 1
               ? { ...message, text: response.reply, isLoading: false }
               : message
           )
-        ); */
+        );
 
         // for typing letter by letter
         //console.log(response.reply);

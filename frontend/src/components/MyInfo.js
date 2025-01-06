@@ -10,10 +10,8 @@ import "../styles/myinfo.css";
 import "../styles/darkMode.css";
 
 const MyInfo = () => {
-  const [cameraConsent, setCameraConsent] = useState(true);
   const [notifications, setNotifications] = useState("WEEKLY");
   //const [notificationMethod, setNotificationMethod] = useState("EMAIL");
-  const [language, setLanguage] = useState("English");
   const [showOverlay, setShowOverlay] = useState(false);
 
   const [username, setUsername] = useState("username");
@@ -25,10 +23,62 @@ const MyInfo = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 600);
   const [showSettingsOverlay, setShowSettingsOverlay] = useState(false);
 
+  // New state variables for profile picture
+  const [imageExtension, setImageExtension] = useState(""); // To store file extension
+  // Handler for image file selection
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result.split(",")[1]; // Get the base64 string (without data URL prefix)
+        setProfileImage(base64String); // Set the profile image state
+        const extension = file.type.split("/")[1]; // Extract the file extension
+        setImageExtension(extension);
+
+        try {
+          console.log("in try");
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("No auth token found");
+
+          const payloadBase64 = token.split(".")[1];
+          const decodedPayload = JSON.parse(atob(payloadBase64));
+          const userId = decodedPayload.userId;
+
+          const updatedData = {
+            profileImage: profileImage, // Send the new image in base64 format
+            imageExtension: imageExtension, // Set the image extension
+          };
+
+          //console.log("Saving updatedData:", updatedData);
+          console.log("updateaddata:", updatedData);
+          // Save the image to the server
+          await axiosInstance.put("/user/auth/update", updatedData, {
+            params: { id: userId },
+          });
+
+          //console.log("Image updated successfully");
+        } catch (err) {
+          console.error("Error updating user image:", err);
+          const backendMessage = err.response?.data?.message;
+          setError(
+            backendMessage || "Failed to update image. Please try again."
+          );
+        }
+      };
+      reader.readAsDataURL(file); // Read the file as base64
+    }
+  };
+
+  // Initialize dark mode based on local storage or default to false
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
+  // Update local storage whenever darkMode changes
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -69,6 +119,8 @@ const MyInfo = () => {
         });
 
         const data = response.data.result;
+        //
+        // console.log("data:", data);
 
         setUsername(data.username);
         setEmail(data.email);
@@ -81,6 +133,7 @@ const MyInfo = () => {
         /* setNotificationMethod(data.notificationMode); */
         setNotificationTime(data.notificationTime);
         setResponseTone(data.responseTone);
+        setSelectedDay(data.notificationDayOfWeek);
       } catch (err) {
         console.error("Error fetching user info:", err);
         const backendMessage = err.response?.data?.message;
@@ -97,13 +150,6 @@ const MyInfo = () => {
     setCurrentComponentIndex(index);
   };
 
-  const setNotificationTimeCustom = (time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    const reminderTime = new Date();
-    reminderTime.setHours(hours, minutes);
-    setNotificationTime(reminderTime);
-  };
-
   const setNotificationDayCustom = (day) => {
     if (notifications !== "WEEKLY") setSelectedDay(null);
     else setSelectedDay(day);
@@ -112,6 +158,7 @@ const MyInfo = () => {
   const handleSaveChanges = async () => {
     setError(null);
     setLoading(true);
+
     try {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("No auth token found");
@@ -121,22 +168,33 @@ const MyInfo = () => {
       const userId = decodedPayload.userId;
 
       const updatedData = {
-        username,
-        cameraConsent,
-        notificationFrequency: notifications,
+        username: localUsername,
+        notificationFrequency: localNotifications,
         //notificationMode: notificationMethod,
-        language,
-        responseTone,
-        email,
-        notificationTime: notificationTime,
-        selectedDay,
+        responseTime: localResponseTone,
+        notificationTime: localNotificationTime,
       };
+      // if reminderFrequency is weekly, add notificationDayOfWeek
+      if (localNotifications === "WEEKLY" && localSelectedDay) {
+        updatedData.notificationDayOfWeek = localSelectedDay;
+      }
+
+      //console.log("updatedData:", updatedData);
 
       await axiosInstance.put("/user/auth/update", updatedData, {
         params: { id: userId },
       });
 
-      setShowOverlay(false);
+      setShowSettingsOverlay(false);
+
+      //
+      // setUsername(localUsername);
+      setNotifications(localNotifications);
+      setResponseTone(localResponseTone);
+      setNotificationDayCustom(localSelectedDay);
+      setNotificationTime(localNotificationTime);
+
+      //console.log("overlay ugasen");
     } catch (err) {
       console.error("Error updating user info:", err);
       const backendMessage = err.response?.data?.message;
@@ -148,9 +206,45 @@ const MyInfo = () => {
     }
   };
 
+  /* const handleSave = () => {
+    // Update parent state with the new values
+    setUsername(localUsername);
+    setNotifications(localNotifications);
+    setResponseTone(localResponseTone);
+    setNotificationDayCustom(localSelectedDay);
+    setNotificationTime(localNotificationTime);
+  }; */
+
+  const [localUsername, setLocalUsername] = useState(username);
+  const [localNotifications, setLocalNotifications] = useState(notifications);
+  const [localResponseTone, setLocalResponseTone] = useState(responseTone);
+  const [localSelectedDay, setLocalSelectedDay] = useState(selectedDay);
+  const [localNotificationTime, setLocalNotificationTime] =
+    useState(notificationTime);
+
+  useEffect(() => {
+    setLocalUsername(username);
+  }, [username]);
+  useEffect(() => {
+    setLocalNotifications(notifications);
+  }, [notifications]);
+  useEffect(() => {
+    setLocalResponseTone(responseTone);
+  }, [responseTone]);
+  useEffect(() => {
+    setLocalSelectedDay(selectedDay);
+  }, [selectedDay]);
+  useEffect(() => {
+    setLocalNotificationTime(notificationTime);
+    //console.log(typeof notificationTime);
+  }, [notificationTime]);
+
   return (
     <div className="app-container">
-      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={() => setDarkMode((prev) => !prev)}
+      />
       <div className={`info-page-container ${darkMode ? "dark" : "light"}`}>
         {/* my-info button */}
         {isSmallScreen && (
@@ -172,14 +266,34 @@ const MyInfo = () => {
           }`}
         >
           <div className="picture-profile">
-            <img
-              src={
-                profileImage ||
-                "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-              }
-              alt="User"
-              className="user-picture-profile"
-            />
+            <div className="picture-profile" style={{ position: "relative" }}>
+              {/* Image as the button */}
+              <img
+                src={
+                  profileImage ||
+                  "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+                }
+                alt="User"
+                className="user-picture-profile"
+                onClick={() => document.getElementById("image-upload").click()} // Trigger file input
+              />
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange} // Handle image change and upload
+                style={{ display: "none" }} // Hide the input element
+              />
+              <div className="image-overlay">
+                <span className="update-icon">Update</span>
+              </div>
+            </div>
+            {/* <button
+              className="update-image-button"
+              onClick={() => document.getElementById("image-upload").click()}
+            >
+              Update Picture
+            </button> */}
           </div>
           <p className="username">{username}</p>
           <p className="email">{email}</p>
@@ -248,14 +362,7 @@ const MyInfo = () => {
                     alt="calendar"
                     className="clock-icon"
                   />
-                  <div style={{ color: "gray" }}>
-                    {" "}
-                    {notificationTime
-                      ? new Date(notificationTime).toLocaleDateString([], {
-                          weekday: "long",
-                        })
-                      : "N/A"}
-                  </div>
+                  <div style={{ color: "gray" }}> {selectedDay}</div>
                 </div>
               </div>
             )}
@@ -304,7 +411,12 @@ const MyInfo = () => {
               >
                 Update Settings
               </button>
-              
+              {/* <button
+                className="summary-button update"
+                onClick={() => setShowOverlay(false)}
+              >
+                Close
+              </button> */}
             </div>
           </div>
         </div>
@@ -346,24 +458,21 @@ const MyInfo = () => {
             <h3>Update Settings</h3>
             <InfoForm
               email={email}
-              setEmail={setEmail}
-              selectedDay={selectedDay}
-              username={username}
-              setUsername={setUsername}
-              setSelectedDay={setSelectedDay}
-              cameraConsent={cameraConsent}
-              setCameraConsent={setCameraConsent}
-              notifications={notifications}
-              setNotifications={setNotifications}
+              localUsername={localUsername}
+              setLocalUsername={setLocalUsername}
+              localSelectedDay={localSelectedDay}
+              setLocalSelectedDay={setLocalSelectedDay}
+              localNotifications={localNotifications}
+              setLocalNotifications={setLocalNotifications}
               //notificationMethod={notificationMethod}
               //setNotificationMethod={setNotificationMethod}
-              language={language}
-              setLanguage={setLanguage}
+              //language={language}
+              //setLanguage={setLanguage}
               darkMode={darkMode}
-              responseTone={responseTone}
-              setResponseTone={setResponseTone}
-              notificationTime={notificationTime}
-              setNotificationTime={setNotificationTimeCustom}
+              localResponseTone={localResponseTone}
+              setLocalResponseTone={setLocalResponseTone}
+              localNotificationTime={localNotificationTime}
+              setLocalNotificationTime={setLocalNotificationTime}
             />
             <div className="update-buttons">
               <button
