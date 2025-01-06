@@ -107,7 +107,7 @@ const MyInfo = () => {
   const setNotificationDayCustom = (day) => {
     if (notifications !== "WEEKLY") setSelectedDay(null);
     else setSelectedDay(day);
-  }
+  };
 
   const handleSaveChanges = async () => {
     setError(null);
@@ -148,7 +148,6 @@ const MyInfo = () => {
     }
   };
 
-  
   return (
     <div className="app-container">
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -173,14 +172,15 @@ const MyInfo = () => {
           }`}
         >
           <div className="picture-profile">
-          <img
-            src={
-              profileImage ||
-              "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-            }
-            alt="User"
-            className="user-picture-profile"
-          /></div>
+            <img
+              src={
+                profileImage ||
+                "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+              }
+              alt="User"
+              className="user-picture-profile"
+            />
+          </div>
           <p className="username">{username}</p>
           <p className="email">{email}</p>
           <div className="settings-container">
@@ -271,9 +271,9 @@ const MyInfo = () => {
                 min="1"
                 max="3"
                 value={
-                  notifications === "EMPATHETIC"
+                  responseTone === "EMPATHETIC"
                     ? 1
-                    : notifications === "NEUTRAL"
+                    : responseTone === "NEUTRAL"
                     ? 2
                     : 3
                 }
@@ -289,7 +289,8 @@ const MyInfo = () => {
                 }}
                 disabled
               />
-              <div className="reminder-labels">
+
+              <div className="reminder-labels smaller-labels">
                 <span>Empathetic</span>
                 <span>Neutral</span>
                 <span>Professional</span>
@@ -303,12 +304,7 @@ const MyInfo = () => {
               >
                 Update Settings
               </button>
-              <button
-      className="summary-button update"
-      onClick={() => setShowOverlay(false)}
-    >
-      Close
-    </button>
+              
             </div>
           </div>
         </div>
@@ -344,7 +340,7 @@ const MyInfo = () => {
         </div>
       )}
 
-      {showSettingsOverlay  && (
+      {showSettingsOverlay && (
         <div className="overlay">
           <div className={`overlay-content ${darkMode ? "dark" : "light"}`}>
             <h3>Update Settings</h3>
