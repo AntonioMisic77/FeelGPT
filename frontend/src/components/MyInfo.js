@@ -396,7 +396,8 @@ const MyInfo = () => {
                 }}
                 disabled
               />
-              <div className="reminder-labels">
+
+              <div className="reminder-labels smaller-labels">
                 <span>Empathetic</span>
                 <span>Neutral</span>
                 <span>Professional</span>
