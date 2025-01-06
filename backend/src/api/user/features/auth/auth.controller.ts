@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerUser, loginUser } from "./auth.service";
+import { registerUser, loginUser, verifyToken } from "./auth.service";
 import { createEndpoint, getUserInfo } from "@/utils";
 import { prisma } from "@/db";
 import { LoginUserValidator, RegisterUserValidator, UpdateUserInfoValidator } from "./user.validator";
@@ -9,13 +9,17 @@ import { cancelNotification, scheduleUserNotification } from "@/api/notification
 // Register Endpoint
 
 export const register = createEndpoint(RegisterUserValidator, async (req: Request, res: Response) => {
+  console.log(req);
   const { username, email, password, notificationFrequency, profileImage,
-    notificationMode, notificationTime, responseTone } = req.body;
+    notificationMode, notificationTime, responseTone, notificationDayOfWeek } = req.body;
 
-  try {
-    const result = await registerUser(email, password, username, profileImage, notificationFrequency,
-      notificationMode, notificationTime, responseTone);
-      
+    try {
+      // include notificationDayOfWeek if the frequency is "weekly", else it is stored as undefined
+      const dayOfWeek = notificationFrequency === 'weekly' ? notificationDayOfWeek : undefined;
+  
+      const result = await registerUser(email, password, username, profileImage, notificationFrequency,
+        notificationMode, notificationTime, responseTone, dayOfWeek);
+        
     res.status(201).json(result);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -37,9 +41,11 @@ export const login = createEndpoint(LoginUserValidator, async (req: Request, res
 export const updateUserInfo = createEndpoint(
   UpdateUserInfoValidator,
   async (req, res) => {
+    console.log('i am updateing');
     const { user } = getUserInfo(req);
 
     const { ...updateUserInfo } = req.body;
+    console.log("updateUserInfo:", updateUserInfo);
 
     // Fetch the current user from the database to compare changes
     const currentUser = await prisma.user.findUnique({
@@ -47,9 +53,17 @@ export const updateUserInfo = createEndpoint(
     });
 
     if (!currentUser) {
-      throw new Error ("User not found");
+      throw new Error("User not found");
     }
 
+    // Validation: Adjust day and time based on notificationFrequency
+    if (updateUserInfo.notificationFrequency === "NEVER") {
+      updateUserInfo.notificationTime = undefined;
+      updateUserInfo.notificationDayOfWeek = undefined;
+    } else if (updateUserInfo.notificationFrequency === "DAILY") {
+      updateUserInfo.notificationDayOfWeek = undefined;
+    }
+    console.log('updateUserInfo:',updateUserInfo)
     // Update the user in the database
     const updatedUser = await prisma.user.update({
       where: {
@@ -65,10 +79,17 @@ export const updateUserInfo = createEndpoint(
       updatedUser.notificationFrequency !== currentUser.notificationFrequency;
 
     const hasNotificationTimeChanged =
-      updatedUser.notificationTime.getTime() !== currentUser.notificationTime.getTime();
+      updatedUser.notificationTime?.getTime() !== currentUser.notificationTime?.getTime();
+
+    const hasNotificationDayChanged =
+      updatedUser.notificationDayOfWeek !== currentUser.notificationDayOfWeek;
 
     // Handle rescheduling logic only if relevant fields are updated
-    if (hasNotificationPreferencesChanged || hasNotificationTimeChanged) {
+    if (
+      hasNotificationPreferencesChanged ||
+      hasNotificationTimeChanged ||
+      hasNotificationDayChanged
+    ) {
       if (
         updatedUser.notificationFrequency === "NEVER" ||
         !updatedUser.notificationTime
@@ -104,4 +125,30 @@ export const getUser = createEndpoint({}, async (req, res) => {
   res.json({
     result: rest,
   });
+});
+
+export const verify = createEndpoint({}, async (req, res) => {
+  const authHeader = req.headers.authorization; // Bearer TOKEN
+  const result = { message: 'Token is required' };
+
+  if (!authHeader) {
+    res.status(401).json({result});
+    return;
+  }
+
+  const token = authHeader.split(' ')[1]; // Extract token after "Bearer"
+  
+  if (!token) {
+    res.status(401).json({ result: 'Malformed authorization header' });
+    return;
+  }
+
+  try {
+    const user = await verifyToken(token);
+    res.status(200).json({ result: user });
+    return;
+  } catch (error: any) {
+    res.status(401).json({ result: error.message });
+    return;
+  }
 });

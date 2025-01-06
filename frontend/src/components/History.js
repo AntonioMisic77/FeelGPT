@@ -40,7 +40,7 @@ import "../styles/history.css";
   ];
   return (
     <div>
-      <h2>History</h2>
+      <h2 className="history">History</h2>
       <div className={`summary-list ${darkMode ? "dark" : "light"}`}>
         {summaries.map((summary) => (
           <div key={summary.id}>
