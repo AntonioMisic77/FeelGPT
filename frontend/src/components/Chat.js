@@ -96,7 +96,7 @@ const Chat = ({
           (sum, { age }) => sum + (age || 0),
           0
         ) /
-          emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
+        emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
         null;
 
       // most common gender
@@ -240,7 +240,7 @@ const Chat = ({
       const startVisageAnalyzer = () => {
         setVisageData({
           imageCaptured: null,
-          setImageCaptured: () => {},
+          setImageCaptured: () => { },
         });
       };
 

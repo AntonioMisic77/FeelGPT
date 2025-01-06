@@ -11,6 +11,7 @@ services:
       - "3001:80"
     environment:
       - MY_REACT_APP_BACKEND_URL=http://localhost:5001/api/v1
+      - HOST=0.0.0.0
     networks:
       - feelgpt-network
   backend-dev:
@@ -23,12 +24,57 @@ services:
       - "5001:5000"
     environment:
       - PORT=5000
-      - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/feelgptdev?authSource=admin&directConnection=true
+      - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/feelgptdb?authSource=admin&directConnection=true
     networks:
       - feelgpt-network
     volumes:
       - ./backend/src:/app/src
 
+  #Selenium Hub for controlling browsers
+  selenium-hub:
+    image: selenium/hub:4.9.0
+    container_name: selenium-hub
+    environment:
+      - SE_ENABLE_TRACING=false
+    ports:
+      - "4444:4444"  # Selenium Grid UI and WebDriver
+      - "4442:4442"  # SE_EVENT_BUS_PUBLISH_PORT
+      - "4443:4443"  # SE_EVENT_BUS_SUBSCRIBE_PORT
+    networks:
+      - feelgpt-network
+  # Chrome Node for running tests in a browser
+  selenium-chrome:
+    image: selenium/node-chrome:4.9.0
+    container_name: selenium-node-chrome
+    environment:
+      - HUB_HOST=selenium-hub
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PORT=4442
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_ENABLE_TRACING=false
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium-hub
+    networks:
+      - feelgpt-network
+  # Selenium Testing Service
+  selenium-tests:
+    build:
+      context: .
+      dockerfile: ./tests/Dockerfile.test
+    depends_on:
+      - backend-dev
+      - frontend-dev
+      - selenium-hub
+    environment:
+      - SELENIUM_HOST=selenium-hub
+    entrypoint: ["sh", "-c", "npm test"]
+    networks:
+      - feelgpt-network
+
 networks:
   feelgpt-network:
-    external: true
+    driver: bridge
+    name: feelgpt-network 

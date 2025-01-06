@@ -13,6 +13,8 @@ const MyInfo = () => {
   const [notifications, setNotifications] = useState("WEEKLY");
   //const [notificationMethod, setNotificationMethod] = useState("EMAIL");
   const [showOverlay, setShowOverlay] = useState(false);
+  const [success, setSuccess] = useState(null);
+
 
   const [username, setUsername] = useState("username");
   const [email, setEmail] = useState("email");
@@ -195,6 +197,9 @@ const MyInfo = () => {
       setNotificationTime(localNotificationTime);
 
       //console.log("overlay ugasen");
+
+      setSuccess("Settings updated successfully.");
+
     } catch (err) {
       console.error("Error updating user info:", err);
       const backendMessage = err.response?.data?.message;
@@ -451,6 +456,7 @@ const MyInfo = () => {
           <p>{error}</p>
         </div>
       )}
+      {success && <div className="success-message">{success}</div>}
 
       {showSettingsOverlay && (
         <div className="overlay">

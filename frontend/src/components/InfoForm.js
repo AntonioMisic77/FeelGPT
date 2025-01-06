@@ -75,6 +75,19 @@ const InfoForm = ({
   };
   
 
+  const handleLanguageSelection = (e) => {
+    setLanguage(e.target.value); // Update selected language
+  };
+
+  /* const handleReminderTypeSelection = (e) => {
+    setNotificationMethod(e.target.value); // Update selected reminder type
+
+  }; */
+
+
+
+  console.log('notificationtIME:',notificationTime )
+
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
@@ -296,6 +309,7 @@ const InfoForm = ({
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
+
                 <option className="option-form" value="">
                   Select a day
                 </option>
@@ -308,6 +322,7 @@ const InfoForm = ({
                   "SATURDAY",
                   "SUNDAY",
                 ].map((day) => (
+
                   <option className="option-form" key={day} value={day}>
                     {day}
                   </option>
