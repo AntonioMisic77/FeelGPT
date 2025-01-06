@@ -12,6 +12,13 @@
     margin-right: 20px;
 
   }
+
+  .input-group .password {
+    position: relative;
+    margin-bottom: 40px;
+    margin-right: 20px;
+
+  }
   
   .input-group input {
     width: 100%;
@@ -146,11 +153,20 @@
       display:flex;
       flex-direction: column;
       width: 85%;
+      height: 60vh;
+      overflow-y: scroll;
     }
 
     .info-one{
       margin-bottom: 35px;
     }
 
+  }
+  
+
+  .readonly-email {
+    cursor: default; 
+    outline: none; 
+    border: none; 
   }
   

@@ -4,6 +4,7 @@ import "../styles/darkMode.css";
 import ImageCapture from "./ImageCapture"; // Import ImageCapture directly
 import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
+import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 
 const Chat = ({
   darkMode,
@@ -66,7 +67,7 @@ const Chat = ({
           timestamp,
           emotionLabel: IsCameraEnabled ? dominantEmotion : "",
         },
-        { text: "...", sender: "them", timestamp },
+        { text: "...", sender: "them", timestamp, isLoading: true },
       ]);
       setInputValue("");
       setIsTyping(false); // Stop visage analysis when message is sent
@@ -75,7 +76,6 @@ const Chat = ({
         textareaRef.current.style.height = "auto";
         textareaRef.current.blur();
       }
-
 
       const processedEmotionsCleaned = processedEmotions.slice(1);
       const processedEmotionsSending = processedEmotionsCleaned.map(
@@ -106,7 +106,7 @@ const Chat = ({
 
       const chatData = {
         message: inputValue,
-        emotion: IsCameraEnabled ? processedEmotionsSending : [],// Array of emotion arrays while typing 
+        emotion: IsCameraEnabled ? processedEmotionsSending : [], // Array of emotion arrays while typing
         age: IsCameraEnabled ? averageAge : undefined, // Average age detected
         gender: IsCameraEnabled ? mostCommonGender : undefined, // Most common gender detected
       };
@@ -116,20 +116,54 @@ const Chat = ({
       /* CONNECTION TO BACKEND */
       try {
         const response = await chatService.sendMessageWithEmotion(chatData);
-        console.log("Backend response: ", response);
+        //.log("Backend response: ", response);
         setMessages((prevMessages) =>
           prevMessages.map((message, index) =>
-            index == prevMessages.length - 1
-              ? { ...message, text: response.reply }
+            index === prevMessages.length - 1
+              ? { ...message, text: response.reply, isLoading: false }
               : message
           )
         );
+
+        // for typing letter by letter
+        //console.log(response.reply);
+        //console.log('messages: ' + messages.length);
+        simulateTypingEffect(response.reply);
+
+        // type out the message letter by letter
       } catch (error) {
         console.error("Failed to send message: ", error);
+        setMessages((prevMessages) =>
+          prevMessages.map((message, index) =>
+            index === prevMessages.length - 1
+              ? { ...message, text: "Failed to load reply", isLoading: false }
+              : message
+          )
+        );
       }
     }
+  };
+  const simulateTypingEffect = (fullText) => {
+    let currentText = "";
+    const typingSpeed = 5;
 
+    const typingInterval = setInterval(() => {
+      if (currentText.length < fullText.length) {
+        currentText += fullText[currentText.length]; // Append the next character
 
+        setMessages((prevMessages) => {
+          // Update only the last message with the new currentText
+          const updatedMessages = [...prevMessages];
+          updatedMessages[updatedMessages.length - 1] = {
+            ...updatedMessages[updatedMessages.length - 1],
+            text: currentText, // Update the text progressively
+            isLoading: false,
+          };
+
+          return updatedMessages;
+        });
+      }
+    }, typingSpeed);
   };
 
   //for data for switches
@@ -189,6 +223,8 @@ const Chat = ({
       clearInterval(captureInterval);
     }
 
+    //
+
     return () => {
       // Clean up the interval when the component is unmounted or when typing stops
       if (captureInterval) {
@@ -225,7 +261,6 @@ const Chat = ({
     gender: null,
   });
 
-
   // in this is stored all emotions while typing
   const [emotionWhileTyping, setEmotionWhileTyping] = useState([]);
 
@@ -234,6 +269,7 @@ const Chat = ({
     if (isTyping) {
       // Clear history at the start of a new typing session
       setEmotionWhileTyping([]);
+      setStartTime(Date.now());
     } else {
       if (emotionValues) {
         setEmotionWhileTyping((prev) => [...prev, emotionValues]);
@@ -265,20 +301,34 @@ const Chat = ({
   //for emotion lable -> now gets max from last detection
   const [dominantEmotion, setDominantEmotion] = useState(null);
   const [processedEmotions, setProcessedEmotions] = useState(null);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(null);
+
   useEffect(() => {
     if (emotionWhileTyping.length > 0) {
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
       // Process the emotionWhileTyping array
       const processedEmotions = emotionWhileTyping.map((emotionValues) => {
         // Extract age, gender, and emotions
         const { age, gender, ...emotions } = emotionValues;
-
+        
+        emotionValues.neutral = emotionValues.neutral * 0.5;
+        
         // Determine the dominant emotion
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
-        for (const [emotion, value] of Object.entries(emotions)) {
-          if (value > maxEmotionValue) {
-            maxEmotionValue = value;
-            maxEmotion = emotion;
+        const allZero = Object.values(emotions).every((value) => value === 0);
+        if (allZero) {
+          maxEmotion = "not detected";
+        } else {
+          for (const [emotion, value] of Object.entries(emotions)) {
+            if (value > maxEmotionValue) {
+              maxEmotionValue = value;
+              maxEmotion = emotion;
+            }
           }
         }
 
@@ -290,47 +340,156 @@ const Chat = ({
         };
       });
 
-      // Set the processed list (optional, if you need to store it somewhere)
+      // Set the processed list
       setProcessedEmotions(processedEmotions);
 
-      // Set the last dominant emotion
+      // remove the first emotion
+      // get time counter: if more seconds have passed than there are
+      // detected emotions, than face is not in the camera
+      const currentTime = Date.now();
+      const elapsedSecondss = Math.floor((currentTime - startTime) / 1000);
+      setElapsedSeconds(elapsedSecondss);
+
       const lastEmotion = processedEmotions[processedEmotions.length - 1];
-      setDominantEmotion(lastEmotion.dominant_emotion);
+
+      // change so that it isnt the last emotion, but most common emotion
+      function getMostCommonNonNeutralWord(words, neutralWords) {
+        const filteredWords = words.filter(word => !neutralWords.includes(word));
+      
+        const wordCounts = filteredWords.reduce((counts, word) => {
+          counts[word] = (counts[word] || 0) + 1;
+          return counts;
+        }, {});
+        const mostCommonWord = Object.keys(wordCounts).reduce((a, b) => 
+          wordCounts[a] > wordCounts[b] ? a : b
+        );
+      
+        return mostCommonWord;
+      }
+      const dominantEmotions = processedEmotions.map(item => item.dominant_emotion);
+      const mostCommonEmotion = getMostCommonNonNeutralWord(dominantEmotions, ['neutral']);
+
+      setDominantEmotion(mostCommonEmotion);
+
+
     } else {
       setProcessedEmotions([]); // Reset the list if no data
       setDominantEmotion(null); // Reset the dominant emotion if no data
     }
   }, [emotionWhileTyping]);
 
+  // for overlay -> when face in not in the camera
+  const lastChangeRef = useRef(null);
+  useEffect(() => {
+    const timeoutThreshold = 3000;
+
+    if (isTyping) {
+      if (processedEmotions) {
+        lastChangeRef.current = Date.now();
+        setShowOverlay(false);
+      }
+
+      // Check every second if there is no change for 3 seconds
+      const interval = setInterval(() => {
+        if (lastChangeRef.current) {
+          const elapsedTime = Date.now() - lastChangeRef.current;
+          if (elapsedTime > timeoutThreshold) {
+            setShowOverlay(true);
+          }
+        }
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    } else {
+      setShowOverlay(false);
+      lastChangeRef.current = null;
+    }
+  }, [processedEmotions, isTyping]);
+
+  // getting user image
+  const [profileImage, setProfileImage] = useState("");
+  const [isProfileImage, setIsProfileImage] = useState(false);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) throw new Error("No auth token found");
+
+        const payloadBase64 = token.split(".")[1];
+        const decodedPayload = JSON.parse(atob(payloadBase64));
+
+        const response = await axiosInstance.get("/user/auth/me", {
+          params: { id: decodedPayload.userId },
+        });
+
+        const data = response.data.result;
+
+        setProfileImage(
+          data.profileImage
+            ? `data:image/png;base64,${data.profileImage}`
+            : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+        );
+
+        if (profileImage === null) {
+          setIsProfileImage(false);
+        } else {
+          setIsProfileImage(true);
+        }
+      } catch (err) {
+        const backendMessage = err.response?.data?.message;
+      }
+      console.log("profile image:", profileImage);
+    };
+
+    fetchUserInfo();
+  }, []);
 
   return (
-    <div className={`big-container ${isRecordingVideo ? "video-enabled" : ""}`}>
+    <div
+      className={`big-container ${isRecordingVideo ? "video-enabled" : ""} `}
+    >
       <div
-        className={`video-container ${isRecordingVideo ? "video-enabled" : ""}`}
+        className={`video-container ${
+          isRecordingVideo ? "video-enabled" : ""
+        } `}
       >
-        {/* didnt work when video was rerendering  each time camera was enabled/disabled */}
         <video
-          className={`live-video ${isRecordingVideo ? "" : "hidden-video"}`}
+          className={`live-video ${isRecordingVideo ? "" : "hidden-video"} ${!showOverlay ? "" : "overlay-video"} `}
           ref={videoRef}
           autoPlay
-          style={{ /* display: IsCameraEnabled ? "inherit" : "none", */
-            filter: IsCameraEnabled ? "none" : "brightness(0)"
+          style={{
+            /* display: IsCameraEnabled ? "inherit" : "none", */
+            filter: IsCameraEnabled ? "none" : "brightness(0)",
           }}
         />
-        {!IsCameraEnabled && isRecordingVideo && (
-          <div className="centered-text">
-            Camera is currently disabled and the emotion detection is not working.
+        {showOverlay && (
+          <div className="warning">
+            For optimal performance, ensure your face is fully visible in the
+            camera.
           </div>
         )}
 
+        {!IsCameraEnabled && isRecordingVideo && (
+          <div className="centered-text">
+            Camera is currently disabled and the emotion detection is not
+            working.
+          </div>
+        )}
 
         {isRecordingVideo && (
-          <div className="sliders">
+          <div
+            className={`sliders
+            ${showOverlay ? "overlay-camera" : ""}`}
+          >
             <div>
               <input
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.anger * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -343,6 +502,7 @@ const Chat = ({
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.disgust * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -355,6 +515,7 @@ const Chat = ({
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.fear * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -367,6 +528,7 @@ const Chat = ({
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.happiness * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -381,6 +543,7 @@ const Chat = ({
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.sadness * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -393,6 +556,7 @@ const Chat = ({
                 type="range"
                 className="win10-thumb"
                 value={emotionValues.surprise * 100}
+                disabled
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -404,7 +568,7 @@ const Chat = ({
               <input
                 type="range"
                 className="win10-thumb"
-                value={emotionValues.neutral * 100}
+                value={emotionValues.neutral * 100 * 0.5}
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
@@ -416,12 +580,13 @@ const Chat = ({
             </div>
           </div>
         )}
-
       </div>
 
       <div
-        className={`chat-container ${darkMode ? "dark" : "light"} ${isRecordingVideo ? "video-enabled-chat" : ""
-          }`}
+        className={`chat-container ${darkMode ? "dark" : "light"} ${
+          isRecordingVideo ? "video-enabled-chat" : ""
+        }
+          ${showOverlay ? "overlay-camera" : ""}`}
       >
         <div className={`messages ${darkMode ? "dark" : "light"}`}>
           <div className={`date-bar ${darkMode ? "dark" : "light"}`}>Today</div>{" "}
@@ -437,18 +602,40 @@ const Chat = ({
                   />
                 )}
                 <div
-                  className={`message-border ${darkMode ? "dark" : "light"}`}
+                  className={`message-border ${darkMode ? "dark" : "light"} ${
+                    message.isLoading ? "transparent-background" : ""
+                  }`}
                 >
-                  {message.text}
+                  {message.isLoading ? (
+                    <div class="dots-bounce-container">
+                      <div class="dots-bounce">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <p>{message.text}</p>
+                  )}
                 </div>
+                {message.sender === "me" && isProfileImage && (
+                  <img
+                    src={profileImage}
+                    alt="User"
+                    className="user-picture chat picture-me"
+                  />
+                )}
 
                 <div className="message-meta">
-                  <div className="timestamp">{message.timestamp}</div>
+                  <div className={`timestamp ${isProfileImage ? "left" : ""}`}>
+                    {!message.isLoading && message.timestamp}
+                  </div>
                   {message.sender === "me" && message.emotionLabel && (
                     <div
-                      className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
+                      className={`emotion-label ${message.emotionLabel.toUpperCase()} ${
+                        isProfileImage ? "left" : ""
+                      } `}
                     >
-
                       <span>{message.emotionLabel.toUpperCase()}</span>
                     </div>
                   )}

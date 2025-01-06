@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Histogram from "./Histogram";
 import axiosInstance from "../api/axiosInstance";
+import "../styles/myinfo.css";
 
 const Graph = () => {
   const [loading, setLoading] = useState(false);

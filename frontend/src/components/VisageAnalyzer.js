@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-import ImageCapture from "./ImageCapture";  // Ensure ImageCapture is imported correctly
+import React, {useEffect } from "react";
 import "../styles/visageAnalyzer.css";
 
 const VisageAnalyzer = ({
