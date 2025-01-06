@@ -61,7 +61,7 @@ const Histogram = ({ data }) => {
       ],
       datasets: [
         {
-           label : `Emotion Data for ${timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}`,          data: combinedData,
+           label : null,
           backgroundColor: [
             "#E74C3C",
             "#F39C12",
@@ -100,7 +100,7 @@ const Histogram = ({ data }) => {
               responsive: true,
               plugins: {
                 legend: {
-                  display: true,
+                  display: false,
                 },
               },
               scales: {
