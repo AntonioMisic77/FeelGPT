@@ -3,7 +3,9 @@ import multer from "multer";
 import { register, login, updateUserInfo, getUser, verify } from "./auth.controller";
 import { isAuth } from "@/middlewares";
 
-const upload = multer({ storage: multer.memoryStorage() }); // For file uploads
+const upload = multer({ storage: multer.memoryStorage(), 
+    limits: { fileSize: 50 * 1024 * 1024 } //50mb
+ }); 
 
 const authRouter = express.Router();
 
