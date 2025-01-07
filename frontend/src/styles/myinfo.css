@@ -46,7 +46,7 @@
 /* Styling for the text overlay */
 .overlay-text {
   position: absolute;
-  top: 60%;
+  top: 55%;
   left: 50%; 
   color: white;
   font-weight: bold;
@@ -93,8 +93,7 @@
 }
 
 .email {
-  font: 16px;
-  font-size: 18px;
+  font: 14px;
   text-align: center;
   margin-top: 0vh;
   margin-bottom: 5vh;

@@ -89,9 +89,10 @@ const MyInfo = () => {
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
 
   const components = [
-    { name: "Graph", component: <Graph /> },
-    { name: "History", component: <History darkMode={darkMode} /> },
     { name: "Mood Tracker", component: <MoodTracker /> },
+    { name: "History", component: <History darkMode={darkMode} /> },
+    { name: "Graph", component: <Graph /> },
+    
   ];
 
   useEffect(() => {
@@ -190,8 +191,8 @@ const MyInfo = () => {
 
       setShowSettingsOverlay(false);
 
-      //
-      // setUsername(localUsername);
+      
+      setUsername(localUsername);
       setNotifications(localNotifications);
       setResponseTone(localResponseTone);
       setNotificationDayCustom(localSelectedDay);

@@ -45,7 +45,7 @@ export const updateUserInfo = createEndpoint(
 
     const { ...updateUserInfo } = req.body;
     // always get empty body when updating just profileImage
-    console.log("req.body:", req.body);
+    console.log("updateUserInfoBE:", updateUserInfo);
 
     // Fetch the current user from the database to compare changes
     const currentUser = await prisma.user.findUnique({
