@@ -1,0 +1,8 @@
+name: frontend-test
+
+on:
+  push:
+    branches: ["feature/seleniumtest"]
+
+
+    

@@ -7,7 +7,7 @@
     "start": "ts-node src/api/user/features/auth/auth.service.ts",
     "start:prod": "node dist/src/index.js",
     "dev": "nodemon -L",
-    "build": "tsc && tsc-alias && npm run cp-js",
+    "build": "tsc && tsc-alias",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "db:migrate": "npx prisma migrate deploy",
