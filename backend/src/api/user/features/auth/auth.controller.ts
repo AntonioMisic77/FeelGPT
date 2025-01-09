@@ -45,11 +45,11 @@ export const login = createEndpoint(LoginUserValidator, async (req: Request, res
 export const updateUserInfo = createEndpoint(
   UpdateUserInfoValidator,
   async (req, res) => {
-    console.log('i am updateing');
     const { user } = getUserInfo(req);
 
     const { ...updateUserInfo } = req.body;
-    console.log("updateUserInfo:", updateUserInfo);
+    // always get empty body when updating just profileImage
+    console.log("updateUserInfoBE:", updateUserInfo);
 
     // Fetch the current user from the database to compare changes
     const currentUser = await prisma.user.findUnique({
@@ -67,7 +67,9 @@ export const updateUserInfo = createEndpoint(
     } else if (updateUserInfo.notificationFrequency === "DAILY") {
       updateUserInfo.notificationDayOfWeek = undefined;
     }
-    console.log('updateUserInfo:',updateUserInfo)
+
+
+
     // Update the user in the database
     const updatedUser = await prisma.user.update({
       where: {

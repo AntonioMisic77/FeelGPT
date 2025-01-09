@@ -33,33 +33,32 @@ const MyInfo = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = async () => {
-        const base64String = reader.result.split(",")[1]; // Get the base64 string (without data URL prefix)
-        setProfileImage(base64String); // Set the profile image state
-        const extension = file.type.split("/")[1]; // Extract the file extension
-        setImageExtension(extension);
-
+        const base64String = reader.result.split(",")[1]; // Extract base64 string
+        const extension = file.type.split("/")[1]; // Extract file extension
+  
         try {
-          console.log("in try");
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("No auth token found");
-
+  
           const payloadBase64 = token.split(".")[1];
           const decodedPayload = JSON.parse(atob(payloadBase64));
           const userId = decodedPayload.userId;
-
+  
           const updatedData = {
-            profileImage: profileImage, // Send the new image in base64 format
-            imageExtension: imageExtension, // Set the image extension
+            profileImage: base64String, // Use the base64 string directly
+            imageExtension: extension, // Use the extracted file extension
           };
-
-          //console.log("Saving updatedData:", updatedData);
-          console.log("updateaddata:", updatedData);
-          // Save the image to the server
+  
+          // Send the updated data to the server
           await axiosInstance.put("/user/auth/update", updatedData, {
             params: { id: userId },
           });
-
-          //console.log("Image updated successfully");
+          console.log('updatedData:', updatedData)
+          // Update local state only after a successful response
+          setProfileImage(`data:image/${extension};base64,${base64String}`);
+          setImageExtension(extension);
+  
+          console.log("Profile image updated successfully");
         } catch (err) {
           console.error("Error updating user image:", err);
           const backendMessage = err.response?.data?.message;
@@ -68,9 +67,11 @@ const MyInfo = () => {
           );
         }
       };
-      reader.readAsDataURL(file); // Read the file as base64
+  
+      reader.readAsDataURL(file); // Start reading the file
     }
   };
+  
 
   // Initialize dark mode based on local storage or default to false
   const [darkMode, setDarkMode] = useState(() => {
@@ -88,9 +89,10 @@ const MyInfo = () => {
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
 
   const components = [
-    { name: "Graph", component: <Graph /> },
-    { name: "History", component: <History darkMode={darkMode} /> },
     { name: "Mood Tracker", component: <MoodTracker /> },
+    { name: "History", component: <History darkMode={darkMode} /> },
+    { name: "Graph", component: <Graph /> },
+    
   ];
 
   useEffect(() => {
@@ -189,8 +191,8 @@ const MyInfo = () => {
 
       setShowSettingsOverlay(false);
 
-      //
-      // setUsername(localUsername);
+      
+      setUsername(localUsername);
       setNotifications(localNotifications);
       setResponseTone(localResponseTone);
       setNotificationDayCustom(localSelectedDay);
@@ -270,36 +272,30 @@ const MyInfo = () => {
             isSmallScreen && showOverlay ? "show-overlay" : ""
           }`}
         >
-          <div className="picture-profile">
-            <div className="picture-profile" style={{ position: "relative" }}>
-              {/* Image as the button */}
-              <img
-                src={
-                  profileImage ||
-                  "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-                }
-                alt="User"
-                className="user-picture-profile"
-                onClick={() => document.getElementById("image-upload").click()} // Trigger file input
-              />
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange} // Handle image change and upload
-                style={{ display: "none" }} // Hide the input element
-              />
-              <div className="image-overlay">
-                <span className="update-icon">Update</span>
-              </div>
-            </div>
-            {/* <button
-              className="update-image-button"
-              onClick={() => document.getElementById("image-upload").click()}
-            >
-              Update Picture
-            </button> */}
-          </div>
+          <div className="picture-profile-2">
+  <div className="picture-profile" style={{ position: "relative" }}>
+    {/* Image as the button */}
+    <img
+      src={
+        profileImage ||
+        "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+      }
+      alt="User"
+      className="user-picture-profile"
+      
+    />
+    <input
+      id="image-upload"
+      type="file"
+      accept="image/*"
+      onChange={handleImageChange} // Handle image change and upload
+      style={{ display: "none" }} // Hide the input elements
+    />
+        <span className="overlay-text"
+        onClick={() => document.getElementById("image-upload").click()} >Change</span> {/* Text over the image */}
+
+  </div>
+</div>
           <p className="username">{username}</p>
           <p className="email">{email}</p>
           <div className="settings-container">
