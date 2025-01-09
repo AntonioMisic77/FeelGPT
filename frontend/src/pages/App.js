@@ -5,6 +5,7 @@ import Start from "../components/Start";
 import Signin from "../components/Signin";  
 import Login from "../components/Login";  
 import AuthGuard from "../services/AuthGuard";
+import ResetPassword from "../components/ResetPassword";
 
 const App = () => {
 
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/" element={<Start />} />
           <Route path="/signin" element={<Signin />} /> 
           <Route path="/Login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />}/>  
 
           <Route path="/chat" 
                 element={
@@ -33,6 +35,8 @@ const App = () => {
                 </AuthGuard>
               }
             />
+
+
           
         </Routes>
       </div>
