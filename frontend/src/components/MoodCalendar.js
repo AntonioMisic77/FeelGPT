@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/moodCalendar.css";
 
 // Emotion definitions with associated colors
@@ -56,6 +56,18 @@ const MoodCalendar = ({ data }) => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [viewMode, setViewMode] = useState("monthly"); // "monthly" or "yearly"
 
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+  
+  // Update local storage whenever darkMode changes
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+  
+  
+
   const renderMonthCalendar = (monthData, year, month) => {
     const daysInMonth = getDaysInMonth(month, year);
     const startDay = getStartDay(month, year);
@@ -87,7 +99,7 @@ const MoodCalendar = ({ data }) => {
     }
 
     return (
-      <div className="month-container" key={`${year}-${month}`}>
+      <div className={`month-container ${darkMode ? "dark" : "light"}`} key={`${year}-${month}`}>
         <h3 className="month-title">{`${new Date(year, month - 1).toLocaleString("default", {
           month: "long",
         })} ${year}`}</h3>

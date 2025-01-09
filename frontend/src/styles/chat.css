@@ -62,6 +62,10 @@ body {
  */
 }
 
+
+
+
+
 .big-container {
   margin-top: 20px;
   display: flex;
@@ -86,6 +90,14 @@ body {
   flex-direction: row;
 }
 
+.overlay-camera {
+  filter: blur(10px);
+}
+
+.warning{
+  left:-20vw;
+}
+
 .hidden-video {
   display: none;
   visibility: hidden;
@@ -94,10 +106,17 @@ body {
   width: 0;
 }
 
+.overlay-video {
+  display: block;
+  visibility: visible;
+  opacity: 100;
+  height: auto;
+  width: auto;
+}
+
 .video-enabled-chat {
   width: 40vw;
 }
-
 
 
 
@@ -158,7 +177,8 @@ textarea:focus {
 
 .message-border {
 
-  padding: 16px;
+  padding-right: 16px;
+  padding-left: 16px;
   border-radius: 15px;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -316,7 +336,7 @@ textarea {
     color: gray;
   }
   50% {
-    color: #32CD32; 
+    color: #71b75c; 
   }
   100% {
     color: gray;
@@ -334,6 +354,12 @@ textarea {
   animation-timing-function: ease-in-out;
   animation-iteration-count: 5;
   color: gray; /* Start color */
+}
+.timestamp.left {
+  right: 70px;
+}
+.emotion-label.left {
+  right: 70px;
 }
 
 /* Specific animation classes for different emotions */
@@ -357,7 +383,7 @@ textarea {
   animation-name: SURPRISE;
 }
 
-.SURPRISE {
+.NEUTRAL {
   animation-name: NEUTRAL;
 }
 
@@ -479,7 +505,6 @@ input[type="range"]::-moz-range-track {
   .chat-container {
     width:auto;
     height:100%;
-    margin-bottom: 20px;
 
   }
 
@@ -509,6 +534,7 @@ input[type="range"]::-moz-range-track {
   .live-video{
     width: 50%;
     height: auto;
+    z-index: 10;
   }
 
   .sliders{
@@ -526,7 +552,62 @@ input[type="range"]::-moz-range-track {
 
   .messages {
     max-height: 100vh;
-    margin-bottom: 15px;
   }
 
+}
+
+
+
+
+/* SPINNER */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.dots-bounce-container {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  height: 100%; 
+}
+
+.dots-bounce {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #286da5;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.transparent-background {
+  background-color: transparent !important;
+  border: none; 
+  box-shadow: none; 
 }

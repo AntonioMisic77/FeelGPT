@@ -32,6 +32,20 @@ export const UpdateUserInfoValidator = {
 };
 
 
+export const ForgotPasswordValidator = {
+  body: z.object({
+    email: EMAIL_VALIDATOR,})
+};
+
+export const ResetPasswordValidator = {
+  body: z.object({
+    email: EMAIL_VALIDATOR,
+    newPassword: PASSWORD_VALIDATOR,
+    token: z.string(),
+  
+  })
+};
+
   export const RegisterUserValidator = {
     body: z.object({
       email: EMAIL_VALIDATOR,

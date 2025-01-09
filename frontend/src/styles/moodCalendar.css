@@ -8,7 +8,19 @@
 .month-container {
   border: 1px solid #ccc;
   border-radius: 8px;
+  background-color: #7896ab;
 }
+
+.month-container.light {
+  background-color: inherit;
+}
+
+
+.month-container.dark {
+  background-color: #10182a;
+  color: inherit;
+}
+
 
 .calendar-grid {
   display: flex;

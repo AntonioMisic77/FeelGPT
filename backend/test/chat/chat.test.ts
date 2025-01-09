@@ -41,12 +41,12 @@ describe('ChatServiceCallPHIModel', () => {
             model: "azureai",
             apiKey: apiKey,
             temperature: 0.8,
-        },{ baseURL : phiOIendpoint });
+        }, { baseURL: phiOIendpoint });
 
         llm.invoke("Hello, how are you?").then((response) => {
             expect(response).toBeDefined();
         });
-    });       
+    });
 });
 
 
