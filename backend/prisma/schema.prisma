@@ -18,6 +18,17 @@ enum NotificationMode {
   PUSH_NOTIFICATION
 }
 
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+
 enum ResponseTone {
   EMPATHETIC
   NEUTRAL
@@ -37,8 +48,14 @@ model User {
   notificationFrequency NotificationFrequency @default(DAILY) // Frequency: daily, weekly, never
   notificationMode      NotificationMode      @default(EMAIL) // Mode: email, push notification
   notificationTime      DateTime              @default(now()) // Time for recurring notifications
+  notificationDayOfWeek   DayOfWeek?             // Nullable; only used for WEEKLY notifications
+
 
   responseTone          ResponseTone          @default(NEUTRAL)
+
+  resetToken           String?   // Secure token for password reset
+  resetTokenExpiresAt  DateTime? // Expiration time for the reset token
+
 
   // Relationships
   sessions      Session[]      // One-to-many relationship: A user can have multiple sessions

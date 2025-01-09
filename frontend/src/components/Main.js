@@ -26,7 +26,7 @@ const App = () => {
       <VisageLoader />
       <Navbar 
         darkMode={darkMode} 
-        setDarkMode={() => setDarkMode((prev) => !prev)} // Toggle dark mode
+        setDarkMode={() => setDarkMode((prev) => !prev)} 
         setIsRecordingVideo={setIsRecordingVideo}
         setIsCameraEnabled={setIsCameraEnabled} 
         IsRecordingVideo={isRecordingVideo}

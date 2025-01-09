@@ -3,7 +3,6 @@ import request from 'supertest';
 import app from '../../src/app';
 import { PrismaClient } from '@prisma/client';
 import { config } from 'dotenv';
-import { mongo } from 'mongoose';
 
 config({ path: '.env.test' });
 

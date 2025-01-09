@@ -10,7 +10,7 @@ services:
       - "3000:3000"
       - "3001:80"
     environment:
-      - MY_REACT_APP_BACKEND_URL=http://localhost:5001/api/v1
+      - MY_REACT_APP_BACKEND_URL=http://backend-dev:5000/api/v1
       - HOST=0.0.0.0
     networks:
       - feelgpt-network
@@ -70,7 +70,7 @@ services:
       - selenium-hub
     environment:
       - SELENIUM_HOST=selenium-hub
-    entrypoint: ["sh", "-c", "npm test"]
+    entrypoint: ["sh", "-c", "sleep 20 && npm test"]
     networks:
       - feelgpt-network
 

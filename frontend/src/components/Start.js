@@ -6,7 +6,7 @@ import gsap from "gsap";
 
 /* TASK: add navbar element -> modify it so it has language */
 const SignInLogin = () => {
-  const [language, setLanguage] = useState("EN");
+  //const [language, setLanguage] = useState("EN");
 
 
   // Initialize dark mode based on local storage or default to false
@@ -21,7 +21,7 @@ const SignInLogin = () => {
   }, [darkMode]);
 
   
-
+/* 
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);
   };
@@ -29,7 +29,7 @@ const SignInLogin = () => {
 
   const toggleLanguage = () => {
     setLanguage(language === "EN" ? "FR" : "EN");
-  };
+  }; */
 
 
   //animation
@@ -67,13 +67,13 @@ const SignInLogin = () => {
             </label>
           </div>
 
-          <button onClick={toggleLanguage} className="language-btn">
+          {/* <button onClick={toggleLanguage} className="language-btn">
             <img
               src="/images/union_jack.png" // Language icon changes with language setting
               alt="Language Icon"
               className="language-icon"
             />
-          </button>
+          </button> */}
         </div>
 
         {/* Center buttons */}

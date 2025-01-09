@@ -1,250 +1,342 @@
 .info-page-container {
-    /* margin-top: 10px; */
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    /* TEMPORARY PADDING  */
-    min-height: 100vh;
-    margin-top: 60px; 
-    
+  position: fixed;
+  top: 0;
+  left: 0px;
+  display: flex;
+  flex-direction: row;
+  min-width: 100vw;
+  min-height: 100vh;
+  margin-top: 60px;
+  padding: 20px;
 }
 
 .info-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Start items from the top */
-    border: 1px solid #10182a;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(128, 102, 102, 0.1);
-  
-    margin-left: 20px;
-    
-    width: 25%; /* TASK: fix so that it is always 25%, even when smaller*/
-    padding: 20px;
-    max-height: 80vh;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  border: 1px solid #10182a;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(128, 102, 102, 0.1);
+  max-width: 20vw;
+  min-width: 20vw;
+  max-height: 80vh;
+  margin-right: 20px;
 }
 
+.picture-profile {
+  position: relative;
+  display: inline-block;
+}
 
 .user-picture-profile {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-    margin-top: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  margin-top: 5vh;
 }
+
+/* Overlay style */
+.image-overlay {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 5vh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Slightly darker background */
+  display: none; /* Initially hidden */
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.update-icon {
+  color: white;
+  font-size: 16px; /* Adjust size */
+  font-weight: bold;
+}
+
+/* Show the overlay and update text on hover 
+.picture-profile:hover .image-overlay {
+  display: flex;
+} */
 
 .username {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
+  font: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0px;
 }
 
-.settings-container {
-    width: 100%; /* Take full width within container */
-    text-align: left; /* Align settings text to the left */
+.email {
+  font: 16px;
+  font-size: 18px;
+  text-align: center;
+  margin-top: 0vh;
+  margin-bottom: 5vh;
 }
 
-.section-title {
-    font-weight: bold;
-    font-size: 16px;
-    margin: 10px 0;
-}
-
-.tick {
-    color: #0a6bff;
-    font-weight: bold;
-    margin-right: 8px;
-  }
-
-.button-right{
-    display: flex;
-  justify-content: flex-end;
-  padding-top: 20px;
-}
-.divider {
-    border: 0;
-    height: 1px;
-    background: gray;
-    margin: 10px 0;
-}
-
-.settings-item {
-    display: flex;
-    justify-content: flex-start;
+.carousel-container {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 8px 0;
-  font-size: 1rem;
-}
-.settings-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-.settings-item input[type="checkbox"] {
-    margin-right: 10px;
+  justify-content: flex-start;
+  flex-grow: 1;
+  width: 66vw;
+  padding: 20px;
+  max-height: 80vh;
+  position: relative;
 }
 
-.manage-settings-btn {
-    display: block;
-    width: 100%;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #1664a3;;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.carousel-navigation {
+  position: absolute;
+  width: inherit;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 15px;
 }
 
-.manage-settings-btn:hover {
-    background-color: #1664a3;
+.carousel-tab {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #aeb0b6;
+  border: none;
+  background: none;
+  position: relative;
 }
 
-.graphs-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    overflow-y: scroll;
-    flex-grow: 1;
-    padding: 10px;
-    max-height: 100%;
+.carousel-tab:hover,
+.carousel-tab.active {
+  color: #7896ab;
 }
 
-.graphs-container::-webkit-scrollbar {
-    display: none;
+.carousel-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #7896ab;
 }
 
-.legend-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-content: space-between;
-    flex-grow: 1;
-    padding: 10px;
+.carousel-content {
+  /*   width: 80%;
+ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  height: calc(100% - 40px); /* Ensure consistent height */
+  overflow-y: auto;
 }
 
-.legend{
-    margin-top: 60px;
-    margin-left: 10px;
+.carousel-content::-webkit-scrollbar {
+  display: none;
 }
 
-.graph-legend-container{
-    display: flex;
-    flex-direction: column;
-}
-.second-container {
-    display: flex;
-    flex-direction: column;
-}
+/* button {
+  padding: 10px 15px;
+  background-color: #1664a3;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+} */
 
-.graph{
-    margin: 5px;
-    max-width: 15vw;
-    height: auto;
-    margin: 10px;
-}
-
-
-.list-item-legend {
-    color: gray;
-}
-
-
-/* list legend*/
-.list-container {
-    margin: 20px;
-  }
-  
-  .list {
-    list-style-type: none; /* Remove default bullet points */
-    padding: 0;
-  }
-  
-  .list-item {
-    display: flex; /* Align items */
-    align-items: center; /* Center items vertically */
-    margin: 10px 0; /* Spacing between items */
-    font-size: 16px; /* Font size */
-  }
-  
-  .checkmark {
-    margin-right: 8px; /* Space between tick and item */
-    color: blue; /* Change tick color */
-  }
-
-
-  /* update info part */
-
-  /* Overlay background */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    display: flex;
-    justify-content: center;
+@media (max-width: 600px) {
+  .info-page-container {
+    flex-direction: column ;
+    padding: 0px;
+    margin-top: 40px;
+    min-height: 100vh;
+    overflow: auto;
     align-items: center;
-    z-index: 1000;
+    margin-left: 0px;
+    
+  }
+
+  .info-container {
+    display:none
+  }
+
+  .picture-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; 
   }
   
-  /* Overlay content */
+
+  .carousel-container {
+    width: 80%;
+    max-height: none; 
+    height: auto;
+    overflow: auto;
+  }
+  .carousel-content {
+    visibility: visible;
+    margin-top: 3vh;
+  }
+  
+  .carousel-navigation{
+    margin-top: 2vh;
+  }
+
+  .app-container {
+    flex-grow: 1;
+  height: auto;
+  }
+
+
+
   .overlay-content {
-    min-height: 487px;
-    min-width: 606px;
-    background: white;
+    min-height: 200px !important; 
+    min-width: 200px !important;
     padding: 20px;
     border-radius: 8px;
     max-width: 90%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+
+  /* my info button */
+.my-info-button {
+  position: fixed;
+  bottom: 20px; /* Adjust the distance from the bottom */
+  right: 10vw; /* Adjust the distance from the left */
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+.my-info-button .summary-button {
+  background-color: #607889; /* Custom background color */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 15px 15px; /* Padding for button size */
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  font-size: 20px; /* Adjust font size */
+}
+
+.my-info-button .summary-button:hover {
+  background-color: #607889; /* Slightly darker shade on hover */
+}
+
+.my-info-button .summary-button:active {
+  background-color: #607889; /* Even darker shade on click */
+}
   
-  .overlay-content h3 {
-    margin-top: 0;
+.info-container.show-overlay {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 70vw;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+.info-container.show-overlay.dark {
+  background-color: inherit;
+  color: inherit;
+}
+
+.info-container.show-overlay.light {
+  background-color: inherit;
+  color: inherit;
+}
+
+}
+
+/* update info part */
+
+/* Overlay background */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Overlay content */
+.overlay-content {
+  min-height: 487px;
+  min-width: 606px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.overlay-content h3 {
+  margin-top: 0;
+}
+
+.languages {
+  margin-bottom: 20px;
+}
+
+.email-icon {
+  height: 3vh;
+  width: auto;
+
+  margin-right: 10px;
+}
+
+.clock-icon {
+  height: 3vh;
+  width: auto;
+  margin-right: 10px;
+  margin-left: 0px;
+}
+
+.email-choice {
+  margin-top: 3vh;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  margin-bottom: 3vh;
+}
+.update {
+  margin-top: 3vh;
+}
+
+
+.button-down{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 1000px) {
+  .info-container{
+    max-width: 30vw;
+    min-width: 30vw;
   }
+}
 
-
-  .languages{
-    margin-bottom: 20px;
-  }
-
-  @media (max-width: 600px) {
-
-    .overlay-content{
-      min-height: 75%;
-      min-width: 75%;
-    }
-    .app-container{
-      
-      height: auto;
-    }
-
-      .info-page-container{
-      margin-top: 40px;;
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-      align-items: center;;
-  
-      margin-left: 0px;
-    }
-
-    .legend-container{
-      display: flex;
-      flex-direction: column;
-      width:auto;
-    }
-
-    .info-container{
-      width: 80%; 
-      margin-top: 30px; 
-      margin-left: 0px;;
-      
-    }
-  }
+.graph-container{
+  background-color: inherit;
+}
