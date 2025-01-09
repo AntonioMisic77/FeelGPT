@@ -12,7 +12,7 @@ const authRouter = express.Router();
 authRouter.post("/register", upload.single("profileImage"), register);
 authRouter.post("/login", login);
 authRouter.get("/verify", verify);
-authRouter.put("/update", isAuth, updateUserInfo);
+authRouter.put("/update", isAuth, upload.single("profileImage"),  updateUserInfo);
 authRouter.get("/me", isAuth, getUser);
 authRouter.post("/forgot-password" , forgotPassword);
 authRouter.post("/reset-password", resetPassword);

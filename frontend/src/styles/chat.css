@@ -336,7 +336,7 @@ textarea {
     color: gray;
   }
   50% {
-    color: #32CD32; 
+    color: #71b75c; 
   }
   100% {
     color: gray;
@@ -383,7 +383,7 @@ textarea {
   animation-name: SURPRISE;
 }
 
-.SURPRISE {
+.NEUTRAL {
   animation-name: NEUTRAL;
 }
 
