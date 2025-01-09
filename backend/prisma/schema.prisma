@@ -53,6 +53,10 @@ model User {
 
   responseTone          ResponseTone          @default(NEUTRAL)
 
+  resetToken           String?   // Secure token for password reset
+  resetTokenExpiresAt  DateTime? // Expiration time for the reset token
+
+
   // Relationships
   sessions      Session[]      // One-to-many relationship: A user can have multiple sessions
   chatMessages  ChatMessage[]  // One-to-many relationship: A user can send multiple chat messages

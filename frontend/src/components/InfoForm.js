@@ -33,7 +33,7 @@ const InfoForm = ({
   // in "storedPassword" should be value of users password from db
   let storedPassword = "mypassword";
 
-  console.log('updating time to:',localNotificationTime  )
+  console.log('updating time to:', localNotificationTime)
   const handleSavePassword = () => {
     setPasswordError("");
     setPasswordSuccess("");
@@ -66,18 +66,14 @@ const InfoForm = ({
   };
 
   const isoToTimeFormat = (isoString) => {
-    console.log('before: ',isoString);
+    console.log('before: ', isoString);
     const date = new Date(isoString);
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    console.log('after: ',`${hours}:${minutes}`);
+    console.log('after: ', `${hours}:${minutes}`);
     return `${hours}:${minutes}`;
   };
-  
 
-  const handleLanguageSelection = (e) => {
-    setLanguage(e.target.value); // Update selected language
-  };
 
   /* const handleReminderTypeSelection = (e) => {
     setNotificationMethod(e.target.value); // Update selected reminder type
@@ -86,7 +82,6 @@ const InfoForm = ({
 
 
 
-  console.log('notificationtIME:',notificationTime )
 
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
@@ -199,8 +194,8 @@ const InfoForm = ({
               localResponseTone === "EMPATHETIC"
                 ? 1
                 : localResponseTone === "NEUTRAL"
-                ? 2
-                : 3
+                  ? 2
+                  : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
@@ -208,8 +203,8 @@ const InfoForm = ({
                 value === 1
                   ? "EMPATHETIC"
                   : value === 2
-                  ? "NEUTRAL"
-                  : "PROFESSIONAL"
+                    ? "NEUTRAL"
+                    : "PROFESSIONAL"
               );
             }}
           />
@@ -231,8 +226,8 @@ const InfoForm = ({
               localNotifications === "NEVER"
                 ? 1
                 : localNotifications === "DAILY"
-                ? 2
-                : 3
+                  ? 2
+                  : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
@@ -250,9 +245,9 @@ const InfoForm = ({
 
         {(localNotifications === "DAILY" ||
           localNotifications === "WEEKLY") && (
-          <div>
-            {/* Reminder Type Radio Buttons */}
-            {/* <div className="reminder-type">
+            <div>
+              {/* Reminder Type Radio Buttons */}
+              {/* <div className="reminder-type">
               <label>Select Reminder Type:</label>
               <div className="radio-buttons">
                 <label>
@@ -276,29 +271,29 @@ const InfoForm = ({
               </div>
             </div> */}
 
-            {/* Pick Time for Daily/Weekly Reminders */}
-            <div className="time-picker">
-              <label>Pick a Time:</label>
-              <input
-  className={`form-control ${darkMode ? "dark" : "light"}`}
-  type="time"
-  value={localNotificationTime ? isoToTimeFormat(localNotificationTime) : ""}
-  onChange={(e) => {
-    const timeString = e.target.value; // "HH:mm"
-    if (!timeString) return; // Prevent invalid changes
+              {/* Pick Time for Daily/Weekly Reminders */}
+              <div className="time-picker">
+                <label>Pick a Time:</label>
+                <input
+                  className={`form-control ${darkMode ? "dark" : "light"}`}
+                  type="time"
+                  value={localNotificationTime ? isoToTimeFormat(localNotificationTime) : ""}
+                  onChange={(e) => {
+                    const timeString = e.target.value; // "HH:mm"
+                    if (!timeString) return; // Prevent invalid changes
 
-    const [hours, minutes] = timeString.split(":").map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return; // Guard against invalid numbers
+                    const [hours, minutes] = timeString.split(":").map(Number);
+                    if (isNaN(hours) || isNaN(minutes)) return; // Guard against invalid numbers
 
-    const date = new Date(localNotificationTime || Date.now());
-    date.setHours(hours, minutes, 0, 0);
-    setLocalNotificationTime(date.toISOString());
-  }}
-/>
+                    const date = new Date(localNotificationTime || Date.now());
+                    date.setHours(hours, minutes, 0, 0);
+                    setLocalNotificationTime(date.toISOString());
+                  }}
+                />
 
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {localNotifications === "WEEKLY" && (
           <div className="week">

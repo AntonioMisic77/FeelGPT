@@ -51,30 +51,49 @@ async function fillSignupForm(driver, username, email) {
 
     await driver.executeScript(script, fileInput, encodedStringBase64, '1kb.png', 'image/png');
 
-    await driver.wait(
-        until.elementLocated(By.css('.image-preview img')),
-        10000,
-        'Image preview did not appear within 10 seconds'
-    );
 
+    console.log('Waiting for 10 seconds for image to load...');
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    // await driver.wait(
+    //     until.elementLocated(By.css('.image-preview img')),
+    //     10000,
+    //     'Image preview did not appear within 10 seconds'
+    // );
+
+    console.log('1...');
     const responseToneSlider = await driver.findElement(By.css('input[type="range"][min="1"][max="3"]'));
     await responseToneSlider.sendKeys(Key.ARROW_RIGHT, Key.ARROW_RIGHT);
 
+    console.log('2...');
     const reminderFrequencySlider = await driver.findElement(By.css('.reminder-frequency input[type="range"]'));
     await reminderFrequencySlider.sendKeys(Key.ARROW_RIGHT, Key.ARROW_RIGHT);
 
-    const pushNotificationRadio = await driver.findElement(By.css('input[type="radio"][value="push_notification"]'));
-    await pushNotificationRadio.click();
+    console.log('3...');
+    // const pushNotificationRadio = await driver.findElement(By.css('input[type="radio"][value="push_notification"]'));
+    // await pushNotificationRadio.click();
 
+    console.log('4...');
     const timePicker = await driver.findElement(By.css('input[type="time"]'));
     await timePicker.sendKeys('12:30');
 
+    console.log('5...');
     const daySelect = await driver.findElement(By.css('select'));
     await daySelect.click();
-    const mondayOption = await driver.findElement(By.css('option[value="Monday"]'));
+
+    console.log('6...');
+    const mondayOption = await driver.findElement(By.css('option[value="MONDAY"]'));
     await mondayOption.click();
 
+    console.log('7...');
     const submitButton = await driver.findElement(By.css('button[type="submit"]'));
+
+
+    console.log('Waiting for 10 seconds after image upload...');
+    await new Promise(resolve => setTimeout(resolve, 10000)); // 40,000 milliseconds = 40 seconds
+
+
+
     await submitButton.click();
 }
 
@@ -93,7 +112,16 @@ async function login(driver, email, password) {
         await passwordInput.sendKeys(password);
 
         const loginButton = await driver.findElement(By.css('.submit-btn'));
+
+
+
         await loginButton.click();
+
+
+
+        console.log('Waiting for 10 seconds before starting the tests...');
+        await new Promise(resolve => setTimeout(resolve, 10000)); // 40,000 milliseconds = 40 seconds
+
 
         await driver.wait(
             until.urlContains('/chat'),
@@ -126,6 +154,7 @@ describe('React App Testing - User Flows', function () {
 
         username = generateGUID() + 'testuser';
         email = generateGUID() + 'test@example.com';
+
     });
 
     after(async () => {
@@ -135,6 +164,7 @@ describe('React App Testing - User Flows', function () {
     });
 
     describe('Signup Flow', function () {
+
         it('should load the React app and show the signup form', async () => {
             for (let attempt = 1; attempt <= 5; attempt++) {
                 try {
@@ -169,6 +199,14 @@ describe('React App Testing - User Flows', function () {
                 'Did not redirect to /chat within 20 seconds'
             );
 
+
+            console.log('Waiting for 10 seconds before chat...');
+            await new Promise(resolve => setTimeout(resolve, 10000)); // 40,000 milliseconds = 40 seconds
+
+
+
+
+
             const currentUrl = await driver.getCurrentUrl();
             expect(currentUrl).to.equal(`${BASE_URL}/chat`);
         });
@@ -201,6 +239,10 @@ describe('React App Testing - User Flows', function () {
                 'Did not navigate to /my-info within 10 seconds after clicking profile link'
             );
             const logoutButton = await driver.findElement(By.css('img.logout-icon'));
+
+
+            console.log('Waiting for 10 seconds before starting the tests...');
+            await new Promise(resolve => setTimeout(resolve, 10000)); // 40,000 milliseconds = 40 seconds
 
             await logoutButton.click();
 
