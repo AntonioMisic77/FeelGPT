@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 import MoodCalendar from "./MoodCalendar"; // Import MoodCalendar
 import "../styles/moodCalendar.css";
-const MoodTracker = () => {
+const MoodTracker = ({ darkMode }) => {
   // State variables for loading, error, and data
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -118,7 +118,7 @@ const MoodTracker = () => {
   return (
     <div className="mood-container">
       <div>
-      <MoodCalendar data={data} />
+      <MoodCalendar data={data} darkMode={darkMode} />
       </div>
       {/* Legend Section */}
       <div>

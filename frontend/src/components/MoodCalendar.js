@@ -51,12 +51,12 @@ const getStartDay = (month, year) => {
   return day === 0 ? 6 : day - 1;
 };
 
-const MoodCalendar = ({ data }) => {
+const MoodCalendar = ({ data, darkMode }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [viewMode, setViewMode] = useState("monthly"); // "monthly" or "yearly"
 
-  const [darkMode, setDarkMode] = useState(() => {
+  /* const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
@@ -64,7 +64,7 @@ const MoodCalendar = ({ data }) => {
   // Update local storage whenever darkMode changes
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
+  }, [darkMode]); */
   
   
 

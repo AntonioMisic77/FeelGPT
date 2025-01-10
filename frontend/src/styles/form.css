@@ -168,5 +168,9 @@
     cursor: default; 
     outline: none; 
     border: none; 
+    color:inherit; 
   }
   
+.update-username{
+  color: inherit;
+}
