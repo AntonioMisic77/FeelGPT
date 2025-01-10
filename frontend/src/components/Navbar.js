@@ -3,20 +3,21 @@
 import React, { useState, useEffect } from "react";
 import "../styles/navbar.css";
 import { Link, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
-const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled}) => {
+const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const location = useLocation();
   const [isCameraOn, setIsCameraOn] = useState(false); // New state for camera status
-  const [isCameraEn, setIsCameraEn] = useState(false); 
+  const [isCameraEn, setIsCameraEn] = useState(false);
 
-  const handleSetIsCameraEnabled = setIsCameraEnabled || (() => {});
+  const handleSetIsCameraEnabled = setIsCameraEnabled || (() => { });
 
 
   useEffect(() => {
     const storedCameraEn = localStorage.getItem("isCameraEn");
     if (storedCameraEn !== null) {
-      setIsCameraEn(JSON.parse(storedCameraEn)); 
+      setIsCameraEn(JSON.parse(storedCameraEn));
       handleSetIsCameraEnabled(JSON.parse(storedCameraEn));
     }
   }, []);
@@ -71,7 +72,7 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    Cookies.remove("authToken", { path: "/" }); // Ensure the path matches where the cookie was set
     window.location.href = "/";
   };
 

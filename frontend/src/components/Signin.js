@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/signin.css";
 import axiosInstance from "../api/axiosInstance";
+import Cookies from "js-cookie"; // [ADDED] Import js-cookie
 
 const Signin = () => {
   // State variables
@@ -102,8 +103,12 @@ const Signin = () => {
   
       const { token } = response.data;
 
-      // Store the auth token and redirect the user
-      localStorage.setItem("authToken", token);
+      Cookies.set("authToken", token, {
+        expires: 1, // Cookie expires in 7 days
+        secure: true, // Ensures the cookie is sent over HTTPS
+        sameSite: "strict", // Protects against CSRF
+        path: "/", // Accessible on all pages
+      });
 
       // Redirect after successful registration
       window.location.replace("/chat");
@@ -199,7 +204,7 @@ const Signin = () => {
               </div>
             )} */}
 
-            
+
           </form>
         </div>
 
@@ -217,8 +222,8 @@ const Signin = () => {
                 responseTone === "empathetic"
                   ? 1
                   : responseTone === "neutral"
-                  ? 2
-                  : 3
+                    ? 2
+                    : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -226,8 +231,8 @@ const Signin = () => {
                   value === 1
                     ? "empathetic"
                     : value === 2
-                    ? "neutral"
-                    : "professional"
+                      ? "neutral"
+                      : "professional"
                 );
               }}
             />
@@ -250,8 +255,8 @@ const Signin = () => {
                 reminderFrequency === "never"
                   ? 1
                   : reminderFrequency === "daily"
-                  ? 2
-                  : 3
+                    ? 2
+                    : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -296,18 +301,18 @@ const Signin = () => {
                 </div>
               </div> */}
 
-              {/* Pick Time for Daily/Weekly Reminders */}
-              <div className="time-picker">
-                <label>Pick a Time:</label>
-                <input
-                  className="form-control"
-                  type="time"
-                  value={reminderTime}
-                  onChange={(e) => setReminderTime(e.target.value)}
-                />
+                {/* Pick Time for Daily/Weekly Reminders */}
+                <div className="time-picker">
+                  <label>Pick a Time:</label>
+                  <input
+                    className="form-control"
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Conditional Rendering for Weekly Reminders */}
           {reminderFrequency === "weekly" && (
