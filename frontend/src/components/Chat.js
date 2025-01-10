@@ -315,7 +315,7 @@ const Chat = ({
         // Extract age, gender, and emotions
         const { age, gender, ...emotions } = emotionValues;
         
-        emotionValues.neutral = emotionValues.neutral * 0.5;
+        emotionValues.neutral = emotionValues.neutral * 0.7;
         
         // Determine the dominant emotion
         let maxEmotion = null;
@@ -568,7 +568,7 @@ const Chat = ({
               <input
                 type="range"
                 className="win10-thumb"
-                value={emotionValues.neutral * 100 * 0.5}
+                value={emotionValues.neutral * 100 * 0.7}
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,

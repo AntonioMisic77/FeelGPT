@@ -103,6 +103,7 @@ const InfoForm = ({
               value={localUsername}
               onChange={(e) => setLocalUsername(e.target.value)}
               required
+              className="update-username"
             />
             <label>Username</label>
           </div>
