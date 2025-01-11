@@ -417,7 +417,7 @@ const Chat = ({
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = Cookies.get("token");
+        const token = Cookies.get("authToken");
         if (!token) throw new Error("No auth token found");
 
         const payloadBase64 = token.split(".")[1];
