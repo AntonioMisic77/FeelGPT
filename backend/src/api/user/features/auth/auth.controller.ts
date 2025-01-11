@@ -113,6 +113,8 @@ export const updateUserInfo = createEndpoint(
       where: { id: user.id },
     });
 
+    console.log("currentUser:", currentUser);
+
     if (!currentUser) {
       throw new Error("User not found");
     }
@@ -124,9 +126,7 @@ export const updateUserInfo = createEndpoint(
     } else if (updateUserInfo.notificationFrequency === "DAILY") {
       updateUserInfo.notificationDayOfWeek = undefined;
     }
-
-
-
+    
     // Update the user in the database
     const updatedUser = await prisma.user.update({
       where: {
@@ -136,6 +136,8 @@ export const updateUserInfo = createEndpoint(
         ...updateUserInfo,
       },
     });
+
+    console.log("updated user info:");
 
     // Check if notification preferences or time have changed
     const hasNotificationPreferencesChanged =
