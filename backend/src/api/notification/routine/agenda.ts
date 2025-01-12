@@ -29,7 +29,9 @@ agenda.define("send email reminder", async (job: Job) => {
 
   const conversationSummary = await generateSessionSummary(email);
 
-  const html = template({ username, conversationSummary });
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
+  const html = template({ username, conversationSummary, frontendUrl });
   await sendMail(email, "Your Conversation Reminder", html);
 });
 
