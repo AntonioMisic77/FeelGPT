@@ -343,8 +343,20 @@ textarea {
   }
 }
 
+@keyframes DISGUST {
+  0% {
+    color: gray;
+  }
+  50% {
+    color: #5b556b; 
+  }
+  100% {
+    color: gray;
+  }
+}
 
-/* Default styles for the emotion label */
+
+
 .emotion-label {
   font-size: 0.8em;
   position: absolute;
@@ -382,6 +394,11 @@ textarea {
 .SURPRISE {
   animation-name: SURPRISE;
 }
+
+.NEUTRAL {
+  animation-name: DISGUST;
+}
+
 
 .NEUTRAL {
   animation-name: NEUTRAL;
