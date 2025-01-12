@@ -49,7 +49,7 @@ const Chat = ({
 
   // Initialize VisageAnalyzer once and store its data
   const [visageData, setVisageData] = useState(null);
-
+  const [consolidatedWords, setConsolidatedWords] = useState(null);
   // Function that keeps the chat scrolled to the bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -98,7 +98,7 @@ const Chat = ({
           (sum, { age }) => sum + (age || 0),
           0
         ) /
-        emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
+          emotionWhileTypingCleaned.filter(({ age }) => age !== null).length ||
         null;
 
       // most common gender
@@ -108,11 +108,10 @@ const Chat = ({
 
       const chatData = {
         message: inputValue,
-        emotion: IsCameraEnabled ? processedEmotionsSending : [], // Array of emotion arrays while typing
+        emotion: IsCameraEnabled ? consolidatedWords : [], // Array of emotion arrays while typing
         age: IsCameraEnabled ? averageAge : undefined, // Average age detected
         gender: IsCameraEnabled ? mostCommonGender : undefined, // Most common gender detected
       };
-
       document.getElementById("textarea-id").focus();
 
       /* CONNECTION TO BACKEND */
@@ -242,7 +241,7 @@ const Chat = ({
       const startVisageAnalyzer = () => {
         setVisageData({
           imageCaptured: null,
-          setImageCaptured: () => { },
+          setImageCaptured: () => {},
         });
       };
 
@@ -316,23 +315,23 @@ const Chat = ({
       const processedEmotions = emotionWhileTyping.map((emotionValues) => {
         // Extract age, gender, and emotions
         const { age, gender, ...emotions } = emotionValues;
-        
-        emotionValues.neutral = emotionValues.neutral * 0.7;
-        
+
+        //emotionValues.neutral = emotionValues.neutral * 0.9;
+
         // Determine the dominant emotion
         let maxEmotion = null;
         let maxEmotionValue = -Infinity;
-        const allZero = Object.values(emotions).every((value) => value === 0);
+        /* const allZero = Object.values(emotions).every((value) => value === 0);
         if (allZero) {
           maxEmotion = "not detected";
-        } else {
-          for (const [emotion, value] of Object.entries(emotions)) {
-            if (value > maxEmotionValue) {
-              maxEmotionValue = value;
-              maxEmotion = emotion;
-            }
+        } else { */
+        for (const [emotion, value] of Object.entries(emotions)) {
+          if (value > maxEmotionValue) {
+            maxEmotionValue = value;
+            maxEmotion = emotion;
           }
         }
+        /* } */
 
         // Return the desired object format
         return {
@@ -356,24 +355,67 @@ const Chat = ({
 
       // change so that it isnt the last emotion, but most common emotion
       function getMostCommonNonNeutralWord(words, neutralWords) {
-        const filteredWords = words.filter(word => !neutralWords.includes(word));
-      
-        const wordCounts = filteredWords.reduce((counts, word) => {
+        //console.log('words:', words);
+
+        // Consolidate consecutive neutral words into a single instance
+        const consolidatedWords = words.reduce((result, word, index) => {
+          if (
+            index === 0 ||
+            word !== result[result.length - 1] ||
+            !neutralWords.includes(word)
+          ) {
+            result.push(word);
+          }
+          return result;
+        }, []);
+
+        // Check if "anger" is the first word and the second word is not "anger"
+        if (
+          consolidatedWords.length > 2 && 
+          consolidatedWords[0] === "anger" && 
+          consolidatedWords[1] !== "anger" 
+        ) {
+          consolidatedWords.shift(); // Remove the first word
+        }
+
+        const consolidatedWordsSent = consolidatedWords.map((emotion) => ({
+          dominant_emotion: emotion,
+        }));
+        setConsolidatedWords(consolidatedWordsSent);
+        //console.log('consolidatedWords:', consolidatedWords);
+
+        // Count occurrences of each word
+        const wordCounts = consolidatedWords.reduce((counts, word) => {
           counts[word] = (counts[word] || 0) + 1;
           return counts;
         }, {});
-        const mostCommonWord = Object.keys(wordCounts).reduce((a, b) => 
-          wordCounts[a] > wordCounts[b] ? a : b
-        );
-      
+
+        // Determine the most common word, prioritizing non-neutral in case of a tie
+        const mostCommonWord = Object.keys(wordCounts).reduce((a, b) => {
+          // If counts are equal, prioritize the non-neutral word
+          if (wordCounts[a] === wordCounts[b]) {
+            if (neutralWords.includes(a) && !neutralWords.includes(b)) {
+              return b;
+            }
+            if (!neutralWords.includes(a) && neutralWords.includes(b)) {
+              return a;
+            }
+          }
+          // Otherwise, choose the word with the higher count
+          return wordCounts[a] > wordCounts[b] ? a : b;
+        });
+
         return mostCommonWord;
       }
-      const dominantEmotions = processedEmotions.map(item => item.dominant_emotion);
-      const mostCommonEmotion = getMostCommonNonNeutralWord(dominantEmotions, ['neutral']);
+
+      const dominantEmotions = processedEmotions.map(
+        (item) => item.dominant_emotion
+      );
+      const mostCommonEmotion = getMostCommonNonNeutralWord(dominantEmotions, [
+        "neutral",
+      ]);
 
       setDominantEmotion(mostCommonEmotion);
-
-
     } else {
       setProcessedEmotions([]); // Reset the list if no data
       setDominantEmotion(null); // Reset the dominant emotion if no data
@@ -429,16 +471,11 @@ const Chat = ({
 
         const data = response.data.result;
 
-        setProfileImage(
-          data.profileImage
-            ? `data:image/png;base64,${data.profileImage}`
-            : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
-        );
-
-        if (profileImage === null) {
-          setIsProfileImage(false);
-        } else {
+        if (data.profileImage) {
+          setProfileImage(`data:image/png;base64,${data.profileImage}`);
           setIsProfileImage(true);
+        } else {
+          setIsProfileImage(false);
         }
       } catch (err) {
         const backendMessage = err.response?.data?.message;
@@ -459,7 +496,9 @@ const Chat = ({
         } `}
       >
         <video
-          className={`live-video ${isRecordingVideo ? "" : "hidden-video"} ${!showOverlay ? "" : "overlay-video"} `}
+          className={`live-video ${isRecordingVideo ? "" : "hidden-video"} ${
+            !showOverlay ? "" : "overlay-video"
+          } `}
           ref={videoRef}
           autoPlay
           style={{
@@ -570,7 +609,7 @@ const Chat = ({
               <input
                 type="range"
                 className="win10-thumb"
-                value={emotionValues.neutral * 100 * 0.7}
+                value={emotionValues.neutral * 100 /* * 0.9 */}
                 onChange={(e) =>
                   setEmotionValues((prev) => ({
                     ...prev,
