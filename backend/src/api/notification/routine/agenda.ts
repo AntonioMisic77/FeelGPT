@@ -37,7 +37,7 @@ agenda.define("send email reminder", async (job: Job) => {
   console.log("reading template", conversationTemplate);
 
   // Compile the template using Handlebars
-  const template = handlebars.compile(conversationTemplate);
+  const template = handlebars.compile(source);
 
   console.log("template", template);
 
