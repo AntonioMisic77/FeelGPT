@@ -6,6 +6,8 @@ import VisageAnalyzer from "./VisageAnalyzer"; // Import VisageAnalyzer
 import chatService from "../services/chatService"; // Import Chat Service
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 
+import Cookies from "js-cookie";
+
 const Chat = ({
   darkMode,
   isRecordingVideo,
@@ -415,7 +417,7 @@ const Chat = ({
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("authToken");
+        const token = Cookies.get("authToken");
         if (!token) throw new Error("No auth token found");
 
         const payloadBase64 = token.split(".")[1];

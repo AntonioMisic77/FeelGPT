@@ -12,6 +12,8 @@ export const UpdateUserInfoValidator = {
       notificationDayOfWeek: z.nativeEnum(DayOfWeek).optional(),
       notificationTime: DATETIME_VALIDATOR.optional(),
       responseTone: z.nativeEnum(ResponseTone).optional(),
+      profileImage: z.string().optional(),
+      imageExtension: z.string().optional(),
     })
     .refine(
       (data) => {
