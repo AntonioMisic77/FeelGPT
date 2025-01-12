@@ -1,6 +1,7 @@
 // src/components/InfoForm.js
 import React, { useState } from "react";
 import "../styles/form.css";
+import axiosInstance from "../api/axiosInstance";
 
 const InfoForm = ({
   email,
@@ -10,18 +11,13 @@ const InfoForm = ({
   setLocalSelectedDay,
   localNotifications,
   setLocalNotifications,
-  // REMOVED NOTIFICATION METHOD AND LANGUAGE
   darkMode,
   localResponseTone,
   setLocalResponseTone,
   localNotificationTime,
   setLocalNotificationTime,
 }) => {
-  //ADDED FOR CHANGE PASSWORD
-  // checking if the old from db (storedPassword) matches oldPAssword from input (done)
-  // checking if repeat and new password in the same (done)
-  // need to connect storedPassword
-  // need to save newPassword to db
+  // Password change states
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -30,18 +26,11 @@ const InfoForm = ({
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
-  // in "storedPassword" should be value of users password from db
-  let storedPassword = "mypassword";
+  console.log('updating time to:', localNotificationTime);
 
-  console.log('updating time to:', localNotificationTime)
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     setPasswordError("");
     setPasswordSuccess("");
-
-    if (oldPassword !== storedPassword) {
-      setPasswordError("Old password is incorrect.");
-      return;
-    }
 
     if (newPassword !== repeatPassword) {
       setPasswordError("New password and repeat password do not match.");
@@ -53,16 +42,34 @@ const InfoForm = ({
       return;
     }
 
-    setPasswordSuccess("Password updated successfully.");
-    setIsChangingPassword(false);
-    setOldPassword("");
-    setNewPassword("");
-    setRepeatPassword("");
+    try {
+      // Make a POST request to change the password
+      const response = await axiosInstance.post("user/auth/change-password", {
+        oldPassword,
+        newPassword,
+      });
+
+      if (response.data.status === "ok") {
+        setPasswordSuccess("Password updated successfully.");
+        setIsChangingPassword(false);
+        setOldPassword("");
+        setNewPassword("");
+        setRepeatPassword("");
+      } else {
+        setPasswordError(response.data.message || "Failed to update password.");
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setPasswordError(error.response.data.message);
+      } else {
+        setPasswordError("An error occurred. Please try again later.");
+      }
+    }
   };
 
   const handleDaySelection = (e) => {
     setLocalSelectedDay(e.target.value);
-    //setNotificationDayCustom(e.target.value); // Update to a single selected day
   };
 
   const isoToTimeFormat = (isoString) => {
@@ -73,15 +80,6 @@ const InfoForm = ({
     console.log('after: ', `${hours}:${minutes}`);
     return `${hours}:${minutes}`;
   };
-
-
-  /* const handleReminderTypeSelection = (e) => {
-    setNotificationMethod(e.target.value); // Update selected reminder type
-
-  }; */
-
-
-
 
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
@@ -166,24 +164,7 @@ const InfoForm = ({
       </div>
 
       <div className="info-two">
-        {/* <div className="languages">
-          <label>Select Language:</label>
-          <select
-            value={language}
-            onChange={handleLanguageSelection}
-            className={`form-control ${darkMode ? "dark" : "light"}`}
-          >
-            <option className="option-form" value="">
-              Select language
-            </option>
-            {["English", "French", "Italian", "German"].map((language) => (
-              <option className="option-form" key={language} value={language}>
-                {language}
-              </option>
-            ))}
-          </select>
-        </div> */}
-
+        {/* Existing preference settings */}
         <div className="preferences">
           <label>Response Tone</label>
           <input
@@ -247,32 +228,6 @@ const InfoForm = ({
         {(localNotifications === "DAILY" ||
           localNotifications === "WEEKLY") && (
             <div>
-              {/* Reminder Type Radio Buttons */}
-              {/* <div className="reminder-type">
-              <label>Select Reminder Type:</label>
-              <div className="radio-buttons">
-                <label>
-                  <input
-                    type="radio"
-                    value="EMAIL"
-                    checked={notificationMethod === "EMAIL"}
-                    onChange={handleReminderTypeSelection}
-                  />
-                  Email
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="PUSH_NOTIFICATION"
-                    checked={notificationMethod === "PUSH_NOTIFICATION"}
-                    onChange={handleReminderTypeSelection}
-                  />
-                  Push Notification
-                </label>
-              </div>
-            </div> */}
-
-              {/* Pick Time for Daily/Weekly Reminders */}
               <div className="time-picker">
                 <label>Pick a Time:</label>
                 <input
@@ -291,7 +246,6 @@ const InfoForm = ({
                     setLocalNotificationTime(date.toISOString());
                   }}
                 />
-
               </div>
             </div>
           )}
@@ -305,7 +259,6 @@ const InfoForm = ({
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
-
                 <option className="option-form" value="">
                   Select a day
                 </option>
@@ -318,7 +271,6 @@ const InfoForm = ({
                   "SATURDAY",
                   "SUNDAY",
                 ].map((day) => (
-
                   <option className="option-form" key={day} value={day}>
                     {day}
                   </option>

@@ -20,7 +20,7 @@ const Graph = () => {
         });
 
         const fetchedData = response.data.result;
-
+        console.log(fetchedData);
         const formattedData = {};
 
         fetchedData.forEach((item) => {
