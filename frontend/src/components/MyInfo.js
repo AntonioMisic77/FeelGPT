@@ -9,6 +9,8 @@ import "../styles/chat.css";
 import "../styles/myinfo.css";
 import "../styles/darkMode.css";
 
+import Cookies from "js-cookie"; // Import js-cookie
+
 const MyInfo = () => {
   const [notifications, setNotifications] = useState("WEEKLY");
   //const [notificationMethod, setNotificationMethod] = useState("EMAIL");
@@ -37,7 +39,7 @@ const MyInfo = () => {
         const extension = file.type.split("/")[1]; // Extract file extension
   
         try {
-          const token = localStorage.getItem("authToken");
+          const token = Cookies.get("authToken"); // Retrieve token from cookies
           if (!token) throw new Error("No auth token found");
   
           const payloadBase64 = token.split(".")[1];
@@ -46,7 +48,7 @@ const MyInfo = () => {
   
           const updatedData = {
             profileImage: base64String, // Use the base64 string directly
-            imageExtension: extension, // Use the extracted file extension
+           // imageExtension: extension, // Uneccessary since we're storing the base64 string
           };
   
           // Send the updated data to the server
@@ -112,7 +114,7 @@ const MyInfo = () => {
     const fetchUserInfo = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem("authToken");
+        const token = Cookies.get("authToken"); // Retrieve token from cookies
         if (!token) throw new Error("No auth token found");
 
         const payloadBase64 = token.split(".")[1];
@@ -164,7 +166,7 @@ const MyInfo = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("authToken");
+      const token = Cookies.get("authToken"); // Retrieve token from cookies
       if (!token) throw new Error("No auth token found");
 
       const payloadBase64 = token.split(".")[1];

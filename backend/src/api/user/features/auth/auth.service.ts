@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {NotificationFrequency, NotificationMode, ResponseTone, DayOfWeek} from "@prisma/client";
+import { NotificationFrequency, NotificationMode, ResponseTone, DayOfWeek } from "@prisma/client";
 import { prisma } from "@/db";
 import { scheduleUserNotification } from "@/api/notification/routine/scheduler";
 
@@ -23,11 +23,11 @@ export const registerUser = async (
     password: string,
     username?: string,
     profileImage?: string,
-    notificationFrequency?: NotificationFrequency , 
-    notificationMode?: NotificationMode, 
-    notificationTime?: Date, 
+    notificationFrequency?: NotificationFrequency,
+    notificationMode?: NotificationMode,
+    notificationTime?: Date,
     responseTone?: ResponseTone,
-    notificationDayOfWeek? : DayOfWeek
+    notificationDayOfWeek?: DayOfWeek
 ) => {
     // Check if the email is already in use
 
@@ -40,7 +40,7 @@ export const registerUser = async (
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Create the user
-    if (!username){
+    if (!username) {
         username = email;
     }
     const newUser = await prisma.user.create({
@@ -56,9 +56,9 @@ export const registerUser = async (
             responseTone
         },
     });
-    if (notificationTime && notificationFrequency){
+    if (notificationTime && notificationFrequency) {
         scheduleUserNotification(newUser);
-      }
+    }
 
     // Generate JWT
     const token = generateToken(newUser.id);
@@ -88,13 +88,15 @@ export const loginUser = async (email: string, password: string) => {
     // Generate JWT
     const token = generateToken(user.id);
 
-    return { token, user: {
-        id: updatedUser.id,
-        username: updatedUser.username,
-        email: updatedUser.email,
-        profileImage: updatedUser.profileImage,
-        lastLogin: updatedUser.lastLogin,
-      }, };
+    return {
+        token, user: {
+            id: updatedUser.id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            profileImage: updatedUser.profileImage,
+            lastLogin: updatedUser.lastLogin,
+        },
+    };
 };
 
 
