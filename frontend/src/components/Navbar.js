@@ -5,14 +5,18 @@ import "../styles/navbar.css";
 import { Link, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 
-const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled }) => {
+const Navbar = ({
+  darkMode,
+  setDarkMode,
+  setIsRecordingVideo,
+  setIsCameraEnabled,
+}) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const location = useLocation();
   const [isCameraOn, setIsCameraOn] = useState(false); // New state for camera status
   const [isCameraEn, setIsCameraEn] = useState(false);
 
-  const handleSetIsCameraEnabled = setIsCameraEnabled || (() => { });
-
+  const handleSetIsCameraEnabled = setIsCameraEnabled || (() => {});
 
   useEffect(() => {
     const storedCameraEn = localStorage.getItem("isCameraEn");
@@ -94,7 +98,8 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
             </label>
           </div>
 
-          {location.pathname === "/my-info" && (
+          {(location.pathname === "/my-info" ||
+            location.pathname.includes("/chat-history")) && (
             <Link className="link" to="/chat">
               <button type="button" className="chat-button">
                 Chat
@@ -102,7 +107,10 @@ const Navbar = ({ darkMode, setDarkMode, setIsRecordingVideo, setIsCameraEnabled
             </Link>
           )}
 
-          {location.pathname !== "/my-info" && (
+          {!(
+            location.pathname === "/my-info" ||
+            location.pathname.includes("/chat-history")
+          ) && (
             <div className="dropdown">
               <summary role="button" onClick={toggleDropdown}>
                 <a className="button">

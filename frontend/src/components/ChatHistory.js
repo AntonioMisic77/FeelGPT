@@ -3,7 +3,11 @@ import "../styles/chat.css";
 import "../styles/darkMode.css";
 import Navbar from "../components/Navbar";
 import chatService from "../services/chatService";
+import SessionList from "../components/sessionList";
+
 import { useParams } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
+
 
 const ChatHistory = ({}) => {
   const { sessionId } = useParams(); // Get sessionId from URL parameters
@@ -11,8 +15,71 @@ const ChatHistory = ({}) => {
   const [loading, setLoading] = useState(true);
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
+  const [sessions, setSessions] = useState([]);
+
+  /* real session from be */
+
+    // getting user image
+    const [profileImage, setProfileImage] = useState("");
+    const [isProfileImage, setIsProfileImage] = useState(false);
+
+    useEffect(() => {
+      const fetchUserInfo = async () => {
+        try {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("No auth token found");
+  
+          const payloadBase64 = token.split(".")[1];
+          const decodedPayload = JSON.parse(atob(payloadBase64));
+  
+          const response = await axiosInstance.get("/user/auth/me", {
+            params: { id: decodedPayload.userId },
+          });
+  
+          const data = response.data.result;
+  
+          setProfileImage(
+            data.profileImage
+              ? `data:image/png;base64,${data.profileImage}`
+              : "https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"
+          );
+  
+          if (profileImage === null) {
+            setIsProfileImage(false);
+          } else {
+            setIsProfileImage(true);
+          }
+        } catch (err) {
+          const backendMessage = err.response?.data?.message;
+        }
+        console.log("profile image:", profileImage);
+      };
+  
+      fetchUserInfo();
+    }, []);
+  
+
   const messagesEndRef = useRef(null);
 
+
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const fetchSessions = async () => {
+    try {
+      setLoading(true);
+      const sessionData = await chatService.getAllSessions();
+      setSessions(sessionData);
+      
+    } catch (err) {
+      console.error("Error loading sessions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
   useEffect(() => {
     if (sessionId) {
       fetchChatHistory();
@@ -53,10 +120,18 @@ const ChatHistory = ({}) => {
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
-
+/* 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages]); */
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    console.log('date u chat history:', date);
+    return `${date.getDate()}. ${date.toLocaleString("default", {
+      month: "long",
+    })} ${date.getFullYear()}.`;
+  };
 
   if (loading) {
     return <div>Loading chat history...</div>;
@@ -78,12 +153,13 @@ const ChatHistory = ({}) => {
         <div className={`chat-container ${darkMode ? "dark" : "light"}`}>
           <div className="history-header">
             <h2>Chat History</h2>
+            <SessionList sessions={sessions} sessionId={sessionId} /> 
           </div>
 
           <div className={`messages ${darkMode ? "dark" : "light"}`}>
             <div className={`date-bar ${darkMode ? "dark" : "light"}`}>
               {messages.length > 0
-                ? messages[0].timestamp.toISOString().split("T")[0]
+                ? formatDate(messages[0].timestamp)
                 : "No messages"}
             </div>
 
@@ -100,16 +176,27 @@ const ChatHistory = ({}) => {
                   <div
                     className={`message-border ${darkMode ? "dark" : "light"}`}
                   >
-                    {message.text}
+                    <p>{message.text}</p>
                   </div>
+
+                  {message.sender === "me" && isProfileImage && (
+                  <img
+                    src={profileImage}
+                    alt="User"
+                    className="user-picture chat picture-me"
+                  />
+                )}
+
                   <div className="message-meta">
-                    <div className="timestamp">
+                  <div className={`timestamp ${isProfileImage ? "left" : ""}`}>
                       {message.timestamp.toLocaleTimeString()}
                     </div>
                     {message.sender === "me" && message.emotionLabel && (
                       <div
-                        className={`emotion-label ${message.emotionLabel.toUpperCase()}`}
-                      >
+                      className={`emotion-label ${message.emotionLabel.toUpperCase()} ${
+                        isProfileImage ? "left" : ""
+                      } `}
+                    >
                         <span>{message.emotionLabel.toUpperCase()}</span>
                       </div>
                     )}

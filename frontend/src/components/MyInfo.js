@@ -91,8 +91,9 @@ const MyInfo = () => {
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
 
   const components = [
-    { name: "Mood Tracker", component: <MoodTracker darkMode={darkMode} /> },
     { name: "History", component: <History darkMode={darkMode} /> },
+    { name: "Mood Tracker", component: <MoodTracker darkMode={darkMode} /> },
+    
     { name: "Graph", component: <Graph /> },
     
   ];

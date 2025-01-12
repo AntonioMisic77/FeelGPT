@@ -18,14 +18,16 @@ const History = ({ darkMode }) => {
     try {
       setLoading(true);
       const sessionData = await chatService.getAllSessions();
-      console.log("fetched session data: ", sessionData);
       setSessions(sessionData);
+      
     } catch (err) {
       console.error("Error loading sessions:", err);
     } finally {
       setLoading(false);
     }
   };
+
+
 
   const handleDeleteSession = async (sessionId) => {
     if (window.confirm("Are you sure you want to delete this chat session?")) {
@@ -63,19 +65,19 @@ const History = ({ darkMode }) => {
   }
 
   return (
-    <div>
+    <div className="history-container">
       <h2 className="history">History</h2>
       <div className={`summary-list ${darkMode ? "dark" : "light"}`}>
         {sessions.length === 0 ? (
           <div className={`summary-item ${darkMode ? "dark" : "light"}`}>
             <div className={`summary-text ${darkMode ? "dark" : "light"}`}>
-              Keine History Daten vorhanden
+              No history data available
             </div>
           </div>
         ) : (
           <>
             {sessions.map((session) => (
-              <div hidden={session.status == "active"} key={session.id}>
+              <div /* hidden={session.status == "active"} */ key={session.id}>
                 <p className="date">{formatDate(session.startTime)}</p>
                 <div className={`summary-item ${darkMode ? "dark" : "light"}`}>
                   <div
