@@ -3,6 +3,8 @@ import "../styles/chat.css";
 import "../styles/darkMode.css";
 import Navbar from "../components/Navbar";
 import chatService from "../services/chatService";
+import SessionList from "../components/sessionList";
+
 import { useParams } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance"; // Import axiosInstance
 
@@ -13,6 +15,9 @@ const ChatHistory = ({}) => {
   const [loading, setLoading] = useState(true);
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
+  const [sessions, setSessions] = useState([]);
+
+  /* real session from be */
 
     // getting user image
     const [profileImage, setProfileImage] = useState("");
@@ -56,6 +61,25 @@ const ChatHistory = ({}) => {
 
   const messagesEndRef = useRef(null);
 
+
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const fetchSessions = async () => {
+    try {
+      setLoading(true);
+      const sessionData = await chatService.getAllSessions();
+      setSessions(sessionData);
+      
+    } catch (err) {
+      console.error("Error loading sessions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
   useEffect(() => {
     if (sessionId) {
       fetchChatHistory();
@@ -129,6 +153,7 @@ const ChatHistory = ({}) => {
         <div className={`chat-container ${darkMode ? "dark" : "light"}`}>
           <div className="history-header">
             <h2>Chat History</h2>
+            <SessionList sessions={sessions} sessionId={sessionId} /> 
           </div>
 
           <div className={`messages ${darkMode ? "dark" : "light"}`}>

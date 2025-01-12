@@ -18,7 +18,6 @@ const History = ({ darkMode }) => {
     try {
       setLoading(true);
       const sessionData = await chatService.getAllSessions();
-      console.log("fetched session data: ", sessionData);
       setSessions(sessionData);
       
     } catch (err) {
@@ -28,9 +27,7 @@ const History = ({ darkMode }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("Updated sessions: ", sessions);
-  }, [sessions]);
+
 
   const handleDeleteSession = async (sessionId) => {
     if (window.confirm("Are you sure you want to delete this chat session?")) {
@@ -58,7 +55,6 @@ const History = ({ darkMode }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    console.log('date u history:', date);
     return `${date.getDate()}. ${date.toLocaleString("default", {
       month: "long",
     })} ${date.getFullYear()}.`;
