@@ -3,8 +3,14 @@ import { Navigate } from 'react-router-dom';
 
 // A simple function to check if the user is authenticated
 const isAuthenticated = () => {
-  // Example: Check if a token exists in localStorage
-  return !!localStorage.getItem('authToken');
+  
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
+  return !!getCookie('authToken');
 };
 
 const AuthGuard = ({ children }) => {

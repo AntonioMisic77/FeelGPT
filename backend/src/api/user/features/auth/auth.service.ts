@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {NotificationFrequency, NotificationMode, ResponseTone} from "@prisma/client";
+import { NotificationFrequency, NotificationMode, ResponseTone, DayOfWeek } from "@prisma/client";
 import { prisma } from "@/db";
 import { scheduleUserNotification } from "@/api/notification/routine/scheduler";
 
 const SECRET_KEY = "your_secret_key"; // Replace with a strong secret key
-const RESET_TOKEN_EXPIRY = "15m";
+//const RESET_TOKEN_EXPIRY = "15m";
 
 // Helper to generate JWT
 const generateToken = (userId: string): string => {
@@ -23,10 +23,11 @@ export const registerUser = async (
     password: string,
     username?: string,
     profileImage?: string,
-    notificationFrequency?: NotificationFrequency , 
-    notificationMode?: NotificationMode, 
-    notificationTime?: Date, 
-    responseTone?: ResponseTone
+    notificationFrequency?: NotificationFrequency,
+    notificationMode?: NotificationMode,
+    notificationTime?: Date,
+    responseTone?: ResponseTone,
+    notificationDayOfWeek?: DayOfWeek
 ) => {
     // Check if the email is already in use
 
@@ -39,7 +40,7 @@ export const registerUser = async (
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Create the user
-    if (!username){
+    if (!username) {
         username = email;
     }
     const newUser = await prisma.user.create({
@@ -51,12 +52,13 @@ export const registerUser = async (
             notificationFrequency,
             notificationMode,
             notificationTime,
+            notificationDayOfWeek,
             responseTone
         },
     });
-    if (notificationTime && notificationFrequency){
+    if (notificationTime && notificationFrequency) {
         scheduleUserNotification(newUser);
-      }
+    }
 
     // Generate JWT
     const token = generateToken(newUser.id);
@@ -86,11 +88,35 @@ export const loginUser = async (email: string, password: string) => {
     // Generate JWT
     const token = generateToken(user.id);
 
-    return { token, user: {
-        id: updatedUser.id,
-        username: updatedUser.username,
-        email: updatedUser.email,
-        profileImage: updatedUser.profileImage,
-        lastLogin: updatedUser.lastLogin,
-      }, };
+    return {
+        token, user: {
+            id: updatedUser.id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            profileImage: updatedUser.profileImage,
+            lastLogin: updatedUser.lastLogin,
+        },
+    };
+};
+
+
+// Token verification function
+export const verifyToken = async (token: string) => {
+    try {
+        const userId = getUserIdFromToken(token)
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            profileImage: user.profileImage,
+        };
+    } catch (error) {
+        throw new Error('Invalid or expired token');
+    }
 };

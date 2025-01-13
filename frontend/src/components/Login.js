@@ -1,21 +1,21 @@
-// src/components/Login.js
-
 import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/login.css";
 import axiosInstance from "../api/axiosInstance"; // Import the axios instance
+import Cookies from "js-cookie"; // Import js-cookie
 
 const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); // Add state for password
-  const [error, setError] = useState(null); // Optional: Add state for error messages
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null); // State for success messages
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Reset any previous errors
-    setLoading(true); // Set loading state
+    setError(null);
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post("/user/auth/login", {
@@ -23,15 +23,20 @@ const Login = () => {
         password,
       });
 
-      // Assuming the backend returns a token in response.data.token
       const { token } = response.data;
 
       if (!token) {
-        throw new Error('No authentication token received.');
+        throw new Error("No authentication token received.");
       }
 
-      // Store the token in localStorage
-      localStorage.setItem("authToken", token);
+      // Updated line using js-cookie
+      Cookies.set("authToken", token, {
+        expires: 1, // Cookie expires in 7 days
+        secure: true, // Ensures the cookie is sent over HTTPS
+        sameSite: "strict", // Protects against CSRF
+        path: "/", // Accessible on all pages
+      });
+
 
       // Redirect to the dashboard or home page
       window.location.replace("/chat"); // Prevent going back to the login page
@@ -39,31 +44,59 @@ const Login = () => {
     } catch (err) {
       console.error("Login error:", err);
 
-      // Improved error handling: check different error types
       let errorMessage = "An error occurred during login.";
       if (err.response) {
-        // Backend error
         errorMessage = err.response?.data?.message || errorMessage;
         if (err.response.status === 401) {
           errorMessage = "Invalid email or password.";
         }
       } else if (err.request) {
-        // No response was received (e.g., network issues)
         errorMessage = "Network error. Please try again later.";
       } else {
-        // Other errors (e.g., unexpected client-side error)
         errorMessage = err.message || errorMessage;
       }
 
       setError(errorMessage);
     } finally {
-      setLoading(false); // Reset loading state after the request
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    try {
+      const response = await axiosInstance.post("/user/auth/forgot-password", {
+        email,
+      });
+
+      setSuccess(
+        "A reset link has been sent to your email address. Please check your inbox."
+      );
+      setEmail(""); // Clear email input
+    } catch (err) {
+      console.error("Forgot password error:", err);
+
+      let errorMessage = "An error occurred while sending the reset link.";
+      if (err.response) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      } else if (err.request) {
+        errorMessage = "Network error. Please try again later.";
+      } else {
+        errorMessage = err.message || errorMessage;
+      }
+
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleForgotPasswordClick = (e) => {
-    e.preventDefault(); // Prevent the default anchor behavior
-    setShowForgotPassword(true); // Show the password reset form
+    e.preventDefault();
+    setShowForgotPassword(true);
   };
 
   const handleEmailChange = (e) => {
@@ -89,8 +122,8 @@ const Login = () => {
                   className="login-input"
                   type="email"
                   placeholder="Enter your email"
-                  value={email} // Bind the email state
-                  onChange={handleEmailChange} // Handle email changes
+                  value={email}
+                  onChange={handleEmailChange}
                   required
                 />
               </div>
@@ -100,19 +133,19 @@ const Login = () => {
                   className="login-input"
                   type="password"
                   placeholder="Enter your password"
-                  value={password} // Bind the password state
-                  onChange={handlePasswordChange} // Handle password changes
+                  value={password}
+                  onChange={handlePasswordChange}
                   required
                 />
               </div>
-              {error && <p className="error-message">{error}</p>} {/* Optional: Display error */}
+              {error && <p className="error-message">{error}</p>}
               <div className="submit-container">
                 <button
                   type="submit"
                   className="submit-btn button-66"
-                  disabled={loading} // Disable button when loading
+                  disabled={loading}
                 >
-                  {loading ? "Logging in..." : "Log in"} {/* Show loading text */}
+                  {loading ? "Logging in..." : "Log in"}
                 </button>
               </div>
             </form>
@@ -130,9 +163,16 @@ const Login = () => {
                 placeholder="Enter your email"
                 required
               />
+              {error && <p className="error-message">{error}</p>}
+              {success && <p className="success-message">{success}</p>}
               <div className="submit-container">
-                <button type="button" className="submit-btn button-66-smaller">
-                  Send Reset Link
+                <button
+                  type="button"
+                  className="submit-btn button-66"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Reset Link"}
                 </button>
               </div>
             </div>

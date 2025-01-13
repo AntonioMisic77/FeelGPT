@@ -9,24 +9,31 @@
   .input-group {
     position: relative;
     margin-bottom: 40px;
+    margin-right: 20px;
+
+  }
+
+  .input-group .password {
+    position: relative;
+    margin-bottom: 40px;
+    margin-right: 20px;
+
   }
   
   .input-group input {
-    width: 200px;
+    width: 100%;
     padding: 10px;
     border: none;
     border-bottom: 2px solid #ccc;
     background: transparent;
+    margin-bottom: 5px;
   }
   
   .input-group label {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
     font-size: 14px;
     color: #777;
+    margin-top: 5px;
   }
-
   
 
   .password-change .checkbox-group label {
@@ -146,6 +153,8 @@
       display:flex;
       flex-direction: column;
       width: 85%;
+      height: 60vh;
+      overflow-y: scroll;
     }
 
     .info-one{
@@ -153,3 +162,15 @@
     }
 
   }
+  
+
+  .readonly-email {
+    cursor: default; 
+    outline: none; 
+    border: none; 
+    color:inherit; 
+  }
+  
+.update-username{
+  color: inherit;
+}

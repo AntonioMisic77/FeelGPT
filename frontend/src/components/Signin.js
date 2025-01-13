@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import "../styles/start.css";
 import "../styles/signin.css";
 import axiosInstance from "../api/axiosInstance";
+import Cookies from "js-cookie"; // [ADDED] Import js-cookie
 
 const Signin = () => {
   // State variables
-  const [consent, setConsent] = useState(false);
-  const [notifications, setNotifications] = useState("daily");
+  //const [notifications, setNotifications] = useState("daily");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -28,14 +28,7 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handlers for form fields
-  const handleConsentChange = () => {
-    setConsent(!consent);
-  };
 
-  const handleNotificationsChange = (e) => {
-    setNotifications(e.target.value);
-  };
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -89,24 +82,33 @@ const Signin = () => {
 
       reminderDateTime.setHours(hours, minutes, 0, 0);
 
-      // Include all required fields in the POST request
-      const response = await axiosInstance.post("/user/auth/register", {
+      const data = {
         username: username,
         email: email,
         password: password,
         responseTone: responseTone.toUpperCase(),
         notificationFrequency: reminderFrequency.toUpperCase(),
         notificationMode: selectedReminderType.toUpperCase(),
-        notificationTime : reminderDateTime,
-        selectedDay : selectedDay, // Include if reminderFrequency is "weekly"
-        profileImage : profileImage, // Add base64 image data,
-        imageExtension : imageExtension, // Add image extension
-      });
-
+        notificationTime: reminderDateTime,
+        profileImage: profileImage, 
+        imageExtension: imageExtension, 
+      };
+  
+      // if reminderFrequency is weekly, add notificationDayOfWeek
+      if (reminderFrequency === "weekly" && selectedDay) {
+        data.notificationDayOfWeek = selectedDay;
+      }
+  
+      const response = await axiosInstance.post("/user/auth/register", data);
+  
       const { token } = response.data;
 
-      // Store the auth token and redirect the user
-      localStorage.setItem("authToken", token);
+      Cookies.set("authToken", token, {
+        expires: 1, // Cookie expires in 7 days
+        secure: true, // Ensures the cookie is sent over HTTPS
+        sameSite: "strict", // Protects against CSRF
+        path: "/", // Accessible on all pages
+      });
 
       // Redirect after successful registration
       window.location.replace("/chat");
@@ -192,7 +194,7 @@ const Signin = () => {
             </div>
 
             {/* Conditionally Render Image Preview */}
-            {profileImage && (
+            {/* {profileImage && (
               <div className="image-preview">
                 <img
                   src={`data:image/${imageExtension};base64,${profileImage}`}
@@ -200,9 +202,9 @@ const Signin = () => {
                   style={{ width: "20vh", height: "20vh", objectFit: "cover" }}
                 />
               </div>
-            )}
+            )} */}
 
-            
+
           </form>
         </div>
 
@@ -220,8 +222,8 @@ const Signin = () => {
                 responseTone === "empathetic"
                   ? 1
                   : responseTone === "neutral"
-                  ? 2
-                  : 3
+                    ? 2
+                    : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -229,8 +231,8 @@ const Signin = () => {
                   value === 1
                     ? "empathetic"
                     : value === 2
-                    ? "neutral"
-                    : "professional"
+                      ? "neutral"
+                      : "professional"
                 );
               }}
             />
@@ -253,8 +255,8 @@ const Signin = () => {
                 reminderFrequency === "never"
                   ? 1
                   : reminderFrequency === "daily"
-                  ? 2
-                  : 3
+                    ? 2
+                    : 3
               }
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -275,7 +277,7 @@ const Signin = () => {
             reminderFrequency === "weekly") && (
             <div>
               {/* Reminder Type Radio Buttons */}
-              <div className="reminder-type">
+              {/* <div className="reminder-type">
                 <label>Select Reminder Type:</label>
                 <div className="radio-buttons">
                   <label>
@@ -297,20 +299,20 @@ const Signin = () => {
                     Push Notification
                   </label>
                 </div>
-              </div>
+              </div> */}
 
-              {/* Pick Time for Daily/Weekly Reminders */}
-              <div className="time-picker">
-                <label>Pick a Time:</label>
-                <input
-                  className="form-control"
-                  type="time"
-                  value={reminderTime}
-                  onChange={(e) => setReminderTime(e.target.value)}
-                />
+                {/* Pick Time for Daily/Weekly Reminders */}
+                <div className="time-picker">
+                  <label>Pick a Time:</label>
+                  <input
+                    className="form-control"
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Conditional Rendering for Weekly Reminders */}
           {reminderFrequency === "weekly" && (
@@ -323,15 +325,7 @@ const Signin = () => {
                   className="form-control"
                 >
                   <option value="">Select a day</option>
-                  {[
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
-                  ].map((day) => (
+                  {["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"].map((day) => (
                     <option key={day} value={day}>
                       {day}
                     </option>

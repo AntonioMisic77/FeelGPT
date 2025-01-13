@@ -1,74 +1,170 @@
 // src/components/InfoForm.js
-
-import React from "react";
+import React, { useState } from "react";
 import "../styles/form.css";
+import axiosInstance from "../api/axiosInstance";
 
 const InfoForm = ({
   email,
-  setEmail,
-  selectedDay,
-  setSelectedDay,
-  cameraConsent,
-  setCameraConsent,
-  notifications,
-  setNotifications,
-  notificationMethod,
-  setNotificationMethod,
-  language,
-  setLanguage,
+  localUsername,
+  setLocalUsername,
+  localSelectedDay,
+  setLocalSelectedDay,
+  localNotifications,
+  setLocalNotifications,
   darkMode,
-  responseTone,
-  setResponseTone,
-  notificationTime,
-  setNotificationTime,
+  localResponseTone,
+  setLocalResponseTone,
+  localNotificationTime,
+  setLocalNotificationTime,
 }) => {
+  // Password change states
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+
+  //console.log('updating time to:', localNotificationTime);
+
+  const handleSavePassword = async () => {
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (newPassword !== repeatPassword) {
+      setPasswordError("New password and repeat password do not match.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters long.");
+      return;
+    }
+
+    try {
+      // Make a POST request to change the password
+      const response = await axiosInstance.post("user/auth/change-password", {
+        oldPassword,
+        newPassword,
+      });
+
+      if (response.data.status === "ok") {
+        setPasswordSuccess("Password updated successfully.");
+        setIsChangingPassword(false);
+        setOldPassword("");
+        setNewPassword("");
+        setRepeatPassword("");
+      } else {
+        setPasswordError(response.data.message || "Failed to update password.");
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setPasswordError(error.response.data.message);
+      } else {
+        setPasswordError("An error occurred. Please try again later.");
+      }
+    }
+  };
 
   const handleDaySelection = (e) => {
-    setSelectedDay(e.target.value); // Update to a single selected day
+    setLocalSelectedDay(e.target.value);
   };
 
-  const handleLanguageSelection = (e) => {
-    setLanguage(e.target.value); // Update selected language
+  const isoToTimeFormat = (isoString) => {
+    //console.log('before: ', isoString);
+    const date = new Date(isoString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    //console.log('after: ', `${hours}:${minutes}`);
+    return `${hours}:${minutes}`;
   };
 
-  const handleReminderTypeSelection = (e) => {
-    setNotificationMethod(e.target.value); // Update selected reminder type
-  };
-  
   return (
     <div className={`settings-form ${darkMode ? "dark" : "light"}`}>
       <div className="info-one">
         <div className="input-group">
-          <input
-            type="email"
-            value={email}
-            // onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <label>email address</label>
+          <div>
+            <input
+              type="email"
+              value={email}
+              required
+              readOnly
+              className="readonly-email"
+            />
+            <label>Email Address</label>
+          </div>
+          <div>
+            <input
+              type="username"
+              value={localUsername}
+              onChange={(e) => setLocalUsername(e.target.value)}
+              required
+              className="update-username"
+            />
+            <label>Username</label>
+          </div>
         </div>
+        {!isChangingPassword && (
+          <button
+            type="button"
+            className="change-password-button"
+            onClick={() => setIsChangingPassword(true)}
+          >
+            I want to change my password
+          </button>
+        )}
 
-        {/* Password change logic can be handled similarly if needed */}
-        {/* If password change is managed here, you might need to pass additional props */}
+        {isChangingPassword && (
+          <div className="password-change">
+            <div className="input-group" style={{ marginBottom: "10px" }}>
+              <input
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                required
+              />
+              <label>Old Password</label>
+            </div>
+            <div className="input-group" style={{ marginBottom: "10px" }}>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+              <label>New Password</label>
+            </div>
+            <div className="input-group">
+              <input
+                type="password"
+                value={repeatPassword}
+                onChange={(e) => setRepeatPassword(e.target.value)}
+                required
+              />
+              <label>Repeat New Password</label>
+            </div>
+            {passwordError && <p className="error-message">{passwordError}</p>}
+            {passwordSuccess && (
+              <p className="success-message">{passwordSuccess}</p>
+            )}
+            <button
+              type="button"
+              className="summary-button wider"
+              onClick={handleSavePassword}
+            >
+              Save my password
+            </button>
+          </div>
+        )}
+        {!isChangingPassword && passwordSuccess && (
+          <p className="success-message">{passwordSuccess}</p>
+        )}
       </div>
 
       <div className="info-two">
-        <div className="languages">
-          <label>Select Language:</label>
-          <select
-            value={language}
-            onChange={handleLanguageSelection}
-            className={`form-control ${darkMode ? "dark" : "light"}`}
-          >
-            <option className="option-form" value="">Select language</option>
-            {["English", "French", "Italian", "German"].map((language) => (
-               <option className="option-form" key={language} value={language}>
-                {language}
-              </option>
-            ))}
-          </select>
-        </div>
-
+        {/* Existing preference settings */}
         <div className="preferences">
           <label>Response Tone</label>
           <input
@@ -77,15 +173,15 @@ const InfoForm = ({
             min="1"
             max="3"
             value={
-              responseTone === "EMPATHETIC"
+              localResponseTone === "EMPATHETIC"
                 ? 1
-                : responseTone === "NEUTRAL"
+                : localResponseTone === "NEUTRAL"
                   ? 2
                   : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
-              setResponseTone(
+              setLocalResponseTone(
                 value === 1
                   ? "EMPATHETIC"
                   : value === 2
@@ -109,15 +205,15 @@ const InfoForm = ({
             min="1"
             max="3"
             value={
-              notifications === "NEVER"
+              localNotifications === "NEVER"
                 ? 1
-                : notifications === "DAILY"
+                : localNotifications === "DAILY"
                   ? 2
                   : 3
             }
             onChange={(e) => {
               const value = parseInt(e.target.value);
-              setNotifications(
+              setLocalNotifications(
                 value === 1 ? "NEVER" : value === 2 ? "DAILY" : "WEEKLY"
               );
             }}
@@ -129,58 +225,53 @@ const InfoForm = ({
           </div>
         </div>
 
-        {(notifications === "DAILY" || notifications === "WEEKLY") && (
-          <div>
-            {/* Reminder Type Radio Buttons */}
-            <div className="reminder-type">
-              <label>Select Reminder Type:</label>
-              <div className="radio-buttons">
-                <label>
-                  <input
-                    type="radio"
-                    value="EMAIL"
-                    checked={notificationMethod === "EMAIL"}
-                    onChange={handleReminderTypeSelection}
-                  />
-                  Email
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="PUSH_NOTIFICATION"
-                    checked={notificationMethod === "PUSH_NOTIFICATION"}
-                    onChange={handleReminderTypeSelection}
-                  />
-                  Push Notification
-                </label>
+        {(localNotifications === "DAILY" ||
+          localNotifications === "WEEKLY") && (
+            <div>
+              <div className="time-picker">
+                <label>Pick a Time:</label>
+                <input
+                  className={`form-control ${darkMode ? "dark" : "light"}`}
+                  type="time"
+                  value={localNotificationTime ? isoToTimeFormat(localNotificationTime) : ""}
+                  onChange={(e) => {
+                    const timeString = e.target.value; // "HH:mm"
+                    if (!timeString) return; // Prevent invalid changes
+
+                    const [hours, minutes] = timeString.split(":").map(Number);
+                    if (isNaN(hours) || isNaN(minutes)) return; // Guard against invalid numbers
+
+                    const date = new Date(localNotificationTime || Date.now());
+                    date.setHours(hours, minutes, 0, 0);
+                    setLocalNotificationTime(date.toISOString());
+                  }}
+                />
               </div>
             </div>
+          )}
 
-            {/* Pick Time for Daily/Weekly Reminders */}
-            <div className="time-picker">
-              <label>Pick a Time:</label>
-              <input
-                className={`form-control ${darkMode ? "dark" : "light"}`}
-                type="time"
-                value={notificationTime}
-                onChange={(e) => setNotificationTime(e.target.value)}
-              />
-            </div>
-          </div>
-        )}
-
-        {notifications === "WEEKLY" && (
+        {localNotifications === "WEEKLY" && (
           <div className="week">
             <label>Select Day:</label>
             <div className="week-picker">
               <select
-                value={selectedDay}
+                value={localSelectedDay}
                 onChange={handleDaySelection}
                 className={`form-control ${darkMode ? "dark" : "light"}`}
               >
-                <option className="option-form" value="">Select a day</option>
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                  <option  className="option-form" key={day} value={day}>
+                <option className="option-form" value="">
+                  Select a day
+                </option>
+                {[
+                  "MONDAY",
+                  "TUESDAY",
+                  "WEDNESDAY",
+                  "THURSDAY",
+                  "FRIDAY",
+                  "SATURDAY",
+                  "SUNDAY",
+                ].map((day) => (
+                  <option className="option-form" key={day} value={day}>
                     {day}
                   </option>
                 ))}

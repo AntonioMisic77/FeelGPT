@@ -1,14 +1,17 @@
+
+
 .summary-list {
-    /* TASK: remove hardcoded value from max-height */
-    max-height: 500px; /* Set a max height for scrolling */
-    overflow-y: auto;  /* Enable vertical scrolling */
-    /* padding: 10px; */ /* Padding around the list */
-    
-    /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+    height: 60vh; 
+    overflow-y: auto;
+    width: 66vw;
+    max-width:1000px;
+    /* padding: 10px; */
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
     box-shadow: inset 0px 10px 10px -10px rgba(0, 0, 0, 0.6), inset 0px -10px 10px -10px rgba(0, 0, 0, 0.6);
 
+    padding-left: 10px; 
+    padding-right: 10px;
   }
 
   .summary-list.light{
@@ -25,6 +28,7 @@
     border: 1px solid #668fac; /* Border for each item */
     margin-bottom: 10px; /* Space between items */
     overflow: hidden; /* Hide overflow */
+
   }
   
   .summary-text {
@@ -66,6 +70,9 @@
     width: 100px;
   }
   
+ 
+
+
   .view{
     background-color: #607889;; /* Button background color */
   }
@@ -84,3 +91,15 @@
     background-color: #0a6bff;
     transform: translateY(-2px);
   }
+
+
+  @media (max-width: 600px) {
+  .summary-list {
+    max-height: 80vh; 
+    margin-top: 5vh;
+  }
+
+  .history{
+    display:none;
+  }
+}

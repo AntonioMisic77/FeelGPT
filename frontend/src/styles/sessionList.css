@@ -1,0 +1,20 @@
+.session-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adjust the space between buttons as needed */
+  }
+  
+  .session-button {
+    flex-shrink: 0;  
+    white-space: nowrap;  
+    max-width: 200px;  
+    text-overflow: ellipsis;  
+    overflow: hidden;
+    /* border:   1px solid gray;
+    border-radius: 5px; */
+    text-decoration: underline;
+    color: gray;
+    background-color: transparent;
+    margin-bottom: 10px;
+}
+
