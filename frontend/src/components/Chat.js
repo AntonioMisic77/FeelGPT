@@ -15,13 +15,8 @@ const Chat = ({
   IsCameraEnabled,
 }) => {
   const first_timestamp = new Date().toLocaleTimeString();
-  const [messages, setMessages] = useState([
-    {
-      text: "Welcome to FeelGPT. I am here to listen and help you reflect on your emotions. How are you feeling today?",
-      sender: "them",
-      timestamp: first_timestamp,
-    },
-  ]);
+  const [sessionId, setSessionId] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   // for input to increase with row of texts
   const textareaRef = useRef(null);
@@ -54,6 +49,68 @@ const Chat = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // fetch messages for active session
+  useEffect(() => {
+    const fetchActiveSession = async () => {
+      try {
+        // Get all sessions first
+        const sessionsData = await chatService.getAllSessions();
+
+        const activeSession = sessionsData.find(
+          (session) => session.status === "active"
+        );
+
+        if (activeSession) {
+          setSessionId(activeSession.id);
+          // Fetch messages for active session
+          const response = await chatService.getSessionMessages(
+            activeSession.id
+          );
+
+          if (response.messages) {
+            const formattedMessages = response.messages.map((msg) => ({
+              text: msg.content,
+              sender: msg.messageType === "assistant" ? "them" : "me",
+              timestamp: new Date(msg.timestamp).toLocaleTimeString(),
+              emotionLabel: msg.emotionalState,
+            }));
+
+            // Combine with welcome message
+            setMessages([
+              {
+                text: "Welcome to FeelGPT. I am here to listen and help you reflect on your emotions. How are you feeling today?",
+                sender: "them",
+                timestamp: new Date().toLocaleTimeString(),
+              },
+              ...formattedMessages,
+            ]);
+          }
+        } else {
+          // If no active session, just show welcome message
+          setMessages([
+            {
+              text: "Welcome to FeelGPT. I am here to listen and help you reflect on your emotions. How are you feeling today?",
+              sender: "them",
+              timestamp: new Date().toLocaleTimeString(),
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching active session:", error);
+        // Show welcome message on error
+        setMessages([
+          {
+            text: "Welcome to FeelGPT. I am here to listen and help you reflect on your emotions. How are you feeling today?",
+            sender: "them",
+            timestamp: new Date().toLocaleTimeString(),
+          },
+        ]);
+      }
+    };
+
+    fetchActiveSession();
+  }, []);
 
   // Function to send a message
   const sendMessage = async () => {
@@ -371,9 +428,9 @@ const Chat = ({
 
         // Check if "anger" is the first word and the second word is not "anger"
         if (
-          consolidatedWords.length > 2 && 
-          consolidatedWords[0] === "anger" && 
-          consolidatedWords[1] !== "anger" 
+          consolidatedWords.length > 2 &&
+          consolidatedWords[0] === "anger" &&
+          consolidatedWords[1] !== "anger"
         ) {
           consolidatedWords.shift(); // Remove the first word
         }
