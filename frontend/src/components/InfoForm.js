@@ -26,7 +26,7 @@ const InfoForm = ({
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
-  console.log('updating time to:', localNotificationTime);
+  //console.log('updating time to:', localNotificationTime);
 
   const handleSavePassword = async () => {
     setPasswordError("");
@@ -73,11 +73,11 @@ const InfoForm = ({
   };
 
   const isoToTimeFormat = (isoString) => {
-    console.log('before: ', isoString);
+    //console.log('before: ', isoString);
     const date = new Date(isoString);
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    console.log('after: ', `${hours}:${minutes}`);
+    //console.log('after: ', `${hours}:${minutes}`);
     return `${hours}:${minutes}`;
   };
 
