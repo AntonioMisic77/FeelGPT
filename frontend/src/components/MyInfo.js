@@ -200,6 +200,7 @@ const MyInfo = () => {
       setResponseTone(localResponseTone);
       setNotificationDayCustom(localSelectedDay);
       setNotificationTime(localNotificationTime);
+      setSelectedDay(localSelectedDay);
 
       //console.log("overlay ugasen");
 
@@ -243,6 +244,8 @@ const MyInfo = () => {
   }, [responseTone]);
   useEffect(() => {
     setLocalSelectedDay(selectedDay);
+
+    console.log(selectedDay);
   }, [selectedDay]);
   useEffect(() => {
     setLocalNotificationTime(notificationTime);
