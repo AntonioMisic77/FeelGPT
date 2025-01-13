@@ -35,7 +35,7 @@ jobs:
                 username: ${{ secrets.REGISTRY_USERNAME }}
                 password: ${{ secrets.REGISTRY_PASSWORD }}  
             - run: |
-                docker build -t feelgptcr.azurecr.io/feelgptserver:${{ github.sha }} --target production .
+                docker build -t feelgptcr.azurecr.io/feelgptserver:${{ github.sha }} --target dev .
                 docker push feelgptcr.azurecr.io/feelgptserver:${{ github.sha }}
     deploy:
         runs-on: ubuntu-latest
