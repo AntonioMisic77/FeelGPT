@@ -359,18 +359,20 @@ Assumptions:
 
 Storage Cost:
 10,000 users × 500KB = 5GB
-AWS S3 Standard: ~$0.023/GB/month (verify current pricing)
-Monthly Storage: ~$0.12
+AWS S3 Standard: Check current pricing
+Monthly Storage: Very low cost (typically under $1)
 
 Transfer Cost:
 2,000 uploads/month × 500KB = 1GB upload
 Uploads are free
 Downloads via CloudFront: negligible for profile images
 
-Total Monthly Cost: ~$0.20
+Estimated Total Monthly Cost: Less than $1
 
-Note: Pricing is approximate and subject to change. 
-Check current AWS pricing at: https://aws.amazon.com/s3/pricing/
+Note: For exact pricing, use the AWS Pricing Calculator:
+https://calculator.aws/#/
+or check current S3 pricing at:
+https://aws.amazon.com/s3/pricing/
 ```
 
 **Implementation:**
@@ -446,26 +448,49 @@ S3_BUCKET_NAME=feelgpt-profile-images
 ```typescript
 import sharp from 'sharp';
 import fs from 'fs/promises';
+import path from 'path';
 
-// Process image from disk (after disk-based upload)
-const processImage = async (filePath: string): Promise<Buffer> => {
-    return await sharp(filePath)
+// Process image from disk with streaming to avoid memory issues
+const processAndSaveImage = async (
+    inputPath: string, 
+    outputDir: string
+): Promise<string> => {
+    const uniqueId = crypto.randomBytes(16).toString('hex');
+    const outputPath = path.join(outputDir, `${uniqueId}.webp`);
+    
+    // Use streaming to avoid loading entire image into memory
+    await sharp(inputPath)
         .resize(800, 800, { 
             fit: 'inside',
             withoutEnlargement: true 
         })
         .webp({ quality: 85 })
-        .toBuffer();
+        .toFile(outputPath); // Stream directly to file
+    
+    return outputPath;
 };
 
 // In upload handler (with disk storage)
 authRouter.post("/register", upload.single("profileImage"), async (req, res) => {
     if (req.file) {
-        // Process from disk to avoid memory issues
-        const optimizedImage = await processImage(req.file.path);
-        // Upload optimizedImage to S3 or save to final location
-        // Clean up temporary file
-        await fs.unlink(req.file.path);
+        try {
+            // Process from disk and stream to output (no large buffers)
+            const optimizedPath = await processAndSaveImage(
+                req.file.path,
+                'uploads/profiles'
+            );
+            
+            // Upload optimizedPath to S3 or use as final location
+            // Clean up temporary file
+            await fs.unlink(req.file.path);
+        } catch (error) {
+            console.error('Image processing failed:', error);
+            // Clean up on error
+            if (req.file.path) {
+                await fs.unlink(req.file.path).catch(() => {});
+            }
+            throw error;
+        }
     }
 });
 ```
@@ -622,64 +647,90 @@ const formats = users.reduce((acc, user) => {
 console.log('Image formats:', formats);
 ```
 
-#### Step 2: Migration Script
+#### Step 2: Migration Script (Memory-Efficient)
 ```typescript
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import axios from 'axios';
+import sharp from 'sharp';
+import fs from 'fs/promises';
+import path from 'path';
+import { Readable } from 'stream';
+
+const BATCH_SIZE = 10; // Process 10 users at a time to avoid memory issues
 
 async function migrateImagesToS3() {
     const users = await prisma.user.findMany({
         where: { profileImage: { not: null } }
     });
 
-    for (const user of users) {
-        try {
-            let imageBuffer: Buffer;
+    console.log(`Migrating ${users.length} profile images...`);
 
-            // Handle different storage formats
-            if (user.profileImage.startsWith('http')) {
-                // Download from URL
-                const response = await axios.get(user.profileImage, {
-                    responseType: 'arraybuffer'
+    // Process in batches to avoid memory pressure
+    for (let i = 0; i < users.length; i += BATCH_SIZE) {
+        const batch = users.slice(i, i + BATCH_SIZE);
+        
+        await Promise.all(batch.map(async (user) => {
+            const tempFile = path.join('/tmp', `migration-${user.id}.tmp`);
+            
+            try {
+                // Download/decode to temporary file first
+                if (user.profileImage.startsWith('http')) {
+                    // Stream download to disk
+                    const response = await axios.get(user.profileImage, {
+                        responseType: 'stream'
+                    });
+                    await fs.writeFile(tempFile, response.data);
+                } else if (user.profileImage.startsWith('data:')) {
+                    // Decode base64 to disk
+                    const base64Data = user.profileImage.split(',')[1];
+                    const buffer = Buffer.from(base64Data, 'base64');
+                    await fs.writeFile(tempFile, buffer);
+                } else {
+                    console.warn(`Unknown format for user ${user.id}`);
+                    return;
+                }
+
+                // Optimize using streams (no large buffers)
+                const key = `profiles/${user.id}.webp`;
+                const optimizedFile = path.join('/tmp', `optimized-${user.id}.webp`);
+                
+                await sharp(tempFile)
+                    .resize(800, 800, { fit: 'inside' })
+                    .webp({ quality: 85 })
+                    .toFile(optimizedFile); // Stream to file instead of buffer
+
+                // Upload to S3 using streaming
+                const fileStream = await fs.readFile(optimizedFile);
+                await s3Client.send(new PutObjectCommand({
+                    Bucket: process.env.S3_BUCKET_NAME,
+                    Key: key,
+                    Body: fileStream,
+                    ContentType: 'image/webp',
+                    ACL: 'public-read'
+                }));
+
+                // Update user record
+                const newUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+                await prisma.user.update({
+                    where: { id: user.id },
+                    data: { profileImage: newUrl }
                 });
-                imageBuffer = Buffer.from(response.data);
-            } else if (user.profileImage.startsWith('data:')) {
-                // Decode base64
-                const base64Data = user.profileImage.split(',')[1];
-                imageBuffer = Buffer.from(base64Data, 'base64');
-            } else {
-                console.warn(`Unknown format for user ${user.id}`);
-                continue;
+
+                console.log(`✓ Migrated image for user ${user.id}`);
+            } catch (error) {
+                console.error(`✗ Failed to migrate image for user ${user.id}:`, error);
+            } finally {
+                // Clean up temporary files
+                await fs.unlink(tempFile).catch(() => {});
+                await fs.unlink(path.join('/tmp', `optimized-${user.id}.webp`)).catch(() => {});
             }
+        }));
 
-            // Optimize image
-            const optimizedBuffer = await sharp(imageBuffer)
-                .resize(800, 800, { fit: 'inside' })
-                .webp({ quality: 85 })
-                .toBuffer();
-
-            // Upload to S3
-            const key = `profiles/${user.id}.webp`;
-            await s3Client.send(new PutObjectCommand({
-                Bucket: process.env.S3_BUCKET_NAME,
-                Key: key,
-                Body: optimizedBuffer,
-                ContentType: 'image/webp',
-                ACL: 'public-read'
-            }));
-
-            // Update user record
-            const newUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
-            await prisma.user.update({
-                where: { id: user.id },
-                data: { profileImage: newUrl }
-            });
-
-            console.log(`Migrated image for user ${user.id}`);
-        } catch (error) {
-            console.error(`Failed to migrate image for user ${user.id}:`, error);
-        }
+        console.log(`Batch ${Math.floor(i / BATCH_SIZE) + 1} completed`);
     }
+    
+    console.log('Migration completed!');
 }
 ```
 

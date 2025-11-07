@@ -77,13 +77,18 @@ const upload = multer({
 
 ### Option 1: Disk-Based Storage (Recommended for Quick Fix)
 ```typescript
+import crypto from 'crypto';
+import path from 'path';
+
 const upload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, 'uploads/temp/')
         },
         filename: (req, file, cb) => {
-            cb(null, `${Date.now()}-${file.originalname}`)
+            const uniqueId = crypto.randomBytes(16).toString('hex');
+            const ext = path.extname(file.originalname);
+            cb(null, `profile-${uniqueId}${ext}`)
         }
     }),
     limits: { fileSize: 5 * 1024 * 1024 }, // Reduce to 5MB
