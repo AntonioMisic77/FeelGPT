@@ -359,8 +359,8 @@ Assumptions:
 
 Storage Cost:
 10,000 users × 500KB = 5GB
-AWS S3 Standard: $0.023/GB/month
-Monthly Storage: $0.12
+AWS S3 Standard: ~$0.023/GB/month (verify current pricing)
+Monthly Storage: ~$0.12
 
 Transfer Cost:
 2,000 uploads/month × 500KB = 1GB upload
@@ -368,6 +368,9 @@ Uploads are free
 Downloads via CloudFront: negligible for profile images
 
 Total Monthly Cost: ~$0.20
+
+Note: Pricing is approximate and subject to change. 
+Check current AWS pricing at: https://aws.amazon.com/s3/pricing/
 ```
 
 **Implementation:**
@@ -774,4 +777,4 @@ The current in-memory storage approach for profile pictures is not suitable for 
 - Enhanced security posture
 - Reduced infrastructure costs
 
-This migration should be prioritized as a high-severity issue and completed within 1-2 weeks (Phase 1 of the implementation roadmap).
+This migration should be prioritized as a high-severity issue and completed within 1-2 weeks (see Phase 1 in Implementation Roadmap section above, which targets Week 1 for immediate fixes).

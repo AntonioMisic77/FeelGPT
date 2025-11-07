@@ -130,7 +130,9 @@ const upload = multer({
         bucket: 'feelgpt-profile-images',
         acl: 'public-read',
         key: (req, file, cb) => {
-            cb(null, `profiles/${Date.now()}-${file.originalname}`);
+            const uniqueId = crypto.randomBytes(16).toString('hex');
+            const ext = path.extname(file.originalname);
+            cb(null, `profiles/${uniqueId}${ext}`);
         }
     }),
     limits: { fileSize: 5 * 1024 * 1024 }
