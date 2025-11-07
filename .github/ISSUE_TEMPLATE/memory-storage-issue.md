@@ -110,20 +110,23 @@ Integrate with cloud storage providers:
 - **Azure Blob Storage**: Already using Azure for AI services
 - **Cloudinary**: Specialized for images with built-in optimization
 
-**Example with AWS S3:**
+**Example with AWS S3 (using SDK v3):**
 ```typescript
+import multer from 'multer';
 import multerS3 from 'multer-s3';
-import AWS from 'aws-sdk';
+import { S3Client } from '@aws-sdk/client-s3';
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION!,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+    }
 });
 
 const upload = multer({
     storage: multerS3({
-        s3: s3,
+        s3: s3Client,
         bucket: 'feelgpt-profile-images',
         acl: 'public-read',
         key: (req, file, cb) => {

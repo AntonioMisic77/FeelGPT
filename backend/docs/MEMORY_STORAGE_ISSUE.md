@@ -442,10 +442,11 @@ S3_BUCKET_NAME=feelgpt-profile-images
 **Add Image Optimization:**
 ```typescript
 import sharp from 'sharp';
+import fs from 'fs/promises';
 
-// After receiving upload
-const processImage = async (buffer: Buffer): Promise<Buffer> => {
-    return await sharp(buffer)
+// Process image from disk (after disk-based upload)
+const processImage = async (filePath: string): Promise<Buffer> => {
+    return await sharp(filePath)
         .resize(800, 800, { 
             fit: 'inside',
             withoutEnlargement: true 
@@ -454,11 +455,14 @@ const processImage = async (buffer: Buffer): Promise<Buffer> => {
         .toBuffer();
 };
 
-// In upload handler
+// In upload handler (with disk storage)
 authRouter.post("/register", upload.single("profileImage"), async (req, res) => {
     if (req.file) {
-        const optimizedImage = await processImage(req.file.buffer);
-        // Upload optimizedImage instead of original
+        // Process from disk to avoid memory issues
+        const optimizedImage = await processImage(req.file.path);
+        // Upload optimizedImage to S3 or save to final location
+        // Clean up temporary file
+        await fs.unlink(req.file.path);
     }
 });
 ```
@@ -770,4 +774,4 @@ The current in-memory storage approach for profile pictures is not suitable for 
 - Enhanced security posture
 - Reduced infrastructure costs
 
-This migration should be prioritized as a high-severity issue and completed within the next sprint.
+This migration should be prioritized as a high-severity issue and completed within 1-2 weeks (Phase 1 of the implementation roadmap).
