@@ -279,9 +279,9 @@ const storage = multer.diskStorage({
         cb(null, path.join(__dirname, '../../../uploads/temp'));
     },
     filename: (req, file, cb) => {
-        const uniqueSuffix = crypto.randomBytes(16).toString('hex');
+        const uniqueId = crypto.randomBytes(16).toString('hex');
         const ext = path.extname(file.originalname);
-        cb(null, `profile-${uniqueSuffix}${ext}`);
+        cb(null, `profile-${uniqueId}${ext}`);
     }
 });
 
