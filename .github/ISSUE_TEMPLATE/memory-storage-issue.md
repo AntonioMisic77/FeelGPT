@@ -93,7 +93,7 @@ const upload = multer({
     }),
     limits: { fileSize: 5 * 1024 * 1024 }, // Reduce to 5MB
     fileFilter: (req, file, cb) => {
-        const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
         if (allowedMimes.includes(file.mimetype)) {
             cb(null, true);
         } else {

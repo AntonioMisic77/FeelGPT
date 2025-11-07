@@ -280,7 +280,15 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueId = crypto.randomBytes(16).toString('hex');
-        const ext = path.extname(file.originalname);
+        const ext = path.extname(file.originalname).toLowerCase();
+        
+        // Validate extension against allowlist
+        const allowedExts = ['.jpg', '.jpeg', '.png', '.webp'];
+        if (!allowedExts.includes(ext)) {
+            cb(new Error('Invalid file extension'));
+            return;
+        }
+        
         cb(null, `profile-${uniqueId}${ext}`);
     }
 });
@@ -288,8 +296,7 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage,
     limits: { 
-        fileSize: 5 * 1024 * 1024, // 5MB
-        files: 1
+        fileSize: 5 * 1024 * 1024 // 5MB
     },
     fileFilter: (req, file, cb) => {
         const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -370,7 +377,7 @@ Downloads via CloudFront: negligible for profile images
 Estimated Total Monthly Cost: Less than $1
 
 Note: For exact pricing, use the AWS Pricing Calculator:
-https://calculator.aws/
+https://calculator.aws
 or check current S3 pricing at:
 https://aws.amazon.com/s3/pricing/
 ```
@@ -654,6 +661,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 import axios from 'axios';
 import sharp from 'sharp';
 import fs from 'fs/promises';
+import { createReadStream } from 'fs';
 import path from 'path';
 import { Readable } from 'stream';
 
@@ -700,8 +708,8 @@ async function migrateImagesToS3() {
                     .webp({ quality: 85 })
                     .toFile(optimizedFile); // Stream to file instead of buffer
 
-                // Upload to S3 using streaming
-                const fileStream = await fs.readFile(optimizedFile);
+                // Upload to S3 using streaming (avoid loading entire file into memory)
+                const fileStream = createReadStream(optimizedFile);
                 await s3Client.send(new PutObjectCommand({
                     Bucket: process.env.S3_BUCKET_NAME,
                     Key: key,
