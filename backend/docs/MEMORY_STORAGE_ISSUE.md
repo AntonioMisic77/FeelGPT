@@ -370,7 +370,7 @@ Downloads via CloudFront: negligible for profile images
 Estimated Total Monthly Cost: Less than $1
 
 Note: For exact pricing, use the AWS Pricing Calculator:
-https://calculator.aws/#/
+https://calculator.aws/
 or check current S3 pricing at:
 https://aws.amazon.com/s3/pricing/
 ```
